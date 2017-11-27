@@ -26,21 +26,24 @@
             <p class="site-description">{{ site.description }}</p>
           </div>
 
-          <nav>
-            <a href="{{ site.baseurl }}/">Home</a>
-            <ul>
-              <li>
-                <a href="#">Topics</a>
-                <ul>
-                  <li><a href="#">Education</a></li>
-                  <li><a href="#">Language</a></li>
-                  <li><a href="#">Reading</a></li>
-                  <li><a href="#">Travels</a></li>
-                </ul>
-              </li>
-            </ul>
-            <a href="{{ site.baseurl }}/about">About</a>
-          </nav>
+          <div class="menu-wrap">
+              <nav class="menu">
+                  <ul class="clearfix">
+                      <li><a href="{{ site.baseurl }}/">Home</a></li>
+                      <li>
+                          <a href="#">Topics <span class="arrow">&#9660;</span></a>
+
+                          <ul class="sub-menu">
+                              <li><a href="#">Education</a></li>
+                              <li><a href="#">Language</a></li>
+                              <li><a href="#">Reading</a></li>
+                              <li><a href="#">Travels</a></li>
+                          </ul>
+                      </li>
+                      <li><a href="{{ site.baseurl }}/about">About</a></li>
+                  </ul>
+              </nav>
+          </div>
         </header>
       </div>
     </div>
