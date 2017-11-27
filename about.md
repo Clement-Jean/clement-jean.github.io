@@ -4,12 +4,10 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Interested in mind blowing and innovative projects, I can devote a lot of time working to make things change and become better. I'm especially interested in education, studies about the human body (mostly the brain) and in analyzing people.
 
-### More Information
-
-A place to include any other types of information that you'd like to include about yourself.
+**Let's end the "one size fits all" education!**
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[clement.jean@epitech.eu](mailto:clement.jean@epitech.eu)
