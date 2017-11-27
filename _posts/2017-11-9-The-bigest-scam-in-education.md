@@ -1,4 +1,4 @@
-In a previous article I gave 5 reasons why people lose time at school, 
+In a previous article I gave [5 reasons why people lose time at school](https://clement-jean.github.io/5-reasons-why-you-lost-time-in-school/), 
 now I would like to talk a little bit about my own experience to let you
 see one of situation created by the educational system. I prefer to say in
 advance that this article will look like a little bit like a text written
