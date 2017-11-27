@@ -7,7 +7,7 @@ I’m just realistic and I conducted some experiments on me to prove it.
 I also want to say that I’m not the only one in this case and that, 
 as you’ll see, a lot of my friends also suffer from these circumstances.
 
-# A little story
+## A little story
 
 Everything starts from the beginning, when I was a young student who was told to learn the multiplication tables. “You need to learn it, it’s important” was the sentence I was hearing every math classes. But, you know I was saying to myself: “Why do I need to learn it ? I can count !”. In a sense it’s true right ? 6 x 7 is just (6 x 6) + 6. After years and years of maths concepts accumulation and a growing sense of “not being designed to do maths”, guess what ? **I WAS BAD AT MATHS. Surprise !**
 
@@ -20,7 +20,7 @@ Let me explain you why I say this before you start telling me : “You worked a 
 - But then I had problems at simplifying the fractions step. I started to search why ? And the answer was: Multiplications (you remember them right ?). I was making a lot of mistakes, stupid mistakes of course because I know how to count but it meant that learning multiplication table is important **BECAUSE** it permits to reduce the errors you do on fractions but also on all the topics after.
 - And now ? Yes, I’m learning multiplication tables by heart
 
-# Some questions
+## Some questions
 
 Let me ask you some questions before to conclude:
 - How can we keep accepting to give student this kind of education ?
@@ -32,7 +32,7 @@ If you have an opinion or answer on these questions please feel free to contact 
 
 **My email is :** clementjean13@gmail.com.
 
-# Conclusion
+## Conclusion
 
 Some of you are laughing and some of are asking themselves questions. What I suggest you to do is the same method. Once you don’t understand 100% of the concept find out why and go on previous concept. I’m sure some of you will be surprise of the level they have. One of my friend who is in maths master tried it and he found out that his level was way lower than what he thought.
 
