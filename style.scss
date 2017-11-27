@@ -241,7 +241,7 @@ nav {
 .menu-wrap {
     width:100%;
     box-shadow:0px 1px 3px rgba(0,0,0,0.2);
-    background:#3e3436;
+    background:#ffffff;
 }
  
 .menu {
@@ -262,7 +262,7 @@ nav {
  
 .menu li:hover > a, .menu .current-item > a {
     text-decoration:none;
-    color:#be5b70;
+    color:#ffffff;
 }
  
 .menu .arrow {
@@ -285,7 +285,7 @@ nav {
 }
  
 .menu > ul > li:hover > a, .menu > ul > .current-item > a {
-    background:#2e2728;
+    background:#e20f39;
 }
  
 /*----- Bottom Level -----*/
@@ -318,7 +318,7 @@ nav {
 }
  
 .sub-menu li a:hover, .sub-menu .current-item a {
-    background:#3e3436;
+    background:#e20f39;
 }
 
 //
