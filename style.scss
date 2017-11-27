@@ -241,7 +241,7 @@ nav {
 .menu-wrap {
     width:100%;
     box-shadow:0px 1px 3px rgba(0,0,0,0.2);
-    background:#ffffff;
+    background:#d8d8d8;
 }
  
 .menu {
@@ -284,7 +284,7 @@ nav {
 }
  
 .menu > ul > li:hover > a, .menu > ul > .current-item > a {
-    background:#e20f39;
+    background:#ff0033;
 }
  
 /*----- Bottom Level -----*/
@@ -303,7 +303,7 @@ nav {
     opacity:0;
     transition:opacity linear 0.15s;
     box-shadow:0px 2px 3px rgba(0,0,0,0.2);
-    background:#2e2728;
+    background:#686868;
 }
  
 .sub-menu li {
@@ -317,7 +317,7 @@ nav {
 }
  
 .sub-menu li a:hover, .sub-menu .current-item a {
-    background:#e20f39;
+    background:#ff0033;
 }
 
 //
