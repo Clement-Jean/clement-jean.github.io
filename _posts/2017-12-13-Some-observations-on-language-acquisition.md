@@ -2,6 +2,8 @@ After visiting different countries and lived in some places as a tourist, I noti
 
 ## Korea — 서울 (Seoul)
 
+![Seoul](/images/seoul.jpeg "Seoul")
+
 One of my friend already visited Korea before me and he told me : *“OK, I need to tell you something about this country before you go there”* and he added : *“You’ll be shocked by the number of people who can speak English”*. I replied *“No way!”* because I thought it would be the same as 北京 where nobody can speak it. I decided to know more opinions and I talked with another friend who went there in 2008. She told me: *“Nobody can speak English! So prepare yourself”*. I was a little bit confused but as my first friend went there more recently the other one I decided to trust him on this point. What if it was true ? I knew nothing about this country (as a lot of westerners know nothing about east Asia in general).
 
 The trip was really short (I mean in comparison with others I did), only 1:30 hour by plane from 北京 to 서울. Once I arrived at the airport, I needed to take the subway to go the guest house. So as it was a one week long trip, I wanted to take a subway card. I went to the ticket office and tried my luck and ask for it in English. And you know what ? She answered: *“you need to go to the convenient store, just there”*. Yes, she has a strong accent (I have it too) but we were able to understand each other without any problem. Isn't it the purpose of communication and language ?! I finally took my card, went to the guest house and went out to walk a little bit around. I needed a coffee. I went to a small café managed by a **30 years old woman**, of course asked in English and she answered with the same language. I was used to it now, no more shock. But when I went out, I kept the door open for one **80 years old guy** and he said: *“thank you”*. I was shocked again.
@@ -9,6 +11,8 @@ The trip was really short (I mean in comparison with others I did), only 1:30 ho
 Don’t misunderstand me, the Korean are not all fluent in English. For the majority of them, then know the vocabulary for their business and some directions, greetings, etc… But you know what ? I think this is awesome ! When I’m in China or in France, old people in general can’t really speak another language. It can be comprehensible for China which open the borders not long ago, but France ?! We live next to England ! Don’t tell me we never did trades with them. Let’s go back to Korean people. Each time you’ll talk to them in English they will say something like: *“My English is not good”* (once again with a string accent), but they will try and 99% of the cases they will succeed in helping you. **This is definitely admirable**.
 
 ## China — 上海 (Shanghai)
+
+![Shanghai](/images/shanghai.jpeg "Shanghai")
 
 This trip was the longest … 16 hours by train. Once again, my friend went there before me and he wanted to let me know something. He said: “This city is one of the most international. Don’t think you’ll be able to practice your Chinese there”. Actually, we did this trip to go to an event and fortunately there was a purpose because I was feeling bad after his advice. Once I arrived there, I said to myself: *“OK, that’s definitely true. I never saw that much foreigners in 北京”*. **I was hearing all the languages possible: French, English, Spanish, Russian, …** As you can imagine the English level there was really high and even little Chinese restaurants have the menu in English and can handle your order. If you see it for my point of view it was not that great because I wanted to practice Chinese but let see it for a different point of view. Let’s take the example of me going in Korea. So if I went to 上海 just for one week, without learning Chinese. Guess what ? I think it would be a great place for me.
 
@@ -19,6 +23,8 @@ Oh ! I didn't mentioned that I was not able to practice my Chinese (trust me I t
 As we saw in this two cities from different countries, **the development of international business impact the society**. Language acquisition is a need in that kind of market because the people who can evolve and make trades with foreigners will thrive. And the one which can’t, will close their company. It’s understandable and logic right ? But now let me present you one other case and maybe you will see things a little bit differently.
 
 ## China — 北京 (Beijing)
+
+![Beijing](/images/beijing.jpeg "Beijing")
 
 Ah 北京 ! I can’t really described how I like this city. It’s history, the traditions and customs, and finally the language (which is not only in 北京， I need to admit). I’m currently master student in this city. My university is sharing the first place in the schools’ ranking in china and the local students here are excellent. You can’t even imagine the competition they have before to be able to enter that school. One of the requirements is, I let you guess for few seconds ……………… English ! So, of course you expect them to be able to help you when you just arrive in China right ? Let me share with you the story of the longest day in my life. It was my first day in 北京, I needed to go to my school, do the classic administrative stuffs and go to the supermarket to buy some food. In a normal school it would just take few hours but here It took me the all day.
 
