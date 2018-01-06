@@ -6,6 +6,8 @@ Before to try to answer these questions, we need to define which kind of habit w
 
 The first thing you'll notice, when you deliberately start a routine, is how fast you increase your skill and performances. Let's say that you want to learn a new language. Everyday, after getting up, you review your list of vocabulary, grammar, etc... You'll notice some patterns and some ways to remember these words. At the same time you'll try to find ways to make your review more efficient by finding new techniques from others or try your assumptions. **You treat the review in a scientific way**.
 
+![Scientific method](/images/the_scientific_method_as_an_ongoing_process-min.jpg "Scientific method")
+
 It's fast and everything is new so you're highly motivated. You love to do it and you would skip it just in case of emergency. And if you skip it you feel really bad. But after a certain time ...
 
 ## OK-plateaus
