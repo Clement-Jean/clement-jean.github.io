@@ -27,11 +27,6 @@ In this article I explained how keeping things simple can enable you to become m
 
 [Productivity: Keep it simple](https://clement-jean.github.io/Productivity-keep-it-simple/)
 
-We all lived that kind of situation in which we find another solution to solve a problem and that solution is so much…
-medium.com	
 In this article I give a tip on how to reach your goal step by step. It is also related to quality because you can actually enjoy more your experiences than having long working, review, … sessions.
 
 [Productivity: Step by step approach](https://clement-jean.github.io/Productivity-step-by-step-technique/)
-
-In order to be productive we generally tend to work more hours or to set unattainable plans. The problem is that when…
-medium.com	
