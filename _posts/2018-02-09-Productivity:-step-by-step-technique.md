@@ -1,11 +1,8 @@
 
 In order to be productive we generally tend to work more hours or to set unattainable plans. **The problem is that when we fail to attain one step and another and another we start to be depressed and we finally abandon the goal even if it was important for us.** How can we keep climbing stairs ? How can we go higher and higher to finally reach the goal ?
 
----
 
-**If you don't want to read you can now listen in your car, on your bike or in any situation. Here is [the audio](https://clementjean.podbean.com/mf/play/xtn9ny/Productivity_step_by_step_technique.mp3). Enjoy!**
-
----
+**If you don't want to read you can now listen in your car, on your bike or in any situation. Here is [the audio](https://www.podbean.com/media/share/pb-7mwgy-87c107). Enjoy!**
 
 ## Main motivation
 Before to talk about the technique in itself we need to ask ourselves questions and define what we really want. You’ll, of course, less tempted to abandon a project if it something you decided to live for. Ask yourself the following questions :
