@@ -1,0 +1,16 @@
+This article is little story I experienced during my last trip to 石家庄 (shijiazhuang). It made me laugh but it also made me think a lot about what happened to us and by us I mean adults.
+
+## The story
+On the image you can see above, you can clearly guess where I went to take a coffee. It was the morning, I was preparing to go visit some places around. I wanted to drink a coffee before just to be able to stay awake for the following hour of bus. After ordering a 美式咖啡 (americano), me and my friend decided to sit just in front of the playground. After observing around I found something really interesting. **The little guy you can see on the picture was having so much fun**. He was climbing the stairs and sliding down to finally start again and again and again. Each time he was reaching the floor he was jumping three times with the arms in the air to show his mother how happy he was. His mother was just next to the entrance watching at her phone and sometimes taking some pictures of the little guy to share it on her favorite social media. During that situation, without caring to much about the mother, I was so amazed about how he was able to appreciate each time the same thing as much as the first time he did it. I was amazed about the big laugh he had and also about the creativity he added to slide down. He did it by sitting properly at first because his mother asked him but then he did it on the belly and etc…
+
+## What’s wrong with us?
+What’s the problem? Why can’t we enjoy as he did for all the slides he did. He was just playing and repeating as long as his mother came to take him. If no one was saying let’s go, I’m sure he would stay there for a week, trying everything possible and even sleep while sliding. **It’s so amazing how adults can become bored by experiences**. We do it once and then we say it’s fine now. He was living an happy life and I think it is what we should do, even as adults. Do you like something (I’m not talking about addictions or killing habits)? Just repeat and repeat, try different things and you’ll normally be able to enjoy life as much as him. We could be happy but instead we just say: “Oh my life is boring, I’m repeating everyday the same thing”. This child can teach you a lesson, change every time a little thing and it will make it as fun as the first time. He can also teach you that we should keep see things as they are and maybe ask ourself why are we bored that quickly. Did you became an eternal unsatisfied? How do you want to find happiness if you are never satisfied?
+
+## Further questions?
+- How come that the mom became that insensible of her child’s happiness?
+- Are we really enjoying time when we took pictures instead of looking with our eyes?
+- Why are we so bored ?
+
+Sometimes you should act as an adult, but sometimes you need to act as a child. That experience was awesome for me and I will never loose that image. I wanted that child to live a happy life, sliding and sliding again. **Stay young, please!**
+
+**If you think what I say is right or wrong or if you want to answer the questions, I would like to hear from you. I’m curious about what people think and so you can contact me by finding the info on the contact page.**
