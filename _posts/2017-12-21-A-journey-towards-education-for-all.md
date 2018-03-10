@@ -59,7 +59,7 @@ I took the example of online teaching websites, but what about teachers ? Can’
 - Does everyone want the same level of education as other ?
 - How do we choose the standards for “level of education” ?
 
-##Conclusion
+## Conclusion
 
 Before to give a conclusion I would like to say once again that I generalized but I described trends in the different types of countries. Now that we are clear about that, I would like to say that maybe we should try to use better words or sentences to describe our goals in expanding education. It’s not as easy as it seems. It’s not just publishing a website which will help everyone on the planet, it’s not only sending children to schools which will help to make them happy, it’s not by just creating schools that children will have a great life.
 If you have comments about this article and you would like to share some ideas with me, you can find my contact at the bottom of the page.
