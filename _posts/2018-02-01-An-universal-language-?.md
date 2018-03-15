@@ -1,5 +1,5 @@
 ---
-category: Languages
+category: Language learning
 ---
 
 Traveling, doing business, watching movies, … are becoming easier in more and more places in the world we can ask ourself some questions about the future. It can be some questions like : **What will be the next way to travel ?, How communication will evolve ? As communication is the beginning of everything (education, exchange, interactions, …) I want to focus on the eventuality of making an universal language. Why is it interesting ?, why it can kill creativity and innovation ? and finally how can we create it ?** Let’s see this together !
