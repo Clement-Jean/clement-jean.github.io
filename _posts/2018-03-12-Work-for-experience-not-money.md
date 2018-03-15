@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 ![mountain](https://images.pexels.com/photos/357891/pexels-photo-357891.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb)
 
 > “Be brave. Take risks. Nothing can substitute experience.” — Paulo Coelho
