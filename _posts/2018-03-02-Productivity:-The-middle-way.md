@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 ![road](https://images.pexels.com/photos/56832/road-asphalt-space-sky-56832.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb)
 
 During that period living in China I learned an important life lesson about productivity. While I was in Europe, and I guess it’s the same in other western countries, **thinking about doing a shitty looking product but having all the main features was for me impossible**. It could be seen as a prototype which the entrepreneurs start with but actually it is much more than that and you can also use some principles in your life. Eager to learn about it? Let’s go!
