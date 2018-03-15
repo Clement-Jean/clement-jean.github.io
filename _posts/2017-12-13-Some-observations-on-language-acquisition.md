@@ -1,3 +1,7 @@
+---
+category: Languages
+---
+
 After visiting different countries and lived in some places as a tourist, I noticed different important aspect in language learning. With my experience of living 20 years in France, 1.5 year in 北京 (Beijing) and after my Trip in 上海 (Shanghai) or in 서울 (Seoul), I observed a bunch of differences. **These differences are in majority created by choices made by people or governments** (sounds stupid right ? But they actually play different roles). The people can create differences like the one I will introduce by actually learning a language for personal reasons (business, pure knowledge, …). And Governments make decisions to improve the population’s life (Economy, reputation, …). **Let’s talk now about the differences I became aware of during my travels and let’s try to see how these differences became reality**.
 
 ## Korea — 서울 (Seoul)
