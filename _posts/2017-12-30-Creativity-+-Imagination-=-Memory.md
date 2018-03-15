@@ -1,3 +1,6 @@
+---
+category: Productivity
+---
 
 After watching a video about some guys memorizing the decimals of pi (I don’t understand totally why, but it’s not the problem), I searched a little bit about the techniques these guys use. The world record is at 100 000 decimals and the guy spent 24 hours to enumerate them. Quite impressive right ? But every brain is able to do that and we will see some techniques.
 
