@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 This article is little story I experienced during my last trip to 石家庄 (shijiazhuang). It made me laugh but it also made me think a lot about what happened to us and by us I mean adults.
 
 ## The story
