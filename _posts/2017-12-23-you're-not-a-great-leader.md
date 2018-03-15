@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 Last day, one friend asked me: “do you think I can be a great leader in the future ?”. The following paragraphs is what I explained to her before to finally conclude: “Become a great leader is a result of all these points, be aware of them and you’ll see your life change”. **I’m sure you can do it too !**
 
 ## If you don’t know how to express yourself
