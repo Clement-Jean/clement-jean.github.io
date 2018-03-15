@@ -5,14 +5,29 @@ layout: default
 <div class="posts">
   {% for post in site.posts %}
     <article class="post">
+      
+      {% if page.url contains "#" %}
+        {% assign category = {{page.url | split:"#"}} %}
+        {% if post.category == category %}
+          <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
 
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
+          <div class="entry">
+            {{ post.excerpt }}
+          </div>
 
-      <div class="entry">
-        {{ post.excerpt }}
-      </div>
+          <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
+        {% enfif %}
+      {% else %}
+          <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
 
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
+          <div class="entry">
+            {{ post.excerpt }}
+          </div>
+
+          <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
+      {% endif %}
+      
+      
     </article>
   {% endfor %}
 </div>
