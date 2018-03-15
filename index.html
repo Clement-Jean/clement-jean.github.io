@@ -2,10 +2,12 @@
 layout: default
 ---
 
+<h1>page.url</h1>
+
 <div class="posts">
   {% for post in site.posts %}
     <article class="post">
-      
+            
       {% if page.url contains "#" %}
         {% assign category = {{page.url | split:"#"}} %}
         {% if post.category == category[1] %}
