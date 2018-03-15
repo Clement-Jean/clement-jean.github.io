@@ -1,3 +1,8 @@
+---
+category: Education
+tags: [Education, Schools, Students, Future]
+---
+
 It’s easy to say: **“I want education for everyone”, “everyone should be able to go to school” or “everyone should have the same level of education”**, it’s another thing to do it. We tend to trust the companies which prone that dream and we assume that everyone of them is understanding the problems they will have during the process of making it becoming true. Unfortunately, I’m not so sure about the fact that they understand the obstacles in generalizing education. This article’s goal is to help everyone realize it’s not that simple and maybe make you come with ideas to innovate.
 
 ## What does “same level of education” means ?
