@@ -1,3 +1,8 @@
+---
+category: Education
+tags: [Education, Schools, Students, Future]
+---
+
 Everyone of us once heard or said : *“I learned it at school long time ago. So, I don’t remember”*. And, I don’t know about you but for me it’s a big problem. Why do we go to school if we don’t remember what we learned? Why do we keep spending **around 15%** of our life in it? I can understand arguments like: school enable you to grow and become adults. But, do we really need it? Don’t we have others solutions?
 
 In a world in which the data flow is so huge and in which you need to adapt quickly to other technologies, we need to create better school to improve our students’ effectiveness. Our students are our future and we cannot let them live in the same situation as us. We want better future for them but also for us right ?
