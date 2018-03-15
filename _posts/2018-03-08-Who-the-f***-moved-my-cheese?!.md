@@ -1,3 +1,7 @@
+---
+category: Languages
+---
+
 ![cheese](https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb)
 
 I recently started to read a book called: “Who moved my cheese?”. I decided that I would read it in Chinese. My goal? It is to translate it just for fun. I’m trying a new technique in order to learn how to read any language. I also started to read this book because this is a self-development book and because of the word cheese (I’m French). I already learned 30 important words while translating. Even if I’m not that good in Chinese, I’m really interested in it because it’s a totally different culture. This language is, for now, the best language in the world. Oh my god! I realized I can translate this in Chinese …
