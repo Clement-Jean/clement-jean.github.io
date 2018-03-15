@@ -283,53 +283,6 @@ footer {
   text-align: center;
 }
 
-//CATEGORY DROPDOWN
-.dropbtn {
-	margin-left: 20px;
-    background: transparent;
-    font-size: 16px;
-    border: none;
-    font-weight: 300;
-    letter-spacing: 1px;
-	font: 18px/1.4 $helvetica;
-	color: #333;
-	padding: 0;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-	background-color: #fff;
-	min-width: 160px;
-	
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-	margin-left: 0px;
-}
-
-.dropdown-content a:hover {background-color: #eee}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    color: $blue; // changer en blue normal
-}
-//
-
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
