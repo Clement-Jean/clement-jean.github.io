@@ -9,3 +9,5 @@ Interested in mind blowing and innovative projects, I can devote a lot of time w
 **Let's end the "one size fits all" education!**
 
 if you want to subsribe to my newsletter and don't miss any of my new articles fill the following form:
+
+{% include newsletter.html %}
