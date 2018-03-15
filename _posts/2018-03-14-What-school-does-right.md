@@ -1,3 +1,8 @@
+---
+category: Education
+tags: [Education, Schools, Students, Future]
+---
+
 ![school](https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb)
 
 There is trend criticizing everything in schools without especially talking about the good sides. I need to admit I criticized too but now I’m realizing that **instead of presenting only the bad points we should also see the good points and give some solutions**. It’s time to change things, let’s see what school does right.
