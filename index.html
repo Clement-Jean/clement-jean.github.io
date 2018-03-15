@@ -8,7 +8,7 @@ layout: default
       
       {% if page.url contains "#" %}
         {% assign category = {{page.url | split:"#"}} %}
-        {% if post.category == category %}
+        {% if post.category == category[1] %}
           <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
 
           <div class="entry">
