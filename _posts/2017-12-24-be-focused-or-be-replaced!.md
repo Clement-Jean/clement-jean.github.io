@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 As I’m living in China and going alongside Chinese workers, I’m seeing everyday what we call: “Competition”. This highly competitive market give big advantages to people who can learn quickly and deeply and people who can apply. When you have a job here, you already know that **if you’re not a good member you’ll be replaced in the following hours**. There are a lot of people who are as good as you and who are waiting for an opportunity. Maybe you’ll feel like it’s not the case in the place you live because the population is not as big as the Chinese one. But you’re wrong ! The one who will replace you is maybe not a human but maybe a robot. **So be focused or get replaced !**
 
 ## Shallow work
