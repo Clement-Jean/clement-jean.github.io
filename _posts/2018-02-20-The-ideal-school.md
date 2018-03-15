@@ -1,3 +1,8 @@
+---
+category: Education
+tags: [Education, Schools, Students, Future]
+---
+
 I’m often criticizing the current education system (like in [this article](https://medium.com/edgeeks/5-reasons-why-you-lost-time-in-school-e24377a7cddc) or [this one](https://medium.com/edgeeks/5-reasons-why-classical-tests-dont-show-your-real-level-74595a0b8391)) but I often try to imagine what would be the kind I school I would like for all children on this planet. **Criticizing without giving solutions is like peeing in a violin, no results come out**. In this article I want to give you a description about what would be an ideal school. Let’s start dreaming!
 
 ## Learn how to learn
