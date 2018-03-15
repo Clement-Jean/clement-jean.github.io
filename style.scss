@@ -285,10 +285,12 @@ footer {
 
 //CATEGORY DROPDOWN
 .dropbtn {
-	background: transparent;
+    background: transparent;
     padding: 16px;
     font-size: 16px;
     border: none;
+    font-weight: 300;
+    letter-spacing: 1px;
 }
 
 .dropdown {
@@ -311,7 +313,7 @@ footer {
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #ddd}
+.dropdown-content a:hover {background-color: #fff}
 
 .dropdown:hover .dropdown-content {
     display: block;
