@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 One sentence can make you think more than an entire book, one hour can give more results than ten and an important emotion can lead to bigger experience than thousands of little feelings. **Quality should be preferred over quantity** but what the link with productivity ? What is the few steps you should take in order to fill your life with quality?
 
 ## What is quality ?
