@@ -1,3 +1,7 @@
+---
+category: Education
+tags: [Education, Schools, Students, Future]
+---
 
 During our student’s life, tests are the worst things happening. It’s stressful and determine your grades and at the same time if you will pass or not. But the first goal of these instruments of torture is not to make you stressed, It’s to give you and your teacher a feedback your **level of mastery** on a certain topic. But are these feedbacks really relevant ? Do they really represent what you know ?
 
