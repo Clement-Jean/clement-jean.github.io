@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 While we are performing our routine, everyday and everyday, we tend to forget one of **the most important key of improvement: Challenge**. If your goal is to become a singer, a good developer or a good boss, challenging yourself will play a role in getting you out of the mass of people who are like you? You’ll, improvement by improvement, get noticed. As Bidemi Mark Modi said:
 
 > “The human spirit is like an elastic band. The more you stretch, the greater your capacity.”
