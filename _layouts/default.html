@@ -26,34 +26,14 @@
             <p class="site-description">{{ site.description }}</p>
           </div>
 
-          <nav>
-              {% assign rawcategories = "" %}
-                {% for post in site.posts %}
-                  {% assign ccategory = post.category | join:'|' | append:'|' %}
-                  {% assign rawcategories = rawcategories | append:ccategory %}
-                {% endfor %}
-              {% assign rawcategories = rawcategories | split:'|' | sort %}
-            
-              {% assign categories = "" %}
-              {% for category in rawcategories %}
-                {% if category != "" %}
-                  {% if categories == "" %}
-                    {% assign categories = category | split:'|' %}
-                  {% endif %}
-                  {% unless categories contains category %}
-                    {% assign tags = categories | join:'|' | append:'|' | append:category | split:'|' %}
-                  {% endunless %}
-                {% endif %}
-              {% endfor %}
-            
-            
+          <nav> 
             <!-- <a href="{{ site.baseurl }}/">Home</a> -->
             <div class="dropdown">
               <button class="dropbtn">Categories</button>
               <div class="dropdown-content">
-                {% for tag in tags %}
-	                <a href="#{{ tag | slugify }}"> {{ tag }} </a>
-                {% endfor %}
+                {% for tag in site.categories %}
+			<a href="#{{ tag[0] | slugify }}">{{ tag[0] }}</a>
+		{% endfor %}
               </div>
             </div>
             <a href="{{ site.baseurl }}/contact">Contact</a>
