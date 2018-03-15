@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 In order to be productive we generally tend to work more hours or to set unattainable plans. The problem is that when we fail to attain one step and another and another we start to be depressed and we finally abandon the goal even if it was important for us. How can we keep climbing stairs ? How can we go higher and higher to finally reach the goal ?
 
 If you don’t want to read and you prefer to listen to the audio in your car, on your bike on in any situation, here is [the audio](https://www.podbean.com/media/share/pb-7mwgy-87c107). Enjoy !
