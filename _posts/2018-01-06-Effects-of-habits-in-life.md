@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 We all have habits. Some of them are good and some of them are bad. We all define these habits by repeating actions (consciously or unconsciously). After repeating them enough time, a certain action become a normal thing. Every influencer on Internet or every famous people say that having routine is an important way to improve yourself. **Is it totally true ? What make them say that ?**
 
 Before to try to answer these questions, we need to define which kind of habit we will talk about. It is obvious to say that destructive habits (smoking, what if questions, ...) will not help you to improve. We need to distinguish **constructive ones (the one which can make you happier, knowledgeable, ...) and the destructive ones (the one which kills you physically or mentally)**. In this article we will just talk about the former one because I'm sure as a professional you're looking ways to improve yourself everyday. However, you're maybe not aware of the effects of them on you because it's sometimes tricky to see. **Don't worry we are here to talk about it !**
