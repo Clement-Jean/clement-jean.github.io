@@ -1,3 +1,7 @@
+---
+category: Productivity
+---
+
 We all lived that kind of situation in which we find another solution to solve a problem and that solution is so much easier than the previous one. We struggled and struggled so hard to arrive to that final solution that we finally say to ourself: “You’re so stupid, it was easy !”. How can we avoid these situations? and How can we design the simplest working plan ?
 
 **If you don’t want to read and you prefer to listen to the audio in your car, on your bike on in any situation, here is [the audio](https://www.podbean.com/media/share/pb-jq9gz-87d822). Enjoy !**
