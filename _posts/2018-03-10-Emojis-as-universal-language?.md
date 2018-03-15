@@ -1,3 +1,7 @@
+---
+category: Languages
+---
+
 We all use this little yellow faces which can help you to add the missing facial or body expressions missing in the communication written form. These little images became a kind of requirements to the extent that if you put the wrong one or you don’t put them you can be misunderstood. So it is relevant to ask ourselves if emojis can become the universal language.
 
 ## It could 🤔
