@@ -304,11 +304,8 @@ footer {
     transition: all 0.1s ease-in-out;
 }
 
-.tags-expo .tags-expo-section ul li {
-    -webkit-transition: all 0.1s ease-in-out;
-    -moz-transition: all 0.1s ease-in-out;
-    transition: all 0.1s ease-in-out;
-    padding: 0 1rem;
+.post-tag ::hover {
+	color: black;
 }
 //
 
