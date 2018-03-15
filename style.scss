@@ -4,7 +4,6 @@
 //
 // IMPORTS
 //
-$font-font-awesome: FontAwesome;
 
 @import "reset";
 @import "variables";
@@ -285,11 +284,11 @@ footer {
 }
 
 // CATEGORIES
-.post-tag:before {
-    content: "\f02b";
-    font-family: FontAwesome;
-    padding-right: .5em;
-}
+//.post-tag:before {
+//    content: "\f02b";
+//    font-family: FontAwesome;
+//    padding-right: .5em;
+//}
 //
 
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
