@@ -316,6 +316,12 @@ footer {
 }
 #mailchimp input[type="submit"]:hover { color: #F2C94C }
 
+#mailchimp-wrapper {
+    position:absolute;
+    top:50%;
+    right:0;
+    left:0;
+}
 //
 
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
