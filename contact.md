@@ -1,5 +1,6 @@
 ---
 layout: other
+permalink: /contact/
 ---
 
 You can contact me by choosing your favorite platefom:
