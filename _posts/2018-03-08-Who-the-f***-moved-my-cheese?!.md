@@ -1,5 +1,5 @@
 ---
-category: Language learning
+category: Misc
 ---
 
 ![cheese](https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb)
