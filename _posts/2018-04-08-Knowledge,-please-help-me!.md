@@ -1,4 +1,9 @@
+---
+category: Language learning
+---
+
 ![help](https://images.pexels.com/photos/167964/pexels-photo-167964.jpeg)
+
 As a lot of people, I have multiple passions. As a lot of people , I’m practicing them when I have time. But as few people, I’m practicing these multiple passions at the same time, **I’m actually combining them**. Now, you start to think that I’m multi tasking and you might have read a lot of articles which explains that multi-tasking doesn't exist. My answer is: Yes multi-tasking doesn't exist, and I’m not doing that for my passions I love them so much that I want to be sure I want to practice correctly and dedicate the time they need. I like to learn the why, the how and the what of languages and I love coding, especially in a reusable way. Do you have more clues about my technique? No? Ok, let’s see it together.
 
 
