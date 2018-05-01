@@ -20,7 +20,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
-    <thead style="background-color:#f64139">
+    <thead style="background-color:#d53120">
       <tr>
         <th>Language</th>
         <th>Proficiency</th>
@@ -71,7 +71,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
-    <thead style="background-color:#f64139">
+    <thead style="background-color:#d53120">
       <tr>
         <th>Skill</th>
         <th>Proficiency</th>
@@ -159,7 +159,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
-    <thead style="background-color:#f64139">
+    <thead style="background-color:#d53120">
       <tr>
         <th>Skill</th>
         <th>Proficiency</th>
