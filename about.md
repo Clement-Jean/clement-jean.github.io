@@ -20,7 +20,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
-    <thead>
+    <thead style="background-color:#fc4537;">
       <tr>
         <th>Language</th>
         <th>Proficiency</th>
@@ -71,7 +71,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
-    <thead>
+    <thead style="background-color:#fc4537;">
       <tr>
         <th>Skill</th>
         <th>Proficiency</th>
@@ -157,10 +157,29 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ### Writing ###
 
-| Skill | Percentage | Use |
-| --- | --- | --- |
-| Latex | 90 % | Often |
-| Markdowm | 80 % | Often |
+<div class="container table-responsive-md">            
+  <table class="table table-striped">
+    <thead style="background-color:#fc4537;">
+      <tr>
+        <th>Skill</th>
+        <th>Proficiency</th>
+        <th>Usage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Latex</td>
+        <td>90%</td>
+        <td>Often</td>
+      </tr>
+      <tr>
+        <td>Markdown</td>
+        <td>80%</td>
+        <td>Often</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ## Projects ##
 
