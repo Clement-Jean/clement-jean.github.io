@@ -47,7 +47,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 #### Languages and frameworks ####
 
-| Skill | Percentage | Usage frequency |
+| Skill | Percentage | Usage |
 | --- | --- | --- |
 | C | 90 % | No more |
 | C++ | 90 % | Often |
