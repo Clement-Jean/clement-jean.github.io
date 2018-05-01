@@ -18,9 +18,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-<div class="container">
-  <h2>Dark Striped Table</h2>
-  <p>Combine .table-dark and .table-striped to create a dark, striped table:</p>            
+<div class="container">            
   <table class="table table-dark table-striped">
     <thead>
       <tr>
