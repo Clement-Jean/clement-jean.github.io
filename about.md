@@ -19,7 +19,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 ## Languages ##
 
 <div class="container table-responsive-md">            
-  <table class="table table-stripened">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Language</th>
@@ -70,7 +70,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 #### Languages and frameworks ####
 
 <div class="container table-responsive-md">            
-  <table class="table table-stripened">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Skill</th>
