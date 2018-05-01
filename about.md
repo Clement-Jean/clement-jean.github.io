@@ -19,8 +19,8 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 ## Languages ##
 
 <div class="container table-responsive-md">            
-  <table class="table">
-    <thead class="cyan lighten-3">
+  <table class="table table-stripened">
+    <thead>
       <tr>
         <th>Language</th>
         <th>Proficiency</th>
