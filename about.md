@@ -18,28 +18,28 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-<div class="container table-responsive">            
+<div class="container table-responsive-md">            
   <table class="table">
-    <thead>
+    <thead class="cyan lighten-3">
       <tr>
         <th>Language</th>
         <th>Proficiency</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="table-success">
+      <tr>
         <td>French</td>
         <td>Native</td>
       </tr>
-      <tr class="table-success">
+      <tr>
         <td>English</td>
         <td>TOEIC/TOEFL</td>
       </tr>
-      <tr class="table-warning">
+      <tr>
         <td>Spanish</td>
         <td>Limited</td>
       </tr>
-      <tr class="table-warning">
+      <tr>
         <td>Chinese</td>
         <td>HSK3</td>
       </tr>
