@@ -18,12 +18,36 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-| Language | Proficiency or exam |
-| --- | --- |
-| French | Native |
-| English | TOEIC/TOEFL |
-| Spanish | Limited |
-| Chinese | HSK3 |
+<div class="container">
+  <h2>Dark Striped Table</h2>
+  <p>Combine .table-dark and .table-striped to create a dark, striped table:</p>            
+  <table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th>Language</th>
+        <th>Proficiency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>French</td>
+        <td>Native</td>
+      </tr>
+      <tr>
+        <td>English</td>
+        <td>TOEIC/TOEFL</td>
+      </tr>
+      <tr>
+        <td>Spanish</td>
+        <td>Limited</td>
+      </tr>
+      <tr>
+        <td>Chinese</td>
+        <td>HSK3</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ## Interests ##
 
