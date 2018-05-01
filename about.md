@@ -27,19 +27,19 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr class="table-success">
         <td>French</td>
         <td>Native</td>
       </tr>
-      <tr>
+      <tr class="table-success">
         <td>English</td>
         <td>TOEIC/TOEFL</td>
       </tr>
-      <tr>
+      <tr class="table-warning">
         <td>Spanish</td>
         <td>Limited</td>
       </tr>
-      <tr>
+      <tr class="table-warning">
         <td>Chinese</td>
         <td>HSK3</td>
       </tr>
