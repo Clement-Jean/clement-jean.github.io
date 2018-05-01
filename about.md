@@ -193,3 +193,7 @@ Finally, I'm passionated by generecity and architecture in programming and by la
 - HSK trainer (Software to train to HSK)
 - KMAT: Framework for automatic and adaptive test system based on Knowledge map (Research for 清华大学 thesis)
 - Flashcard app (non published)
+
+## Want to know more about me?  ##
+
+If you are also interested in language learning, programming, collaborating with me or about any point in this CV, I would like to hear from you. You can contact me with your prefered platform by clicking on the contact page. Finally, if you live in China and you want to reach me more easily, my Wechat id is : clementjean.
