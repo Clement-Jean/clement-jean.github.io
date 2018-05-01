@@ -19,7 +19,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 ## Languages ##
 
 <div class="container">            
-  <table class="table table-dark table-striped">
+  <table class="table">
     <thead>
       <tr>
         <th>Language</th>
