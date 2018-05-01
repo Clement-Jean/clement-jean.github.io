@@ -1,0 +1,120 @@
+---
+layout: page
+permalink: /fr/towards-fluency/
+---
+
+<img src="https://images.pexels.com/photos/346839/pexels-photo-346839.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" alt="book">
+
+<h1>Table des matieres</h1>
+
+<ul>
+  <li>Introduction</li>
+  <li>Utilisation du livre</li>
+  <li>Connaissances pratiques
+    <ul>
+      <li>Qu'est ce qu'un language</li>
+      <li>Pourquoi est t'il interessant d'en apprendre un?</li>
+      <li>L'etudiant parfait</li>
+      <li>Le choc culturel</li>
+    </ul>
+  </li>
+  <li>Definir ses objectifs
+    <ul>
+      <li>Subjectivite</li>
+      <li>Votre definition</li>
+      <li>Ma definition</li>
+    </ul>
+  </li>
+  <li>Les outils du survivant
+    <ul>
+      <li>Le bon etat d'esprit</li>
+      <li>Eviter les pseudo-sciences</li>
+      <li>Les regles de prononciation</li>
+      <li>Les questions majeures</li>
+      <li>Contenu interessant et pertinent</li>
+      <li>Les competences multi-sensorielles</li>
+    </ul>
+  </li>
+  <li>Ameliore tes outils - multiculturalisme
+    <ul>
+      <li>Agir comme un local</li>
+      <li>Penser comme un local</li>
+      <li>Suivre votre evolution</li>
+    </ul>
+  </li>
+  <li>Ameliore tes outils - multilinguisme
+    <ul>
+      <li>Mots et grammaire</li>
+      <li>Scenariste et acteur (partie 1): Auto-conversation</li>
+      <li>Scenariste et acteur (partie 2): Conversations dans la vraie vie</li>
+      <li>Reading/translating</li>
+    </ul>
+  </li>
+  <li>Conclusion</li>
+</ul>
+
+<h1>Why that book and not another?</h1>
+<p style="text-align:justify">
+  <b>This book can be considered as a mentor who will help you to learn any language from scratch</b>. It will guide through all the process
+  by keeping you away from the bullshit and giving you only real experiences. It is interesting to learn a language but it is more
+  interesting to enjoy learning a language. Furthermore, this book emphasizes on the relationship between culture and language. It will
+  give you another point of view on what is a language and why learning a language to just add a line on your CV is not respectful
+  and does not give you value. <b>This book wants to help everyone to learn a language with respect and hard/creative work</b>. Finally, what's is more important in this project is that it shows us that
+  there is no shortcuts, you need to experience and enjoy the process to fully understand and use this tool of communication.
+</p>
+
+<h1>A little gift</h1>
+
+<p style="text-align:justify">
+In order to let you know about what this book is fighting against, I decided to give a little gift. This is the entire sub part called
+"Avoid bullshit" in the Survivor's tool part. It will present you some pseudo sciences that a lot of people are spreading around and which
+you should avoid if you don't want to waste time and money.
+<br>
+<br>
+
+<b>Here it is :</b> <a href="/pdfs/Avoid bullshit.pdf" target="_blank">Avoid bullshit</a>
+</p>
+
+<h1>Join the familly</h1>
+<p style="text-align:justify">
+And now? Well, if you are interested by what you read and you want to know more about the nexts steps of the book I invite you to join
+the newsletter in order to follow the news about this book. Finally, if you have some questions or you simply want to contact me,
+you can find more informations at the bottom of the page. <b>Thank you!</b>
+</p>
+
+<!-- Begin MailChimp Signup Form -->
+<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+</style>
+<div id="mc_embed_signup">
+<form action="https://github.us12.list-manage.com/subscribe/post?u=7619bd6ebb857eede6185893c&amp;id=acbb72173b" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Subscribe to our mailing list</h2>
+<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+<div class="mc-field-group">
+	<label for="mce-EMAIL">Email Address  <span class="asterisk">*</span>
+</label>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+</div>
+<div class="mc-field-group">
+	<label for="mce-FNAME">First Name </label>
+	<input type="text" value="" name="FNAME" class="" id="mce-FNAME">
+</div>
+<div class="mc-field-group">
+	<label for="mce-LNAME">Last Name </label>
+	<input type="text" value="" name="LNAME" class="" id="mce-LNAME">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_7619bd6ebb857eede6185893c_acbb72173b" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+<!--End mc_embed_signup-->
