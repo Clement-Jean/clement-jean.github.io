@@ -69,18 +69,69 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 #### Languages and frameworks ####
 
-| Skill | Percentage | Usage |
-| --- | --- | --- |
-| C | 90 % | No more |
-| C++ | 90 % | Often |
-| C# | 80 % | Everyday |
-| WPF | 75 % | Everyday |
-| Xamarin | 80 % | Often |
-| Unity | 85 % | Often |
-| Java | 80 % | Often |
-| Android | 75 % | Times to times |
-| Python | 70 % | Times to times |
-| Javascript | 70% | Times to times |
+<div class="container table-responsive-md">            
+  <table class="table table-stripened">
+    <thead>
+      <tr>
+        <th>Skill</th>
+        <th>Proficiency</th>
+        <th>Usage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>C</td>
+        <td>90%</td>
+        <td>No more</td>
+      </tr>
+      <tr>
+        <td>C++</td>
+        <td>90%</td>
+        <td>Often</td>
+      </tr>
+      <tr>
+        <td>C#</td>
+        <td>80%</td>
+        <td>Everyday</td>
+      </tr>
+      <tr>
+        <td>WPF</td>
+        <td>75%</td>
+        <td>Everyday</td>
+      </tr>
+      <tr>
+        <td>Xamarin</td>
+        <td>80%</td>
+        <td>Often</td>
+      </tr>
+      <tr>
+        <td>Unity</td>
+        <td>85%</td>
+        <td>Often</td>
+      </tr>
+      <tr>
+        <td>Java</td>
+        <td>80%</td>
+        <td>Often</td>
+      </tr>
+      <tr>
+        <td>Android</td>
+        <td>75%</td>
+        <td>Times to times</td>
+      </tr>
+      <tr>
+        <td>Python</td>
+        <td>70%</td>
+        <td>Times to times</td>
+      </tr>
+      <tr>
+        <td>Javascript</td>
+        <td>70%</td>
+        <td>Times to times</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 #### Implemented design patterns ####
 
