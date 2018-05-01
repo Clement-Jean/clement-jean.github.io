@@ -18,8 +18,8 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-<div class="container">            
-  <table class="table">
+<div class="container table-responsive">            
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Language</th>
