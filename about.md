@@ -72,7 +72,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
     <thead style="background-color:#d53120">
-      <tr style="color: #fff;>
+      <tr style="color: #fff;">
         <th>Skill</th>
         <th>Proficiency</th>
         <th>Usage</th>
@@ -160,7 +160,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 <div class="container table-responsive-md">            
   <table class="table table-striped">
     <thead style="background-color:#d53120">
-      <tr style="color: #fff;>
+      <tr style="color: #fff;">
         <th>Skill</th>
         <th>Proficiency</th>
         <th>Usage</th>
