@@ -82,7 +82,7 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
       <tr>
         <td>C</td>
         <td>90%</td>
-        <td>No more</td>
+        <td>Rarely</td>
       </tr>
       <tr>
         <td>C++</td>
