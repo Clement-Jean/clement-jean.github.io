@@ -12,7 +12,7 @@ permalink: /about/
   <b>Clément JEAN (一介)</b>
 </p>
 
-## Summary ##
+## Introduction ##
 
 I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) and from 清华大学 (Tsinghua university, China), I'm developing websites, apps and softwares for companies and I'm providing follow-up on these projects. I'm also writer, I like to write about topics like productivity, different point of views in life, language, etc... I'm passionated by generecity and architecture in programming and by languages. I like to mix these two passions in order to improve the way to teach or to learn, my goal is to launch a new kind of school which focus on helping student to learn at their own pace.
 
