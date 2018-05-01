@@ -14,7 +14,11 @@ permalink: /about/
 
 ## Introduction ##
 
-I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) and from 清华大学 (Tsinghua university, China), I'm developing websites, apps and softwares for companies and I'm providing follow-up on these projects. I'm also writer, I like to write about topics like productivity, different point of views in life, language, etc... I'm passionated by generecity and architecture in programming and by languages. I like to mix these two passions in order to improve the way to teach or to learn, my goal is to launch a new kind of school which focus on helping student to learn at their own pace.
+I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) and from 清华大学 (Tsinghua university, China), I'm developing websites, apps and softwares for companies and I'm providing follow-up on these projects. With two finished projects for one school and one company, I'm looking to develop this business and maybe looking for partners.
+
+I'm also writer, I like to write about topics like productivity, different point of views in life, language, etc... Mostly on medium but also on this website, I'm publish these articles which are the results of my experiences as student but also as person. I'm trying to help people and to get some feedback from them in order to improve myself everyday.
+
+Finally, I'm passionated by generecity and architecture in programming and by languages. I like to mix these two passions in order to improve the way to teach or to learn. By mixing these, I'm developing some projects in order to help me learn chinese with more fun but also with more efficiency. My goal, in the future, is to launch a new kind of school which focus on helping student to learn at their own pace.
 
 ## Languages ##
 
