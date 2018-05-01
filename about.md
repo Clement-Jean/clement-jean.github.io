@@ -18,36 +18,12 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-<table>
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Language</th>
-<th>Proficiency or exam</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td markdown="span">French</td>
-<td markdown="span">Native</td>
-</tr>
-<tr>
-<td markdown="span">English</td>
-<td markdown="span">TOEIC/TOEFL</td>
-</tr>
-<tr>
-<td markdown="span">Spanish</td>
-<td markdown="span">Limited</td>
-</tr>
-<tr>
-<td markdown="span">Chinese</td>
-<td markdown="span">HSK3</td>
-</tr>
-</tbody>
-</table>
+| Language | Proficiency or exam |
+| --- | --- |
+| French | Native |
+| English | TOEIC/TOEFL |
+| Spanish | Limited |
+| Chinese | HSK3 |
 
 ## Interests ##
 
