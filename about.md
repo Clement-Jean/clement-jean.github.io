@@ -18,12 +18,12 @@ I'm a young entrepreneur, developer and writer. Graduated from Epitech (France) 
 
 ## Languages ##
 
-Language | Proficiency or exam
---- | ---
-French | Native
-English | TOEIC/TOEFL
-Spanish | Limited
-Chinese | HSK3
+| Language | Proficiency or exam |
+| --- | --- |
+| French | Native |
+| English | TOEIC/TOEFL |
+| Spanish | Limited |
+| Chinese | HSK3 |
 
 ## Interests ##
 
@@ -46,18 +46,19 @@ Chinese | HSK3
 ### Programming ###
 
 #### Languages and frameworks ####
-Skill | Percentage | Usage frequency
---- | --- | ---
-C | 90 % | No more
-C++ | 90 % | Often
-C# | 80 % | Everyday
-WPF | 75 % | Everyday
-Xamarin | 80 % | Often
-Unity | 85 % | Often
-Java | 80 % | Often
-Android | 75 % | Times to times
-Python | 70 % | Times to times
-Javascript | 70% | Times to times
+
+| Skill | Percentage | Usage frequency |
+| --- | --- | --- |
+| C | 90 % | No more |
+| C++ | 90 % | Often |
+| C# | 80 % | Everyday |
+| WPF | 75 % | Everyday |
+| Xamarin | 80 % | Often |
+| Unity | 85 % | Often |
+| Java | 80 % | Often |
+| Android | 75 % | Times to times |
+| Python | 70 % | Times to times |
+| Javascript | 70% | Times to times |
 
 #### Implemented design patterns ####
 
@@ -83,10 +84,10 @@ Javascript | 70% | Times to times
 
 ### Writing ###
 
-Skill | Percentage | Use
---- | --- | ---
-Latex | 90 % | Often
-Markdowm | 80 % | Often
+| Skill | Percentage | Use |
+| --- | --- | --- |
+| Latex | 90 % | Often |
+| Markdowm | 80 % | Often |
 
 ## Projects ##
 
