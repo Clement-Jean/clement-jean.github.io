@@ -3,6 +3,8 @@ category: Programming
 tags: [C/C++, programming]
 ---
 
+![pattern](https://images.pexels.com/photos/430207/pexels-photo-430207.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)
+
 Sometimes, while writing a class in c++ you just notice little differences between two member functions. While writing my [SparseMatrix class](https://github.com/Clement-Jean/CsJourney/blob/master/CsJourney/SparseMatrix.h) in my [cjl library](https://github.com/Clement-Jean/CsJourney), I noticed that the addition and the subtraction of matrix is really similar (Just change + by -).
 
 After analyzing how the c++ stl is working, I noticed something really great in term of code factorization : UnaryOperators.
