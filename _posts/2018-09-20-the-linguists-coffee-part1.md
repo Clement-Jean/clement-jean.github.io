@@ -1,6 +1,6 @@
 ---
 category: Linguistics
-title: The linguists' coffee : 亡
+title: The linguists coffee 亡
 ---
 
 <div style="text-align:center"><img src ="https://upload.wikimedia.org/wikipedia/commons/0/0e/亡-bw.png" /></div>
