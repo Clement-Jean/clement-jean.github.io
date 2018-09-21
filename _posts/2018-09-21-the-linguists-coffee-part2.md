@@ -24,7 +24,14 @@ The chinese character 盲 is telling the following story, when you are the blind
 
 **It's as simple as that, but now let's see how it's represented on the character.**
 
-The upper part (亡) means to die, but you already know it. So guess the lower part (目)  ... It means eyes. Yes sorry, that's all for today !
+The upper part (亡) means to die, but you already know it. So guess the lower part (目)  ... It means eyes.
+
+<div style="text-align:center"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/目-oracle.svg" /> </div>
+
+This picture is how the chinese would write eye at the very beginning of their writing system, after being subject to some changes and pivoting it became the character we know now.
+
+
+Yes sorry, that's all for today !
 
 ## Conclusion
 
