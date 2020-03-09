@@ -1,6 +1,6 @@
 
 .highlight {
-  background-color: #efefef;
+  //background-color: #efefef;
   padding: 7px 7px 7px 10px;
   border: 1px solid #ddd;
   -moz-box-shadow: 3px 3px rgba(0,0,0,0.1);
@@ -8,10 +8,15 @@
   box-shadow: 3px 3px rgba(0,0,0,0.1);
   margin: 20px 0 20px 0;
   overflow: scroll;
+  background-color: $darkGray !important;
 }
 
+pre {
+  background-color: $darkGray !important;
+}
 code {
   font-family:'Bitstream Vera Sans Mono','Courier', monospace;
+  //background-color: black !important;
 }
 
 .highlight .c { color: #586E75 } /* Comment */
