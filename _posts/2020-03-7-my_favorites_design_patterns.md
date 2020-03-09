@@ -2,7 +2,7 @@
 layout: post
 author: Clement
 title: My favorites design patterns - Builder
-categories: [design_pattern]
+categories: [Design pattern]
 ---
 
 Recently, I was trying to handle errors in the programming language I'm developping. Nothing fancy here and the problem was quickly solved with a simple:

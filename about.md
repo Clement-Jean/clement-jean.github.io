@@ -9,7 +9,7 @@ permalink: /about/
 </div>
 
 <div style="margin-top: 1cm; margin-bottom: 1cm;">
-    <center><p><b>Clement Jean (一介)</b></p></center>
+    <center><p><b>Clément Jean (一介)</b></p></center>
 </div>
 
 <table class="table">
