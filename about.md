@@ -15,30 +15,23 @@ permalink: /about/
 <div class="container-fluid">
     <div class="row example-centered">
         <div class="col-xs-10 offset-xs-1 col-sm-8 offset-sm-2">
+            <div class="card-deck">
+                <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass.jpg" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-csharp/">gRPC Masterclass C#</a>
+                        <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a .NET micro service with gRPC, Protocol Buffers (protobuf)</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/github.jpg" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://github.com/Clement-Jean">Github</a>
+                        <p class="card-text">Current projects on Github</p>
+                    </div>
+                </div>
+            </div>
             <ul class="timeline timeline-centered">
-                <!-- <li class="timeline-item period">
-                    <div class="timeline-content">
-                        <h2 class="timeline-title">Projects</h2>
-                    </div>
-                </li> -->
-                <li class="timeline-item">
-                    <div class="card-deck">
-                        <div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <a style="font-size: 1.25rem;" class="black-red-link card-title">gRPC Masterclass C#</a>
-                                <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a .NET micro service with gRPC, Protocol Buffers (protobuf)</p>
-                            </div>
-                        </div>
-                        <div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src="{{ site.baseurl }}/images/github.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <a style="font-size: 1.25rem;" class="black-red-link card-title">Github</a>
-                                <p class="card-text">Current projects on Github</p>
-                            </div>
-                        </div>
-                    </div>
-                </li>
                 <li class="timeline-item period">
                     <div class="timeline-content">
                         <h2 class="timeline-title">Education</h2>
