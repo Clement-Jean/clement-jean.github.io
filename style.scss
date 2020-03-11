@@ -271,6 +271,10 @@ nav {
     text-transform: uppercase;
     font-size: 15px;
   }
+
+  h1 {
+    padding: 10px 0;
+  }
 }
 
 .red-black-link {
@@ -288,9 +292,9 @@ nav {
 }
 
 .post-title {
-  color: red !important;
+  color: black !important;
   &:hover, &:active {
-    color: black !important;
+    color: red !important;
   }
 }
 
