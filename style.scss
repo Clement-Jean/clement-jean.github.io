@@ -187,6 +187,7 @@ img {
     float: none;
     display: block;
     margin: 0 auto;
+    margin-top: 20px;
   }
 }
 
@@ -276,6 +277,13 @@ nav {
   color: red !important;
   &:hover, &:active {
     color: black !important;
+  }
+}
+
+.black-red-link {
+  color: black !important;
+  &:hover, &:active {
+    color: red !important;
   }
 }
 
@@ -584,3 +592,14 @@ footer {
               background: red;
           }
       }
+
+.post {
+  h1 {
+    a {
+      color: black !important;
+      &:hover, &:active {
+        color: red !important;
+      }
+    }
+  }
+}
