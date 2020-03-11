@@ -1,6 +1,5 @@
 ---
 layout: page
-title: About
 permalink: /about/
 ---
 
@@ -8,80 +7,39 @@ permalink: /about/
     <img class="circle-image center" src="{{ site.baseurl }}/images/profile-picture.jpg" />
 </div>
 
-<div style="margin-top: 1cm; margin-bottom: 1cm;">
-    <center><h2 class="timeline-title">Clément Jean (一介)</h2></center>
+<div style="margin-top: 1cm;">
+    <center><h2 style="margin-bottom: 15px;" class="timeline-title">Clément Jean (一介)</h2></center>
+    <center style="margin-bottom: 25px;">{% include svg-icons.html %}</center>
 </div>
-
-<!-- <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Language</th>
-      <th scope="col">Usage</th>
-      <th scope="col">Projects</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>C++</td>
-      <td>Daily</td>
-      <td>
-        <div class="list-group">
-            <a class="list-group-item list-group-item-action" href="https://github.com/Clement-Jean/protORM">protORM</a>
-            <a class="list-group-item list-group-item-action" href="#">YAL (programming language)</a>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>C#</td>
-      <td>Time to time</td>
-      <td>
-      <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a style="color:#555" href="https://github.com/AnkiTools/AnkiSharp">AnkiSharp</a>
-                <span class="badge badge-primary badge-pill">
-                    <a href="/AnkiTools/AnkiSharp/stargazers" class="pinned-item-meta muted-link" style="color:white">
-                        <svg fill="white" aria-label="stars" class="octicon octicon-star" viewBox="0 0 14 16" version="1.1" width="14" height="16" role="img"><path fill-rule="evenodd" d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74L14 6z"></path></svg>
-                        12
-                    </a>
-                </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a style="color:#555" href="https://github.com/Clement-Jean/grpc-csharp-course">gRPC masterclass</a>
-                <span class="badge badge-primary badge-pill">
-                    <a href="/Clement-Jean/grpc-csharp-course/stargazers" class="pinned-item-meta muted-link " style="color:white">
-                        <svg fill="white" aria-label="stars" class="octicon octicon-star" viewBox="0 0 14 16" version="1.1" width="14" height="16" role="img"><path fill-rule="evenodd" d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74L14 6z"></path></svg>
-                        4
-                    </a>
-                </span>
-            </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>Kotlin</td>
-      <td>Daily</td>
-      <td>
-        <div class="list-group">
-            <a class="list-group-item list-group-item-action" href="#">Yimaru (educational content app)</a>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table> -->
-
-<!-- <div class="alert alert-danger" role="alert">
-  If you are really interested in knowing more about a project that is not accessible yet, please contact me
-</div> -->
 
 <div class="container-fluid">
     <div class="row example-centered">
-        <!-- <div class="col-md-12 example-title">
-            <h2>Experience</h2>
-            <p>Medium devices (desktops, 992px and up).</p>
-        </div> -->
-        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+        <div class="col-xs-10 offset-xs-1 col-sm-8 offset-sm-2">
             <ul class="timeline timeline-centered">
-            <li class="timeline-item period">
+                <!-- <li class="timeline-item period">
+                    <div class="timeline-content">
+                        <h2 class="timeline-title">Projects</h2>
+                    </div>
+                </li> -->
+                <li class="timeline-item">
+                    <div class="card-deck">
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <a style="font-size: 1.25rem;" class="black-red-link card-title">gRPC Masterclass C#</a>
+                                <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a .NET micro service with gRPC, Protocol Buffers (protobuf)</p>
+                            </div>
+                        </div>
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="{{ site.baseurl }}/images/github.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <a style="font-size: 1.25rem;" class="black-red-link card-title">Github</a>
+                                <p class="card-text">Current projects on Github</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="timeline-item period">
                     <div class="timeline-content">
                         <h2 class="timeline-title">Education</h2>
                     </div>
