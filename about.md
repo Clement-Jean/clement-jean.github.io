@@ -24,10 +24,10 @@ permalink: /about/
                     </div>
                 </div>
                 <div class="card">
-                    <img class="card-img-top" src="{{ site.baseurl }}/images/github.jpg" alt="Card image cap">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/e4e.png" alt="Card image cap">
                     <div class="card-body">
-                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://github.com/Clement-Jean">Github</a>
-                        <p class="card-text">Current projects on Github</p>
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-csharp/">E4E - Yimaru</a>
+                        <p class="card-text">Android app (Kotlin, dagger, rxjava) communicating with Raspberry pi (gRPC/Protobuff) to let student in low-resources environment access educational content (Maths, Chinese, ...)</p>
                     </div>
                 </div>
             </div>
@@ -46,6 +46,12 @@ permalink: /about/
                         <img src="{{ site.baseurl }}/images/ckgsb.png" />
                         <h3 class="timeline-title">CKGSB</h3>
                         <p>Master of Business Administration - MBA</p>
+                        <ul>
+                            <li>Marketing</li>
+                            <li>Economics</li>
+                            <li>AI/Deep learning</li>
+                            <li>Game theory</li>
+                        </ul>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -57,6 +63,9 @@ permalink: /about/
                         <img src="{{ site.baseurl }}/images/byydx.png" />
                         <h3 class="timeline-title">Beijing Language and Culture University</h3>
                         <p>Chinese Language and Literature</p>
+                        <ul>
+                            <li>HSK5</li>
+                        </ul>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -68,6 +77,13 @@ permalink: /about/
                         <img src="{{ site.baseurl }}/images/tsinghua.png" />
                         <h3 class="timeline-title">Tsinghua University</h3>
                         <p>Computer Science - Master</p>
+                        <ul>
+                            <li>Data structures</li>
+                            <li>Algorithms</li>
+                            <li>Machine learning</li>
+                            <li>Databases</li>
+                            <li>Distributed systems</li>
+                        </ul>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -79,6 +95,11 @@ permalink: /about/
                         <img src="{{ site.baseurl }}/images/epitech.png" />
                         <h3 class="timeline-title">EPITECH</h3>
                         <p>Computer Engineering - Bachelor</p>
+                        <ul>
+                            <li>C</li>
+                            <li>C++</li>
+                            <li>C#</li>
+                        </ul>
                     </div>
                 </li>
                 <li class="timeline-item period">
@@ -107,7 +128,7 @@ permalink: /about/
                     <div class="timeline-content">
                         <img src="{{ site.baseurl }}/images/epitech.png" />
                         <h3 class="timeline-title">Regional teaching assistant</h3>
-                        <p align="justify">"These students are motors in their region to their peers and enjoy a series of benefits and special conditions. Because they engage with Epitech, Epitech agrees with them: Epitech is a school where the responsibility is shared and learned from the 1st years."</p>
+                        <p align="justify">"These students are motors in their region to their peers and enjoy a series of benefits and special conditions. Because they engage with Epitech, Epitech agrees with them: Epitech is a school where the responsibility is shared and learned from the 1st years.". My job was teaching C, C++ and linux to younger generation of Epitech's students</p>
                     </div>
                 </li>
                 <li class="timeline-item">
