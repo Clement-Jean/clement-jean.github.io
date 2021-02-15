@@ -18,9 +18,11 @@ This activity handles the playlist of videos and the video player (we use [ExoPl
 ### LandscapeActivity
 
 This activity handles only the video player and has a locked screenOrientation in the AndroidManifest:
+{% highlight java %}
 ```
 android:screenOrientation="landscape"
 ```
+{% endhighlight %}
 
 ### The behavior
 
@@ -31,6 +33,8 @@ Our expected behavior is that depending on 3 attributes of the player (currentPo
 Now, because we had this redundant crash, we decided to do like all the good engineers: testing. With that we would then be able to prevent these crashes to ever happen again in the future.
 
 For that, we used the [Espresso Intent extension](https://developer.android.com/training/testing/espresso/intents) and basically check the extras passed between activities. To do that we did the following:
+
+{% highlight java %}
 
 ```
 activityRule.scenario.onActivity {
@@ -49,11 +53,13 @@ intended(
     )
 )
 ```
+{% endhighlight %}
 
 pretty simple and pretty expressive code.
 
 The real trouble came when we decided to test a video that is playing. The first problem came from ExoPlayer itself, we basically needed to wait that the video was in playing state before to even create the new activity. To do that we added a listener like the following:
 
+{% highlight java %}
 ```
 player.addListener(object: Player.EventListener {
     override fun onIsPlayingChanged(playing: Boolean) {
@@ -61,15 +67,19 @@ player.addListener(object: Player.EventListener {
     }
 })
 ```
+{% endhighlight %}
 
 and we basically waited for `isPlaying` to change:
 
+{% highlight java %}
 ```
 while (!isPlaying && deadline.isNotExceeded()) {}
 ```
+{% endhighlight %}
 
 After that we were able to click our `full_screen_button` and we were ready to check our intents. In a naive attempte we wrote something like:
 
+{% highlight java %}
 ```
 intended(
     allOf(
@@ -79,9 +89,11 @@ intended(
     )
 )
 ```
+{% endhighlight %}
 
 And we thought "yeah looks like it's gonna work". But after running our test, we received a ❌. We then decided to read the Logs and see what wouldn't match. I let you judge by yourself:
 
+{% highlight java %}
 ```
 IntentMatcher: (has extras: has bundle with: key: is "current_position" value: is <a value equal to or greater than <1000L>> and has extras: has bundle with: key: is "media_id" value: is "A_VIDEO.mp4" and has extras: has bundle with: key: is "is_playing" value: is <true>)
 
@@ -91,6 +103,7 @@ Recorded intents:
 -Intent { cmp=com.clementjean.unittest/.NewActivity (has extras) } handling packages:[[com.clementjean.unittest]], extras:[Bundle[{current_position=1158, media_id=A_VIDEO.mp4, is_playing=true}]])
 
 ```
+{% endhighlight %}
 
 Apparently the recorded intent is matching, we have a current_position >= 1000, we have the right meta_id and the is_playing is set to true. Correct right?
 
@@ -98,13 +111,17 @@ After an hour of trying to debug that, we checked the documentation (we only sca
 
 In the documentation of [Intent matchers](https://developer.android.com/reference/androidx/test/espresso/intent/matcher/IntentMatchers#hasExtra(org.hamcrest.Matcher%3Cjava.lang.String%3E,%20org.hamcrest.Matcher%3C?%3E)), we can see that there are two definitions of the function `hasExtra`:
 
+{% highlight java %}
 ```
 Matcher<Intent> hasExtra (Matcher<String> keyMatcher, Matcher<?> valueMatcher)
 ```
+{% endhighlight %}
 and
+{% highlight java %}
 ```
 Matcher<Intent> hasExtra (String key, T value)
 ```
+{% endhighlight %}
 
 Do you see the problem?
 
@@ -112,6 +129,7 @@ The problem is in that line `hasExtra(CURRENT_POSITION, greaterThanOrEqualTo(100
 
 To solve that we need to add the matcher `is()` around the string `CURRENT_POSITION` and we would then access the first definition of the matcher `hasExtra`. It gives us something like:
 
+{% highlight java %}
 ```
 intended(
     allOf(
@@ -121,6 +139,7 @@ intended(
     )
 )
 ```
+{% endhighlight %}
 
 ## The problem
 
