@@ -26,8 +26,8 @@ permalink: /about/
                 <div class="card">
                     <img class="card-img-top" src="{{ site.baseurl }}/images/e4e.png" alt="Card image cap">
                     <div class="card-body">
-                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.educationforethiopia.org/">E4E - Yimaru</a>
-                        <p class="card-text">Android app (Kotlin, dagger, rxjava) communicating with Raspberry pi (gRPC/Protobuff) to let student in low-resources environment access educational content (Maths, Chinese, ...)</p>
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.educationforethiopia.org/">E4E - Saquama</a>
+                        <p class="card-text">Android app (Kotlin, hilt) communicating with Raspberry pi (gRPC/Protobuff) to let student in low-resources environment access educational content (Maths, Chinese, ...)</p>
                     </div>
                 </div>
             </div>
