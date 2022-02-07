@@ -11,7 +11,7 @@ In order to get the code for this course, you can simply go to [the github repos
 
 You can also directly clone it in your terminal:
 
-{% highlight bash %}
+{% highlight shell %}
 git clone git@github.com:Clement-Jean/grpc-csharp-course.git
 {% endhighlight %}
 
