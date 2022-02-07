@@ -1,7 +1,7 @@
 ---
 layout: post
 author: Clement
-title: Code Download for gRPC (C# Course)
+title: Code Download for gRPC Course (C#)
 categories: [gRPC, C#, Udemy]
 ---
 
