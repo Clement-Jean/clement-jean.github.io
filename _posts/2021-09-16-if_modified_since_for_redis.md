@@ -42,7 +42,7 @@ This plugin is heavily influenced by the following Lua code in this [article](ht
 
 ## An example
 
-{% highlight %}
+{% highlight shell %}
 redisims.exists MY_NON_EXISTING_KEY -> 0 
 redisims.get MY_NON_EXISTING_KEY TIMESTAMP -> NULL
 
