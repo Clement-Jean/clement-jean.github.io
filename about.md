@@ -30,6 +30,8 @@ permalink: /about/
                         <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a Java micro service with gRPC, Protocol Buffers (protobuf)</p>
                     </div>
                 </div>
+            </div>
+            <div class="card-deck">
                 <div class="card">
                     <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-csharp.png" alt="Card image cap">
                     <div class="card-body">
