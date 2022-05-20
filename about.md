@@ -40,6 +40,22 @@ permalink: /about/
                     </div>
                 </div>
                 <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-node.png" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-nodejs">gRPC Masterclass NodeJs</a>
+                        <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a NodeJS micro service with gRPC, Protocol Buffers (protobuf)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-deck">
+                <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/proto-masterclass.png" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/protocol-buffers">Complete Guide to Protocol Buffers 3 [Java, Golang, Python]</a>
+                        <p class="card-text">Say Goodbye to JSON & XML. Pre-req to gRPC</p>
+                    </div>
+                </div>
+                <div class="card">
                     <img class="card-img-top" src="{{ site.baseurl }}/images/e4e.png" alt="Card image cap">
                     <div class="card-body">
                         <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://play.google.com/store/apps/details?id=com.e4e.saquama">E4E - Saquama</a>
