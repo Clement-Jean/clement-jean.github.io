@@ -19,7 +19,7 @@ permalink: /about/
                 <div class="card">
                     <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-go.png" alt="Card image cap">
                     <div class="card-body">
-                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-go/">gRPC Masterclass Go</a>
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-golang/">gRPC Masterclass Go</a>
                         <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a Go micro service with gRPC, Protocol Buffers (protobuf)</p>
                     </div>
                 </div>
