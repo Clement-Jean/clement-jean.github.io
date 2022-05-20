@@ -17,7 +17,21 @@ permalink: /about/
         <div class="col-xs-10 offset-xs-1 col-sm-8 offset-sm-2">
             <div class="card-deck">
                 <div class="card">
-                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass.png" alt="Card image cap">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-go.png" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-go/">gRPC Masterclass Go</a>
+                        <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a Go micro service with gRPC, Protocol Buffers (protobuf)</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-java.png" alt="Card image cap">
+                    <div class="card-body">
+                        <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-java/">gRPC Masterclass Java</a>
+                        <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a Java micro service with gRPC, Protocol Buffers (protobuf)</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-img-top" src="{{ site.baseurl }}/images/grpc-masterclass-csharp.png" alt="Card image cap">
                     <div class="card-body">
                         <a style="font-size: 1.25rem;" class="black-red-link card-title" href="https://www.udemy.com/course/grpc-csharp/">gRPC Masterclass C#</a>
                         <p class="card-text">Better than REST API! Build a fast scalable HTTP/2 API for a .NET micro service with gRPC, Protocol Buffers (protobuf)</p>
