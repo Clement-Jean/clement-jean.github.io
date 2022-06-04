@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://localhost:4000/my_favorites_design_patterns/</loc>
+<lastmod>2020-03-07T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/grpc_do_not_mock/</loc>
+<lastmod>2020-03-09T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/value_matchers_in_espresso_intents/</loc>
+<lastmod>2021-02-15T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/if_modified_since_for_redis/</loc>
+<lastmod>2021-09-16T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/code_download_for_grpc_csharp/</loc>
+<lastmod>2022-02-07T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/storing_color_in_pb/</loc>
+<lastmod>2022-06-02T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/about/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/categories/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/</loc>
+</url>
+</urlset>

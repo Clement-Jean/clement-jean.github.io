@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Value Matchers in Expresso Intents – Clément Jean – Eternal learner and challenges lover</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="
+After the decision of using Crashlytics for our first pilot (Education for ethopia), the tech team discovered that one particular crash was redundant. This crash was due to a malformed Intent between the video player in portrait mode and the video player in landscape mode.
+" />
+    <meta property="og:description" content="
+After the decision of using Crashlytics for our first pilot (Education for ethopia), the tech team discovered that one particular crash was redundant. This crash was due to a malformed Intent between the video player in portrait mode and the video player in landscape mode.
+" />
+    
+    <meta name="author" content="Clément Jean" />
+
+    
+    <meta property="og:title" content="Value Matchers in Expresso Intents" />
+    <meta property="twitter:title" content="Value Matchers in Expresso Intents" />
+    
+
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" />
+    <link rel="icon"  type="image/png"    href="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png">
+    <!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="/" class="site-avatar"><img src="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a class="black-red-link" href="/">Clément Jean</a></h1>
+            <p class="site-description">Eternal learner and challenges lover</p>
+          </div>
+
+          <nav> 
+            <a class="black-red-link" href="/">Home</a>
+	          <a class="black-red-link" href="/categories">Categories</a>
+            <a class="black-red-link" href="/about">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+      <article class="post">
+  <h1>Value Matchers in Expresso Intents</h1>
+
+  <div class="entry">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
+<p>After the decision of using <a href="https://firebase.google.com/docs/crashlytics">Crashlytics</a> for our first pilot (<a href="https://www.educationforethiopia.org/">Education for ethopia</a>), the tech team discovered that one particular crash was redundant. This crash was due to a malformed Intent between the video player in portrait mode and the video player in landscape mode.</p>
+<h2 id="context">Context</h2>
+<p>To understand a little bit more about the problem faced later, I want to describe briefly how this transition of video player mode is working for us.</p>
+<h3 id="portraitactivity">PortraitActivity</h3>
+<p>This activity handles the playlist of videos and the video player (we use <a href="https://exoplayer.dev">ExoPlayer</a>).</p>
+<h3 id="landscapeactivity">LandscapeActivity</h3>
+<p>This activity handles only the video player and has a locked screenOrientation in the AndroidManifest:</p>
+<div class="code_switcher_container_parent 57893949-1f62-4af4-aa42-d7483bce4a12"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>android:screenOrientation="landscape"
+</code></pre></div></div>
+</div>
+<h3 id="the-behavior">The behavior</h3>
+<p>Our expected behavior is that depending on 3 attributes of the player (currentPosition, currentMediaItem.mediaId, isPlaying), the user find the video in the same state switching from Portrait to Landscape or from Landscape to Portrait.</p>
+<h2 id="testing">Testing</h2>
+<p>Now, because we had this redundant crash, we decided to do like all the good engineers: testing. With that we would then be able to prevent these crashes to ever happen again in the future.</p>
+<p>For that, we used the <a href="https://developer.android.com/training/testing/espresso/intents">Espresso Intent extension</a> and basically check the extras passed between activities. To do that we did the following:</p>
+<div class="code_switcher_container_parent 3709c35e-6254-464a-beed-2f2c0c7f72f1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">activityRule</span><span class="o">.</span><span class="na">scenario</span><span class="o">.</span><span class="na">onActivity</span> <span class="o">{</span>
+    <span class="n">val</span> <span class="n">player</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="na">findViewById</span><span class="o">&lt;</span><span class="nc">PlayerView</span><span class="o">&gt;(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">player_view</span><span class="o">).</span><span class="na">player</span><span class="o">!!</span>
+
+    <span class="n">player</span><span class="o">.</span><span class="na">pause</span><span class="o">()</span> <span class="c1">// pause the video</span>
+    <span class="n">player</span><span class="o">.</span><span class="na">seekTo</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span> <span class="c1">// we seek to 1 sec from the beginning</span>
+<span class="o">}</span>
+<span class="n">onView</span><span class="o">(</span><span class="n">withId</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">change_activity</span><span class="o">)).</span><span class="na">perform</span><span class="o">(</span><span class="n">click</span><span class="o">())</span>
+
+<span class="n">intended</span><span class="o">(</span>
+    <span class="n">allOf</span><span class="o">(</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">CURRENT_POSITION</span><span class="o">,</span> <span class="mi">1000L</span><span class="o">),</span> <span class="c1">// 1 sec</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">MEDIA_ID</span><span class="o">,</span> <span class="s">"A_VIDEO.mp4"</span><span class="o">),</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">IS_PLAYING</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span> <span class="c1">// is not playing</span>
+    <span class="o">)</span>
+<span class="o">)</span>
+</code></pre></div></div>
+</div>
+<p>pretty simple and pretty expressive code.</p>
+<p>The real trouble came when we decided to test a video that is playing. The first problem came from ExoPlayer itself, we basically needed to wait that the video was in playing state before to even create the new activity. To do that we added a listener like the following:</p>
+<div class="code_switcher_container_parent 33998a85-fa4a-4cc9-9b77-bad15495bf1c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">player</span><span class="o">.</span><span class="na">addListener</span><span class="o">(</span><span class="nl">object:</span> <span class="nc">Player</span><span class="o">.</span><span class="na">EventListener</span> <span class="o">{</span>
+    <span class="n">override</span> <span class="n">fun</span> <span class="nf">onIsPlayingChanged</span><span class="o">(</span><span class="nl">playing:</span> <span class="nc">Boolean</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">isPlaying</span> <span class="o">=</span> <span class="n">playing</span>
+    <span class="o">}</span>
+<span class="o">})</span>
+</code></pre></div></div>
+</div>
+<p>and we basically waited for <code>isPlaying</code> to change:</p>
+<div class="code_switcher_container_parent 88b86946-3e91-4007-865a-05046d67437a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="o">(!</span><span class="n">isPlaying</span> <span class="o">&amp;&amp;</span> <span class="n">deadline</span><span class="o">.</span><span class="na">isNotExceeded</span><span class="o">())</span> <span class="o">{}</span>
+</code></pre></div></div>
+</div>
+<p>After that we were able to click our <code>full_screen_button</code> and we were ready to check our intents. In a naive attempte we wrote something like:</p>
+<div class="code_switcher_container_parent 4dc2ffec-5b96-4ffe-a6d6-9a8ebfd8d88b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">intended</span><span class="o">(</span>
+    <span class="n">allOf</span><span class="o">(</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">CURRENT_POSITION</span><span class="o">,</span> <span class="n">greaterThanOrEqualTo</span><span class="o">(</span><span class="mi">1000L</span><span class="o">)),</span> <span class="c1">// &gt;= 1000 because playing</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">MEDIA_ID</span><span class="o">,</span> <span class="s">"A_VIDEO.mp4"</span><span class="o">),</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">IS_PLAYING</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="o">)</span>
+<span class="o">)</span>
+</code></pre></div></div>
+</div>
+<p>And we thought &quot;yeah looks like it's gonna work&quot;. But after running our test, we received a ❌. We then decided to read the Logs and see what wouldn't match. I let you judge by yourself:</p>
+<div class="code_switcher_container_parent 4c64defc-7341-4d21-a1c4-4e750bd49f09"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>IntentMatcher: <span class="o">(</span>has extras: has bundle with: key: is <span class="s2">"current_position"</span> value: is &lt;a value equal to or greater than &lt;1000L&gt;&gt; and has extras: has bundle with: key: is <span class="s2">"media_id"</span> value: is <span class="s2">"A_VIDEO.mp4"</span> and has extras: has bundle with: key: is <span class="s2">"is_playing"</span> value: is &lt;<span class="nb">true</span><span class="o">&gt;)</span>
+
+Matched intents:[]
+
+Recorded intents:
+<span class="nt">-Intent</span> <span class="o">{</span> <span class="nv">cmp</span><span class="o">=</span>com.clementjean.unittest/.NewActivity <span class="o">(</span>has extras<span class="o">)</span> <span class="o">}</span> handling packages:[[com.clementjean.unittest]], extras:[Bundle[<span class="o">{</span><span class="nv">current_position</span><span class="o">=</span>1158, <span class="nv">media_id</span><span class="o">=</span>A_VIDEO.mp4, <span class="nv">is_playing</span><span class="o">=</span><span class="nb">true</span><span class="o">}]])</span>
+</code></pre></div></div>
+</div>
+<p>Apparently the recorded intent is matching, we have a current_position &gt;= 1000, we have the right meta_id and the is_playing is set to true. Correct right?</p>
+<p>After an hour of trying to debug that, we checked the documentation (we only scanned through it before) and we finally found what was the problem.</p>
+<p>In the documentation of <a href="https://developer.android.com/reference/androidx/test/espresso/intent/matcher/IntentMatchers#hasExtra(org.hamcrest.Matcher%3Cjava.lang.String%3E,%20org.hamcrest.Matcher%3C?%3E)">Intent matchers</a>, we can see that there are two definitions of the function <code>hasExtra</code>:</p>
+<div class="code_switcher_container_parent 88bc505c-bccd-432b-8f2b-4e0fc18c34d4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">Intent</span><span class="o">&gt;</span> <span class="nf">hasExtra</span> <span class="o">(</span><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keyMatcher</span><span class="o">,</span> <span class="nc">Matcher</span><span class="o">&lt;?&gt;</span> <span class="n">valueMatcher</span><span class="o">)</span>
+</code></pre></div></div>
+</div>
+<p>and</p>
+<div class="code_switcher_container_parent 56456cb0-8963-4f61-84de-540123232840"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">Intent</span><span class="o">&gt;</span> <span class="nf">hasExtra</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="no">T</span> <span class="n">value</span><span class="o">)</span>
+</code></pre></div></div>
+</div>
+<p>Do you see the problem?</p>
+<p>The problem is in that line <code>hasExtra(CURRENT_POSITION, greaterThanOrEqualTo(1000L))</code> because by using the string <code>CURRENT_POSITION</code>, we were actually using the second overload of the function and thus the value of our Intent extra was definitely not equal to value matcher <code>greaterThanOrEqualTo</code>.</p>
+<p>To solve that we need to add the matcher <code>is()</code> around the string <code>CURRENT_POSITION</code> and we would then access the first definition of the matcher <code>hasExtra</code>. It gives us something like:</p>
+<div class="code_switcher_container_parent 84335c54-304d-43a9-9337-fbbaceb9b292"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">intended</span><span class="o">(</span>
+    <span class="n">allOf</span><span class="o">(</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="err">`</span><span class="n">is</span><span class="err">`</span><span class="o">(</span><span class="no">CURRENT_POSITION</span><span class="o">),</span> <span class="n">greaterThanOrEqualTo</span><span class="o">(</span><span class="mi">1000L</span><span class="o">)),</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">MEDIA_ID</span><span class="o">,</span> <span class="s">"A_VIDEO.mp4"</span><span class="o">),</span>
+        <span class="n">hasExtra</span><span class="o">(</span><span class="no">IS_PLAYING</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="o">)</span>
+<span class="o">)</span>
+</code></pre></div></div>
+</div>
+<h2 id="the-problem">The problem</h2>
+<p>For me the problem is the impossibility for library designers to define a certain domain for the template parameter. Knowing that an intent only accept a restricted amount of types as extra, it would be great to have the possibility to only constraint the template to these types. This is however a language design problem and it might not be solved in a near future (if you are a language developer though, you might consider solving this).</p>
+<h2 id="conclusion">Conclusion</h2>
+<p><code>Beware function overloads</code></p>
+
+  </div>
+
+  <div class="date">
+    Written on February 15, 2021
+  </div>
+</article>
+
+    </div>
+  </body>
+</html>
