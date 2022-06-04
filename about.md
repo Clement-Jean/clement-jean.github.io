@@ -9,7 +9,9 @@ permalink: /about/
 
 <div style="margin-top: 1cm;">
     <center><h2 style="margin-bottom: 15px;" class="timeline-title">Clément Jean (一介)</h2></center>
-    <center style="margin-bottom: 25px;">{% include svg-icons.html %}</center>
+    <center>
+        <div class="arrange-horizontally" style="margin-bottom: 25px;">{% include svg-icons.html %}</div>
+    </center>
 </div>
 
 <div class="container-fluid">
