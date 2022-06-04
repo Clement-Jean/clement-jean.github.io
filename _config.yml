@@ -47,6 +47,7 @@ sass:
 gems:
   - jekyll-sitemap
   - jekyll-feed
+  - jdvp-codetabs-commonmark
 
 exclude:
   - Gemfile
