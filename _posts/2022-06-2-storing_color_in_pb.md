@@ -11,23 +11,23 @@ While working on a new course, I was looking for an example to store a Color in 
 
 In order to define what's the most optimal message definition that we come with, we need a way to calculate the serialized size of that message. Fortunately, doing so is pretty easy with Protocol Buffers.
 
-```python Python
+```python Python codeCopyEnabled
 def calculate_size(message):
   return len(message.SerializeToString())
 ```
-```java Java
+```java Java codeCopyEnabled
 import com.google.protobuf.Message;
 
 int calculateSize(Message message) {
   return message.getSerializedSize();
 }
 ```
-```kotlin Kotlin
+```kotlin Kotlin codeCopyEnabled
 import com.google.protobuf.Message
 
 fun calculateSize(message: Message) = message.serializedSize
 ```
-```go Go
+```go Go codeCopyEnabled
 import "google.golang.org/protobuf/proto"
 
 func calculateSize(message proto.Message) int {
@@ -40,19 +40,19 @@ func calculateSize(message proto.Message) int {
   return len(out)
 }
 ```
-```csharp C#
+```csharp C# codeCopyEnabled
 using Google.Protobuf
 
 int CalculateSize(IMessage message) {
   return message.CalculateSize();
 }
 ```
-```js JS
+```js JS codeCopyEnabled
 function calculateSize(message) {
   return message.serializeBinary().length;
 }
 ```
-```cpp C++
+```cpp C++ codeCopyEnabled
 #include <google/protobuf/message.h>
 
 int calculate_size(google::protobuf::Message *message)
@@ -92,37 +92,37 @@ message Color {
 
 and here is the code that calculates the size for `Color` with value `#FFFFFFFF` (max color value):
 
-```python Python
+```python Python codeCopyEnabled
 import proto.color_pb2 as pb
 
 print(calculate_size(pb.Color(value = "FFFFFFFF")))
 ```
-```java Java
+```java Java codeCopyEnabled
 import com.example.Color
 
 System.out.println(calculateSize(Color.newBuilder().setValue("FFFFFFFF").build()));
 ```
-```kotlin Kotlin
+```kotlin Kotlin codeCopyEnabled
 import com.example.color
 
 println(calculateSize(color { value = "FFFFFFFF" }))
 ```
-```go Go
+```go Go codeCopyEnabled
 import pb "example.com/m"
 
 fmt.Println(calculateSize(&pb.Color{Value: "FFFFFFFF"}))
 ```
-```csharp C#
+```csharp C# codeCopyEnabled
 using Example;
 
 Console.WriteLine(CalculateSize(new Color { Value = "FFFFFFFF" }));
 ```
-```js JS
+```js JS codeCopyEnabled
 const {Color} = require('./proto/color_pb');
 
 console.log(calculateSize(new Color().setValue("FFFFFFFF")));
 ```
-```cpp C++
+```cpp C++ codeCopyEnabled
 #include "color.pb.h"
 
 Color color;
@@ -151,10 +151,10 @@ where:
 
 As mentioned earlier, the other way to solve that is to store the value in an integer. So let's check the decimal value of the biggest color that we can get, which is `FFFFFFFF`. 
 
-```shell Linux/Mac
+```shell Linux/Mac codeCopyEnabled
 echo "ibase=16; FFFFFFFF" | bc
 ```
-```shell Windows (Powershell)
+```shell Windows (Powershell) codeCopyEnabled
 [convert]::toint64("FFFFFFFF", 16)
 ```
 
