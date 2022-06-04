@@ -1,0 +1,57 @@
+name: Clément Jean
+author: Clément Jean
+description: Eternal learner and challenges lover
+avatar: https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png
+footer-links:
+  dribbble:
+  email: clement.jean@epitech.eu
+  facebook:
+  flickr:
+  github: Clement-Jean/
+  instagram:
+  linkedin: clement-jean
+  pinterest:
+  rss: anything
+  twitter: 
+  stackoverflow: users/11269045/clément-jean
+  youtube: #channel/UCgh1ZH7wECtTejZuVx0dtQQ 
+  googleplus:
+
+markdown: JdvpCodeTabsCommonMark
+
+# Enter your Disqus shortname (not your username) to enable commenting on posts
+# You can find your shortname on the Settings page of your Disqus account
+disqus: 
+
+# Enter your Google Analytics web tracking code (e.g. UA-2110908-2) to activate tracking
+google_analytics: 
+
+url: https://clement-jean.github.io
+
+baseurl: ""
+
+permalink: /:title/
+
+version: v4.2.0
+encoding: utf-8
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+sass:
+  style: :compressed
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+  - jdvp-codetabs-commonmark
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - CNAME
