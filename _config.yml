@@ -44,7 +44,7 @@ kramdown:
 sass:
   style: :compressed
 
-gems:
+plugins:
   - jekyll-sitemap
   - jekyll-feed
   - jdvp-codetabs-commonmark
