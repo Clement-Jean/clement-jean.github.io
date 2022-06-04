@@ -11,11 +11,11 @@ While working on a new course, I was looking for an example to store a Color in 
 
 In order to define what's the most optimal message definition that we come with, we need a way to calculate the serialized size of that message. Fortunately, doing so is pretty easy with Protocol Buffers.
 
-```python Python codeCopyEnabled
+```python Python
 def calculate_size(message):
   return len(message.SerializeToString())
 ```
-```java Java codeCopyEnabled
+```java Java
 import com.google.protobuf.Message;
 
 int calculateSize(Message message) {
@@ -27,7 +27,7 @@ import com.google.protobuf.Message
 
 fun calculateSize(message: Message) = message.serializedSize
 ```
-```go Go codeCopyEnabled
+```go Go
 import "google.golang.org/protobuf/proto"
 
 func calculateSize(message proto.Message) int {
@@ -40,7 +40,7 @@ func calculateSize(message proto.Message) int {
   return len(out)
 }
 ```
-```csharp C# codeCopyEnabled
+```csharp C#
 using Google.Protobuf
 
 int CalculateSize(IMessage message) {
@@ -92,12 +92,12 @@ message Color {
 
 and here is the code that calculates the size for `Color` with value `#FFFFFFFF` (max color value):
 
-```python Python codeCopyEnabled
+```python Python
 import proto.color_pb2 as pb
 
 print(calculate_size(pb.Color(value = "FFFFFFFF")))
 ```
-```java Java codeCopyEnabled
+```java Java
 import com.example.Color
 
 System.out.println(calculateSize(Color.newBuilder().setValue("FFFFFFFF").build()));
@@ -107,12 +107,12 @@ import com.example.color
 
 println(calculateSize(color { value = "FFFFFFFF" }))
 ```
-```go Go codeCopyEnabled
+```go Go
 import pb "example.com/m"
 
 fmt.Println(calculateSize(&pb.Color{Value: "FFFFFFFF"}))
 ```
-```csharp C# codeCopyEnabled
+```csharp C#
 using Example;
 
 Console.WriteLine(CalculateSize(new Color { Value = "FFFFFFFF" }));
@@ -151,10 +151,10 @@ where:
 
 As mentioned earlier, the other way to solve that is to store the value in an integer. So let's check the decimal value of the biggest color that we can get, which is `FFFFFFFF`. 
 
-```shell Linux/Mac codeCopyEnabled
+```shell Linux/Mac
 echo "ibase=16; FFFFFFFF" | bc
 ```
-```shell Windows (Powershell) codeCopyEnabled
+```shell Windows (Powershell)
 [convert]::toint64("FFFFFFFF", 16)
 ```
 
