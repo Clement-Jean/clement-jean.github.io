@@ -11,32 +11,30 @@ After being used to the traditional way of debug an android app by using mocking
 
 I discovered that, of course, gRPC has interceptors, but I also discovered in my case I didn't need them. Let me explain here. After playing a little bit with the [ForwardingClientCall.SimpleForwardingClientCall](https://grpc.github.io/grpc-java/javadoc/io/grpc/ForwardingClientCall.SimpleForwardingClientCall.html) class by inheriting it like [this](https://github.com/grpc/grpc-java/blob/master/examples/src/test/java/io/grpc/examples/header/HeaderServerInterceptorTest.java):
 
-{% highlight java %}
-
+```java
 public void serverHeaderDeliveredToClient() {
-    class SpyingClientInterceptor implements ClientInterceptor {
-      ClientCall.Listener<?> spyListener;
+  class SpyingClientInterceptor implements ClientInterceptor {
+    ClientCall.Listener<?> spyListener;
 
-      @Override
-      public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
-          MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
-        return new SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {
-          @Override
-          public void start(Listener<RespT> responseListener, Metadata headers) {
-            spyListener = responseListener =
-                mock(ClientCall.Listener.class, delegatesTo(responseListener));
-            super.start(responseListener, headers);
-          }
-        };
-      }
-    }
-
-{% endhighlight %}
+    @Override
+    public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
+        MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next)
+    {
+      return new SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {
+        @Override
+        public void start(Listener<RespT> responseListener, Metadata headers) {
+          spyListener = responseListener =
+              mock(ClientCall.Listener.class, delegatesTo(responseListener));
+          super.start(responseListener, headers);
+        }
+    };
+  }
+}
+```
 
 I didn't find any way to send back a message to my client. After going through the gRPC code and especially the comments (ctrl+left click on android studio),something caught my eye:
 
-{% highlight java %}
-
+```java
 /**
     ...
  * <p>DO NOT MOCK: Use InProcessServerBuilder and make a test server instead.
@@ -45,42 +43,49 @@ I didn't find any way to send back a message to my client. After going through t
  * @param <RespT> type of message received one or more times from the server.
  */
 public abstract class ClientCall<ReqT, RespT> {
+```
 
-{% endhighlight %}
+Here was my solution: `InProcessServerBuilder`. After a little bit more searching in github, I found [this](https://github.com/grpc/grpc-java/blob/e6c8534f10d938566a62e38792a74032955e6c82/examples/src/test/java/io/grpc/examples/helloworld/HelloWorldServerTest.java):
 
-Here was my solution: InProcessServerBuilder. After a little bit more searching in github, I found [this](https://github.com/grpc/grpc-java/blob/e6c8534f10d938566a62e38792a74032955e6c82/examples/src/test/java/io/grpc/examples/helloworld/HelloWorldServerTest.java):
-
-{% highlight java %}
-
+```java
 public void greeterImpl_replyMessage() throws Exception {
-    // Generate a unique in-process server name.
-    String serverName = InProcessServerBuilder.generateName();
+  // Generate a unique in-process server name.
+  String serverName = InProcessServerBuilder.generateName();
 
-    // Create a server, add service, start, and register for automatic graceful shutdown.
-    grpcCleanup.register(InProcessServerBuilder
-        .forName(serverName).directExecutor().addService(new GreeterImpl()).build().start());
+  // Create a server, add service, start, and register for automatic graceful shutdown.
+  grpcCleanup.register(InProcessServerBuilder
+      .forName(serverName)
+      .directExecutor()
+      .addService(new GreeterImpl())
+      .build()
+      .start());
 
-    GreeterGrpc.GreeterBlockingStub blockingStub = GreeterGrpc.newBlockingStub(
-        // Create a client channel and register for automatic graceful shutdown.
-        grpcCleanup.register(InProcessChannelBuilder.forName(serverName).directExecutor().build()));
+  GreeterGrpc.GreeterBlockingStub blockingStub = GreeterGrpc.newBlockingStub(
+      // Create a client channel and register for automatic graceful shutdown.
+      grpcCleanup.register(InProcessChannelBuilder
+        .forName(serverName)
+        .directExecutor()
+        .build()));
 
 
-    HelloReply reply =
-        blockingStub.sayHello(HelloRequest.newBuilder().setName( "test name").build());
+  HelloReply reply = blockingStub.sayHello(HelloRequest
+    .newBuilder()
+    .setName( "test name")
+    .build());
 
-    assertEquals("Hello test name", reply.getMessage());
-  }
-  {% endhighlight %}
+  assertEquals("Hello test name", reply.getMessage());
+}
+```
 
-  The most important thing to note here is the use of the two 2 builders:
+The most important thing to note here is the use of the two 2 builders:
 
-  - InProcessServerBuilder
-  - InProcessChannelBuilder
+- InProcessServerBuilder
+- InProcessChannelBuilder
 
-  and the use of InProcessServerBuilder's function :
+and the use of InProcessServerBuilder's function :
 
-  - addService
+- addService
 
-  And if you are familiar with the greeter example of gRPC, everything will make sense here. If you are not, you can join my course on [Udemy](addService) (my class is C# one, but trust me it is similar to Java/Kotlin).
-  
-  You can now adapt this solution for the testing part of you application !
+And if you are familiar with the greeter example of gRPC, everything will make sense here. If you are not, you can join my gRPC Java course on [Udemy](https://www.udemy.com/course/grpc-java/?referralCode=9648E53DF9F3D92EB2EA).
+
+You can now adapt this solution for the testing part of you application !

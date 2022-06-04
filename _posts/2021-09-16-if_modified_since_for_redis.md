@@ -58,4 +58,3 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -> NULL
 If you feel like contributing to the project or just trying it, head up to the [Github repository](https://github.com/Clement-Jean/RedisIMS).
 
 And finnaly if you have any constructive feedback, feel free to reach me by checking the contact page of either my [Github profile](https://github.com/Clement-Jean) or the [about page of the website](https://clement-jean.github.io/about/)
-
