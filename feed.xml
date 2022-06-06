@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-06-04T15:20:10+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Storing Colors in Protocol Buffers</title><link href="http://localhost:4000/storing_color_in_pb/" rel="alternate" type="text/html" title="Storing Colors in Protocol Buffers" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>http://localhost:4000/storing_color_in_pb</id><content type="html" xml:base="http://localhost:4000/storing_color_in_pb/"><![CDATA[<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-06-06T15:51:36+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Storing Colors in Protocol Buffers</title><link href="http://localhost:4000/storing_color_in_pb/" rel="alternate" type="text/html" title="Storing Colors in Protocol Buffers" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>http://localhost:4000/storing_color_in_pb</id><content type="html" xml:base="http://localhost:4000/storing_color_in_pb/"><![CDATA[<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
 <p>While working on a new course, I was looking for an example to store a Color in Protocol Buffers. At first this seemed like an easy task but it turned out to be an interesting example of optimization. Let's work through it.</p>
 <h2 id="quick-requirements">Quick Requirements</h2>
 <p>In order to define what's the most optimal message definition that we come with, we need a way to calculate the serialized size of that message. Fortunately, doing so is pretty easy with Protocol Buffers.</p>
-<ul class="code-tab-container cb082439-dd56-4ce2-8773-dcd8629a7377"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'cb082439-dd56-4ce2-8773-dcd8629a7377', 6)">C++</a></li></ul><ul class="code-tab-switcher cb082439-dd56-4ce2-8773-dcd8629a7377"><li class="code_switcher_container_parent active-tab code_switcher_python d28f50ba-df61-4f05-9119-725f2761232f"><div class="code_switcher_code_action_container"><div id="code_copied_snackbar">Copied!</div><button class="code_switcher_copy_button" title="Copy" onclick="copyText('d28f50ba-df61-4f05-9119-725f2761232f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 53aff278-ccae-4a4c-bc92-c2721c5433ab"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '53aff278-ccae-4a4c-bc92-c2721c5433ab', 6)">C++</a></li></ul><ul class="code-tab-switcher 53aff278-ccae-4a4c-bc92-c2721c5433ab"><li class="code_switcher_container_parent active-tab code_switcher_python 16dda089-94f4-46bb-b9b1-adb6f0d13e2e"><div class="code_switcher_code_action_container"><div id="code_copied_snackbar">Copied!</div><button class="code_switcher_copy_button" title="Copy" onclick="copyText('16dda089-94f4-46bb-b9b1-adb6f0d13e2e')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">SerializeToString</span><span class="p">())</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 354081b9-1784-4fbd-83fa-9979b530db55"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('354081b9-1784-4fbd-83fa-9979b530db55')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 9a3f9966-e7f8-4914-801b-0046efe43b7b"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('9a3f9966-e7f8-4914-801b-0046efe43b7b')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.Message</span><span class="o">;</span>
 
 <span class="kt">int</span> <span class="nf">calculateSize</span><span class="o">(</span><span class="nc">Message</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">getSerializedSize</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin 33d4baf7-d3f5-421b-bc27-d9188b871eba"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('33d4baf7-d3f5-421b-bc27-d9188b871eba')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_kotlin 5f89f517-8d79-4e07-97f0-17701f708a81"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('5f89f517-8d79-4e07-97f0-17701f708a81')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.google.protobuf.Message</span>
 
 <span class="k">fun</span> <span class="nf">calculateSize</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">Message</span><span class="p">)</span> <span class="p">=</span> <span class="n">message</span><span class="p">.</span><span class="n">serializedSize</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go c9e102f2-8aa9-4068-ab45-7dd9713dadaf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('c9e102f2-8aa9-4068-ab45-7dd9713dadaf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_go 2cc24109-40e7-45df-b7c3-e750b50cfbbf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('2cc24109-40e7-45df-b7c3-e750b50cfbbf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="s">"google.golang.org/protobuf/proto"</span>
 
 <span class="k">func</span> <span class="n">calculateSize</span><span class="p">(</span><span class="n">message</span> <span class="n">proto</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
@@ -31,19 +31,19 @@
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp f4f4b16f-5e5b-4796-b274-88171c0bc6b5"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('f4f4b16f-5e5b-4796-b274-88171c0bc6b5')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 4f25e112-e124-4303-883f-5f932b639183"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('4f25e112-e124-4303-883f-5f932b639183')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Google.Protobuf</span>
 
 <span class="kt">int</span> <span class="nf">CalculateSize</span><span class="p">(</span><span class="n">IMessage</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="n">message</span><span class="p">.</span><span class="nf">CalculateSize</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js c01a82a2-944f-49d1-8301-dfd628fefe1b"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('c01a82a2-944f-49d1-8301-dfd628fefe1b')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_js 1954d4e4-3e97-408c-96e9-43f465f7c51e"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('1954d4e4-3e97-408c-96e9-43f465f7c51e')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">calculateSize</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">serializeBinary</span><span class="p">().</span><span class="nx">length</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 9985319e-55be-4ad1-b789-a2f6397bb02d"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('9985319e-55be-4ad1-b789-a2f6397bb02d')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp b550624f-e018-4efa-a92d-441b1ee82090"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('b550624f-e018-4efa-a92d-441b1ee82090')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;google/protobuf/message.h&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">Message</span> <span class="o">*</span><span class="n">message</span><span class="p">)</span>
@@ -66,7 +66,7 @@
 <li>The non human readable solution: <code>int32</code> or <code>int64</code></li>
 </ul>
 <p>Let's try with the string and work our way through, here is the proto file we are gonna use:</p>
-<div class="code_switcher_container_parent 36af8789-c662-4571-8cf0-895b04106220"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent f74f6f13-9f21-424f-93a2-bcc9b8035772"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">option</span> <span class="na">java_package</span> <span class="o">=</span> <span class="s">"com.example"</span><span class="p">;</span>
@@ -80,37 +80,37 @@
 </code></pre></div></div>
 </div>
 <p>and here is the code that calculates the size for <code>Color</code> with value <code>#FFFFFFFF</code> (max color value):</p>
-<ul class="code-tab-container 96b17305-8d05-477a-8640-3a96c41c3053"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', '96b17305-8d05-477a-8640-3a96c41c3053', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '96b17305-8d05-477a-8640-3a96c41c3053', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', '96b17305-8d05-477a-8640-3a96c41c3053', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', '96b17305-8d05-477a-8640-3a96c41c3053', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '96b17305-8d05-477a-8640-3a96c41c3053', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', '96b17305-8d05-477a-8640-3a96c41c3053', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '96b17305-8d05-477a-8640-3a96c41c3053', 6)">C++</a></li></ul><ul class="code-tab-switcher 96b17305-8d05-477a-8640-3a96c41c3053"><li class="code_switcher_container_parent active-tab code_switcher_python 4f696135-5672-4a7d-9d1e-6d7c13c7b475"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('4f696135-5672-4a7d-9d1e-6d7c13c7b475')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container d996ed0a-5eed-480c-a08d-02adcb7bc856"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'd996ed0a-5eed-480c-a08d-02adcb7bc856', 6)">C++</a></li></ul><ul class="code-tab-switcher d996ed0a-5eed-480c-a08d-02adcb7bc856"><li class="code_switcher_container_parent active-tab code_switcher_python b8124148-caf4-4d77-99c1-fef0ae80027d"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('b8124148-caf4-4d77-99c1-fef0ae80027d')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">proto.color_pb2</span> <span class="k">as</span> <span class="n">pb</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">calculate_size</span><span class="p">(</span><span class="n">pb</span><span class="p">.</span><span class="n">Color</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"FFFFFFFF"</span><span class="p">)))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 842ec7ff-4e41-4c95-b099-bce880dbc0a9"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('842ec7ff-4e41-4c95-b099-bce880dbc0a9')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java a45bcb9f-84d1-427d-8898-c39e68eff8b6"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('a45bcb9f-84d1-427d-8898-c39e68eff8b6')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.example.Color</span>
 
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">calculateSize</span><span class="o">(</span><span class="nc">Color</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">setValue</span><span class="o">(</span><span class="s">"FFFFFFFF"</span><span class="o">).</span><span class="na">build</span><span class="o">()));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin ab81c1c4-5377-43ac-a77f-fc79c7342546"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('ab81c1c4-5377-43ac-a77f-fc79c7342546')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_kotlin 69027ecd-9082-4362-bf70-10d5cc493507"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('69027ecd-9082-4362-bf70-10d5cc493507')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.example.color</span>
 
 <span class="nf">println</span><span class="p">(</span><span class="nf">calculateSize</span><span class="p">(</span><span class="nf">color</span> <span class="p">{</span> <span class="n">value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go aa8c2b53-68ac-466a-96f2-3fcf7028571b"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('aa8c2b53-68ac-466a-96f2-3fcf7028571b')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_go 16641c8f-1506-4c90-b4bd-5321ce15540c"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('16641c8f-1506-4c90-b4bd-5321ce15540c')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="n">pb</span> <span class="s">"example.com/m"</span>
 
 <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">calculateSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">Color</span><span class="p">{</span><span class="n">Value</span><span class="o">:</span> <span class="s">"FFFFFFFF"</span><span class="p">}))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 105c79d6-860e-4db3-8f72-3f910d147d8d"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('105c79d6-860e-4db3-8f72-3f910d147d8d')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 148dc4e3-30c6-4fc6-8ec9-3aa93fda7ee9"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('148dc4e3-30c6-4fc6-8ec9-3aa93fda7ee9')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Example</span><span class="p">;</span>
 
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="nf">CalculateSize</span><span class="p">(</span><span class="k">new</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">Value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js 319d14ec-4fe1-4a4f-9bde-ff9df9478e22"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('319d14ec-4fe1-4a4f-9bde-ff9df9478e22')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_js 99848a8d-e98a-41bb-8e0a-6272cbd7afeb"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('99848a8d-e98a-41bb-8e0a-6272cbd7afeb')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span><span class="nx">Color</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./proto/color_pb</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">calculateSize</span><span class="p">(</span><span class="k">new</span> <span class="nx">Color</span><span class="p">().</span><span class="nx">setValue</span><span class="p">(</span><span class="dl">"</span><span class="s2">FFFFFFFF</span><span class="dl">"</span><span class="p">)));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp efb0ec09-69cc-49ce-a0d1-f39e016f954e"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('efb0ec09-69cc-49ce-a0d1-f39e016f954e')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 725d7c41-fc5f-4392-a113-a97308d11bd3"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('725d7c41-fc5f-4392-a113-a97308d11bd3')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"color.pb.h"</span><span class="cp">
 </span>
 <span class="n">Color</span> <span class="n">color</span><span class="p">;</span>
@@ -131,15 +131,15 @@
 <p>🟢 green: is the <code>Length-delimited</code> field value. Here 46 is F (you can type <code>man ascii</code> and have a look at the Hexadecimal set).</p>
 <h2 id="lets-optimize-that">Let's optimize that</h2>
 <p>As mentioned earlier, the other way to solve that is to store the value in an integer. So let's check the decimal value of the biggest color that we can get, which is <code>FFFFFFFF</code>.</p>
-<ul class="code-tab-container 568c5fe7-29ba-45f6-96a7-d0f1598a2de6"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '568c5fe7-29ba-45f6-96a7-d0f1598a2de6', 0)">Linux/Mac</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '568c5fe7-29ba-45f6-96a7-d0f1598a2de6', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher 568c5fe7-29ba-45f6-96a7-d0f1598a2de6"><li class="code_switcher_container_parent active-tab code_switcher_shell ba0ea079-bf74-4262-b976-9c5e4cad8a81"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('ba0ea079-bf74-4262-b976-9c5e4cad8a81')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 090ce41a-984d-4bea-9868-369c5d437bc9"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '090ce41a-984d-4bea-9868-369c5d437bc9', 0)">Linux/Mac</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '090ce41a-984d-4bea-9868-369c5d437bc9', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher 090ce41a-984d-4bea-9868-369c5d437bc9"><li class="code_switcher_container_parent active-tab code_switcher_shell 1082975a-ceab-4dc5-86e5-16a15f842781"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('1082975a-ceab-4dc5-86e5-16a15f842781')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"ibase=16; FFFFFFFF"</span> | bc
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_shell 965edc97-2fa6-473f-ba58-55a65171afbf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('965edc97-2fa6-473f-ba58-55a65171afbf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_shell d6319760-ba45-4bfd-996e-dfe9b317a0a0"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('d6319760-ba45-4bfd-996e-dfe9b317a0a0')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>convert]::toint64<span class="o">(</span><span class="s2">"FFFFFFFF"</span>, 16<span class="o">)</span>
 </code></pre></div></div>
 </li></ul>
 <p>and this gives us: <strong>4,294,967,295</strong>. Sounds like this gonna fit inside an <code>int32</code> or even an <code>uint32</code> if we wanted to make class instantiation safer (not letting user enter negative value). So we now have:</p>
-<div class="code_switcher_container_parent e6f10d38-4c29-4216-ab78-b57cfa28c92c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent febc4af8-b7ef-4231-b0b1-0cb73d5b8b90"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
   <span class="kt">uint32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
@@ -186,7 +186,7 @@
 </div>
 <p>This table presents the field value thresholds and the bytes size for serialization of <code>uint32</code>. Can you see the problem here ? <strong>4,294,967,295</strong> is simply bigger than <strong>268,435,456</strong> and what it means is that, our value of <code>FFFFFFFF</code> will be serialized to 5 bytes.</p>
 <p>Do we know another type that could help us serialize in less bytes? Sure we do! We know that <code>fixed32</code> is an unsigned integer and it will always be serialized to 4 bytes. So we if change to:</p>
-<div class="code_switcher_container_parent 63f3ef12-2251-4772-8f3c-e5d500746c4b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent de5dcf42-8c6d-414f-a974-1136d55f5bf8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
   <span class="kt">fixed32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
@@ -219,7 +219,7 @@
 <h2 id="getting-the-code">Getting the code</h2>
 <p>In order to get the code for this course, you can simply go to <a href="https://github.com/Clement-Jean/grpc-csharp-course">the github repository</a> and clone it.</p>
 <p>You can also directly clone it in your terminal:</p>
-<div class="code_switcher_container_parent 39cf7ce0-9fee-40ba-8927-721695d133f1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 4150e677-4ea2-4213-84e9-eaf1a237f476"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:Clement-Jean/grpc-csharp-course.git
 </code></pre></div></div>
 </div>
@@ -284,7 +284,7 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -&gt; NULL</code></pre></figure>
 <p>This activity handles the playlist of videos and the video player (we use <a href="https://exoplayer.dev">ExoPlayer</a>).</p>
 <h3 id="landscapeactivity">LandscapeActivity</h3>
 <p>This activity handles only the video player and has a locked screenOrientation in the AndroidManifest:</p>
-<div class="code_switcher_container_parent 30ee8c59-cac4-4b86-b3da-7be38b11dfd7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 14c97f8e-6eec-437e-b03c-083a03da34c4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>android:screenOrientation="landscape"
 </code></pre></div></div>
 </div>
@@ -293,7 +293,7 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -&gt; NULL</code></pre></figure>
 <h2 id="testing">Testing</h2>
 <p>Now, because we had this redundant crash, we decided to do like all the good engineers: testing. With that we would then be able to prevent these crashes to ever happen again in the future.</p>
 <p>For that, we used the <a href="https://developer.android.com/training/testing/espresso/intents">Espresso Intent extension</a> and basically check the extras passed between activities. To do that we did the following:</p>
-<div class="code_switcher_container_parent 83e07299-4e2a-4322-b0a0-9a97e9ff3d1c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 697cdb4a-41e4-4a9b-8247-01809fed05d5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">activityRule</span><span class="o">.</span><span class="na">scenario</span><span class="o">.</span><span class="na">onActivity</span> <span class="o">{</span>
     <span class="n">val</span> <span class="n">player</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="na">findViewById</span><span class="o">&lt;</span><span class="nc">PlayerView</span><span class="o">&gt;(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">player_view</span><span class="o">).</span><span class="na">player</span><span class="o">!!</span>
 
@@ -313,7 +313,7 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -&gt; NULL</code></pre></figure>
 </div>
 <p>pretty simple and pretty expressive code.</p>
 <p>The real trouble came when we decided to test a video that is playing. The first problem came from ExoPlayer itself, we basically needed to wait that the video was in playing state before to even create the new activity. To do that we added a listener like the following:</p>
-<div class="code_switcher_container_parent 35a46a5b-9dab-4e30-abe0-a29f57e3d91f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent a124bc38-880d-419e-b0e3-7d88d4e067ce"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">player</span><span class="o">.</span><span class="na">addListener</span><span class="o">(</span><span class="nl">object:</span> <span class="nc">Player</span><span class="o">.</span><span class="na">EventListener</span> <span class="o">{</span>
     <span class="n">override</span> <span class="n">fun</span> <span class="nf">onIsPlayingChanged</span><span class="o">(</span><span class="nl">playing:</span> <span class="nc">Boolean</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">isPlaying</span> <span class="o">=</span> <span class="n">playing</span>
@@ -322,12 +322,12 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -&gt; NULL</code></pre></figure>
 </code></pre></div></div>
 </div>
 <p>and we basically waited for <code>isPlaying</code> to change:</p>
-<div class="code_switcher_container_parent 5d2b043f-ebca-43ea-b5bd-8b52dac66d86"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 7478b36e-b422-4b62-bf05-e6498f3ca14f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="o">(!</span><span class="n">isPlaying</span> <span class="o">&amp;&amp;</span> <span class="n">deadline</span><span class="o">.</span><span class="na">isNotExceeded</span><span class="o">())</span> <span class="o">{}</span>
 </code></pre></div></div>
 </div>
 <p>After that we were able to click our <code>full_screen_button</code> and we were ready to check our intents. In a naive attempte we wrote something like:</p>
-<div class="code_switcher_container_parent 923aa226-4a1c-45f5-a90f-7de5a79efc2b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent a4d6f8b3-6530-4d2a-9ebd-363e5752d674"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">intended</span><span class="o">(</span>
     <span class="n">allOf</span><span class="o">(</span>
         <span class="n">hasExtra</span><span class="o">(</span><span class="no">CURRENT_POSITION</span><span class="o">,</span> <span class="n">greaterThanOrEqualTo</span><span class="o">(</span><span class="mi">1000L</span><span class="o">)),</span> <span class="c1">// &gt;= 1000 because playing</span>
@@ -338,7 +338,7 @@ redisims.get MY_EXISTING_KEY CURRENT_TIMESTAMP -&gt; NULL</code></pre></figure>
 </code></pre></div></div>
 </div>
 <p>And we thought &quot;yeah looks like it's gonna work&quot;. But after running our test, we received a ❌. We then decided to read the Logs and see what wouldn't match. I let you judge by yourself:</p>
-<div class="code_switcher_container_parent f1e381d8-4712-4893-ace9-b6853631a791"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 0df11184-3cf9-45fb-a609-2ea3a0684e8d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>IntentMatcher: <span class="o">(</span>has extras: has bundle with: key: is <span class="s2">"current_position"</span> value: is &lt;a value equal to or greater than &lt;1000L&gt;&gt; and has extras: has bundle with: key: is <span class="s2">"media_id"</span> value: is <span class="s2">"A_VIDEO.mp4"</span> and has extras: has bundle with: key: is <span class="s2">"is_playing"</span> value: is &lt;<span class="nb">true</span><span class="o">&gt;)</span>
 
 Matched intents:[]
@@ -350,19 +350,19 @@ Recorded intents:
 <p>Apparently the recorded intent is matching, we have a current_position &gt;= 1000, we have the right meta_id and the is_playing is set to true. Correct right?</p>
 <p>After an hour of trying to debug that, we checked the documentation (we only scanned through it before) and we finally found what was the problem.</p>
 <p>In the documentation of <a href="https://developer.android.com/reference/androidx/test/espresso/intent/matcher/IntentMatchers#hasExtra(org.hamcrest.Matcher%3Cjava.lang.String%3E,%20org.hamcrest.Matcher%3C?%3E)">Intent matchers</a>, we can see that there are two definitions of the function <code>hasExtra</code>:</p>
-<div class="code_switcher_container_parent 55813652-6016-4b22-beb5-2a7f36961de4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent a94aac52-bbe1-48ae-a7c4-170152c7f718"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">Intent</span><span class="o">&gt;</span> <span class="nf">hasExtra</span> <span class="o">(</span><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keyMatcher</span><span class="o">,</span> <span class="nc">Matcher</span><span class="o">&lt;?&gt;</span> <span class="n">valueMatcher</span><span class="o">)</span>
 </code></pre></div></div>
 </div>
 <p>and</p>
-<div class="code_switcher_container_parent 4d5af982-61d3-4233-8d38-4d775198add5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 0e160c4e-1910-40f4-898a-63f88e0fcc44"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Matcher</span><span class="o">&lt;</span><span class="nc">Intent</span><span class="o">&gt;</span> <span class="nf">hasExtra</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="no">T</span> <span class="n">value</span><span class="o">)</span>
 </code></pre></div></div>
 </div>
 <p>Do you see the problem?</p>
 <p>The problem is in that line <code>hasExtra(CURRENT_POSITION, greaterThanOrEqualTo(1000L))</code> because by using the string <code>CURRENT_POSITION</code>, we were actually using the second overload of the function and thus the value of our Intent extra was definitely not equal to value matcher <code>greaterThanOrEqualTo</code>.</p>
 <p>To solve that we need to add the matcher <code>is()</code> around the string <code>CURRENT_POSITION</code> and we would then access the first definition of the matcher <code>hasExtra</code>. It gives us something like:</p>
-<div class="code_switcher_container_parent 49048d09-302e-4ba0-99fb-68ebdde9ec86"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 31283d2b-78a1-4b49-ae2d-18780ea1c19f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">intended</span><span class="o">(</span>
     <span class="n">allOf</span><span class="o">(</span>
         <span class="n">hasExtra</span><span class="o">(</span><span class="err">`</span><span class="n">is</span><span class="err">`</span><span class="o">(</span><span class="no">CURRENT_POSITION</span><span class="o">),</span> <span class="n">greaterThanOrEqualTo</span><span class="o">(</span><span class="mi">1000L</span><span class="o">)),</span>
@@ -379,7 +379,7 @@ Recorded intents:
 <p>After being used to the traditional way of debug an android app by using mocking and interceptors, I came across an interesting problem with gRPC. I wanted to do the same. Basically, add an interceptor that mock a server response.</p>
 <p><strong>An important note: The app is in Kotlin, however this code I show is in Java. What I want to show here is that the concepts in gRPC are generally easily convertible to other languages. And even if you are actually coding in another supported language, you should be able to do pretty much the same</strong></p>
 <p>I discovered that, of course, gRPC has interceptors, but I also discovered in my case I didn't need them. Let me explain here. After playing a little bit with the <a href="https://grpc.github.io/grpc-java/javadoc/io/grpc/ForwardingClientCall.SimpleForwardingClientCall.html">ForwardingClientCall.SimpleForwardingClientCall</a> class by inheriting it like <a href="https://github.com/grpc/grpc-java/blob/master/examples/src/test/java/io/grpc/examples/header/HeaderServerInterceptorTest.java">this</a>:</p>
-<div class="code_switcher_container_parent 3890b683-d5a7-4c34-8531-44bb8ec81aae"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent afe0c319-929e-445d-b4b2-dc58bd5fe1b6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">serverHeaderDeliveredToClient</span><span class="o">()</span> <span class="o">{</span>
   <span class="kd">class</span> <span class="nc">SpyingClientInterceptor</span> <span class="kd">implements</span> <span class="nc">ClientInterceptor</span> <span class="o">{</span>
     <span class="nc">ClientCall</span><span class="o">.</span><span class="na">Listener</span><span class="o">&lt;?&gt;</span> <span class="n">spyListener</span><span class="o">;</span>
@@ -401,7 +401,7 @@ Recorded intents:
 </code></pre></div></div>
 </div>
 <p>I didn't find any way to send back a message to my client. After going through the gRPC code and especially the comments (ctrl+left click on android studio),something caught my eye:</p>
-<div class="code_switcher_container_parent 5b1645a6-b6d3-4989-9c29-21f814a96a2c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 7e18996d-6ed6-4e17-ae52-f70554fcc941"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
     ...
  * &lt;p&gt;DO NOT MOCK: Use InProcessServerBuilder and make a test server instead.
@@ -413,7 +413,7 @@ Recorded intents:
 </code></pre></div></div>
 </div>
 <p>Here was my solution: <code>InProcessServerBuilder</code>. After a little bit more searching in github, I found <a href="https://github.com/grpc/grpc-java/blob/e6c8534f10d938566a62e38792a74032955e6c82/examples/src/test/java/io/grpc/examples/helloworld/HelloWorldServerTest.java">this</a>:</p>
-<div class="code_switcher_container_parent 5db10aa3-b09e-47cf-b0d2-69a4bc3b9c36"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 90c8b4fd-2d68-470f-baec-234745232dc3"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">greeterImpl_replyMessage</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
   <span class="c1">// Generate a unique in-process server name.</span>
   <span class="nc">String</span> <span class="n">serverName</span> <span class="o">=</span> <span class="nc">InProcessServerBuilder</span><span class="o">.</span><span class="na">generateName</span><span class="o">();</span>
@@ -455,7 +455,7 @@ Recorded intents:
 <p>And if you are familiar with the greeter example of gRPC, everything will make sense here. If you are not, you can join my gRPC Java course on <a href="https://www.udemy.com/course/grpc-java/?referralCode=9648E53DF9F3D92EB2EA">Udemy</a>.</p>
 <p>You can now adapt this solution for the testing part of you application !</p>]]></content><author><name>Clement</name></author><category term="gRPC" /><category term="Android" /><category term="Kotlin" /><category term="Java" /><summary type="html"><![CDATA[After being used to the traditional way of debug an android app by using mocking and interceptors, I came across an interesting problem with gRPC. I wanted to do the same. Basically, add an interceptor that mock a server response.]]></summary></entry><entry><title type="html">My favorites design patterns - Builder</title><link href="http://localhost:4000/my_favorites_design_patterns/" rel="alternate" type="text/html" title="My favorites design patterns - Builder" /><published>2020-03-07T00:00:00+08:00</published><updated>2020-03-07T00:00:00+08:00</updated><id>http://localhost:4000/my_favorites_design_patterns</id><content type="html" xml:base="http://localhost:4000/my_favorites_design_patterns/"><![CDATA[<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
 <p>Recently, I was trying to handle errors in the programming language I'm developping. Nothing fancy here and the problem was quickly solved with a simple:</p>
-<div class="code_switcher_container_parent 15a2be01-1fe1-445d-87b4-1ea16ca0eb3f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent c1894ed2-ec51-4f4e-b5c9-a97b26eb3f79"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
 </div>
@@ -463,7 +463,7 @@ Recorded intents:
 <ul>
 <li>Lack of genericity: Each time I expected or got a different token, I needed to change the text in the message.</li>
 </ul>
-<div class="code_switcher_container_parent abbc1884-da5d-4359-b8f3-cc556d6793d2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 20cd055c-37ed-4cdb-a691-4d214fc84eee"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 <span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected ')' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
@@ -471,18 +471,18 @@ Recorded intents:
 <ul>
 <li>Lack of testability: I basically wanted to be able to check if the error type and the error message were the same. But then if I have a stupid typo then my test fail.</li>
 </ul>
-<div class="code_switcher_container_parent 950dc37f-6f12-42a1-89e9-bec430b516b2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 082233c8-8eaa-476b-a4b7-ff3e97efb322"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ASSERT_EQ</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"xpected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
 </div>
 <p>So at that point, I decided to make the solution more generic and more testable. Basically, I wanted something roughly like:</p>
-<div class="code_switcher_container_parent e216aba8-cbf7-4131-a7ee-2c737be37d09"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 2de03acc-ca8b-4e33-bbb1-5e366fcf63e8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Error</span> <span class="n">error</span> <span class="o">=</span> <span class="n">expect</span><span class="p">(</span><span class="s">"("</span><span class="p">).</span><span class="n">got</span><span class="p">(</span><span class="s">"{"</span><span class="p">)</span>
 </code></pre></div></div>
 </div>
 <h2 id="the-solution">The solution</h2>
 <p>And here comes the Builder pattern. The idea is that we could build an object by changing the variables in an expressive way. So finally, I came up with this:</p>
-<div class="code_switcher_container_parent ab711305-462f-49b0-afa0-04c9acc45702"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 0f67c6b6-cb0f-4879-8f98-8bddff4e4a2e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Expect</span> <span class="p">{</span>
 <span class="nl">private:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_expected</span><span class="p">;</span>
@@ -501,7 +501,7 @@ Recorded intents:
 </code></pre></div></div>
 </div>
 <p>That you would use like:</p>
-<div class="code_switcher_container_parent e515af44-f133-4790-b9b1-f0011d18967e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 3cc4c64e-df75-4ba6-9198-1f951ad52260"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Expect</span><span class="o">::</span><span class="n">builder</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">"("</span><span class="p">).</span><span class="n">got</span><span class="p">(</span><span class="s">"{"</span><span class="p">).</span><span class="n">build</span><span class="p">()</span>
 </code></pre></div></div>
 </div>
