@@ -3,11 +3,12 @@ layout: post
 author: Clement
 title: Protocol Buffers varint vs fixed
 categories: [Protocol Buffers]
+excerpt_separator: <!--desc-->
 ---
 
 This article is much more a note to myself than something else but this might be interesting for people out there.
 
-I wanted to calculate the thresholds at which it is better it is to use a `fixed` rather than a varint. Now, knowing that the varint are encoded in base 128, this basically means that we are dealing with power of 128. This gives us the following table:
+I wanted to calculate the thresholds at which it is better it is to use a `fixed` rather than a varint. <!--desc--> Now, knowing that the varint are encoded in base 128, this basically means that we are dealing with power of 128. This gives us the following table:
 
 <div class="table-responsive">
 <table class="table table-striped table-borderless">
