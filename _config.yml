@@ -3,24 +3,18 @@ author: Clément Jean
 description: Eternal learner and challenges lover
 avatar: https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png
 footer-links:
-  dribbble:
   email: clement.jean@epitech.eu
-  facebook:
-  flickr:
   github: Clement-Jean/
-  instagram:
   linkedin: clement-jean
   pinterest:
   rss: anything
-  twitter: 
+  twitter: ClmentJean1
   stackoverflow: users/11269045/clément-jean
-  youtube: #channel/UCgh1ZH7wECtTejZuVx0dtQQ 
-  googleplus:
+  youtube: #channel/UCgh1ZH7wECtTejZuVx0dtQQ
+  mastodon: clementjean
 
 markdown: JdvpCodeTabsCommonMark
-
 disqus: clement-jean-github-io-1
-
 google_analytics: UA-111260962-1
 
 url: https://clement-jean.github.io
