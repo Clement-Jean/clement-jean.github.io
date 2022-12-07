@@ -23,6 +23,7 @@ After being used to the traditional way of debug an android app by using mocking
     <meta property="twitter:title" content="gRPC 'mocking'" />
     
 
+    <link href="https://techhub.social/@clementjean" rel="me">
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" />
     <link rel="icon"  type="image/png"    href="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png">
@@ -39,7 +40,7 @@ After being used to the traditional way of debug an android app by using mocking
             <p class="site-description">Eternal learner and challenges lover</p>
           </div>
 
-          <nav> 
+          <nav>
             <a class="black-red-link" href="/">Home</a>
 	          <a class="black-red-link" href="/categories">Categories</a>
             <a class="black-red-link" href="/about">About</a>
@@ -57,7 +58,7 @@ After being used to the traditional way of debug an android app by using mocking
 <p>After being used to the traditional way of debug an android app by using mocking and interceptors, I came across an interesting problem with gRPC. I wanted to do the same. Basically, add an interceptor that mock a server response.</p>
 <p><strong>An important note: The app is in Kotlin, however this code I show is in Java. What I want to show here is that the concepts in gRPC are generally easily convertible to other languages. And even if you are actually coding in another supported language, you should be able to do pretty much the same</strong></p>
 <p>I discovered that, of course, gRPC has interceptors, but I also discovered in my case I didn't need them. Let me explain here. After playing a little bit with the <a href="https://grpc.github.io/grpc-java/javadoc/io/grpc/ForwardingClientCall.SimpleForwardingClientCall.html">ForwardingClientCall.SimpleForwardingClientCall</a> class by inheriting it like <a href="https://github.com/grpc/grpc-java/blob/master/examples/src/test/java/io/grpc/examples/header/HeaderServerInterceptorTest.java">this</a>:</p>
-<div class="code_switcher_container_parent de005d10-5785-4c99-bacf-0950e15113f3"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 996313bc-a13a-49bc-b689-7a35fcbc9a03"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">serverHeaderDeliveredToClient</span><span class="o">()</span> <span class="o">{</span>
   <span class="kd">class</span> <span class="nc">SpyingClientInterceptor</span> <span class="kd">implements</span> <span class="nc">ClientInterceptor</span> <span class="o">{</span>
     <span class="nc">ClientCall</span><span class="o">.</span><span class="na">Listener</span><span class="o">&lt;?&gt;</span> <span class="n">spyListener</span><span class="o">;</span>
@@ -79,7 +80,7 @@ After being used to the traditional way of debug an android app by using mocking
 </code></pre></div></div>
 </div>
 <p>I didn't find any way to send back a message to my client. After going through the gRPC code and especially the comments (ctrl+left click on android studio),something caught my eye:</p>
-<div class="code_switcher_container_parent 74c9c08b-4a5b-4896-8a7f-81a2dc9afd70"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 59fcd7e8-c124-442a-84c4-92913c5f4615"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
     ...
  * &lt;p&gt;DO NOT MOCK: Use InProcessServerBuilder and make a test server instead.
@@ -91,7 +92,7 @@ After being used to the traditional way of debug an android app by using mocking
 </code></pre></div></div>
 </div>
 <p>Here was my solution: <code>InProcessServerBuilder</code>. After a little bit more searching in github, I found <a href="https://github.com/grpc/grpc-java/blob/e6c8534f10d938566a62e38792a74032955e6c82/examples/src/test/java/io/grpc/examples/helloworld/HelloWorldServerTest.java">this</a>:</p>
-<div class="code_switcher_container_parent 79196b7d-b6c1-4266-9c3e-1c78339bfdd8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent b3ad0b43-92b0-4dd9-a798-f742b5b2b363"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">greeterImpl_replyMessage</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
   <span class="c1">// Generate a unique in-process server name.</span>
   <span class="nc">String</span> <span class="n">serverName</span> <span class="o">=</span> <span class="nc">InProcessServerBuilder</span><span class="o">.</span><span class="na">generateName</span><span class="o">();</span>
@@ -163,19 +164,14 @@ After being used to the traditional way of debug an android app by using mocking
     <div class="wrapper-footer">
       <div class="container">
         <footer class="footer">
-          
-<a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
-
-
-<a href="https://github.com/Clement-Jean/"><i class="svg-icon github"></i></a>
-
+          <a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
+<a href="https://github.com/Clement-Jean"><i class="svg-icon github"></i></a>
 <a href="https://www.linkedin.com/in/clement-jean"><i class="svg-icon linkedin"></i></a>
-
 <a href="/feed.xml"><i class="svg-icon rss"></i></a>
-
+<a href="https://www.twitter.com/ClmentJean1"><i class="svg-icon twitter"></i></a>
 <a href="http://stackoverflow.com/users/11269045/clément-jean"><i class="svg-icon stackoverflow"></i></a>
 
-
+<a href="https://techhub.social/@clementjean"><i class="svg-icon mastodon"></i></a>
 
         </footer>
       </div>

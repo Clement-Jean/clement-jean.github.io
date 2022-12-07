@@ -11,9 +11,11 @@
     
     <meta name="description" content="
 This article is much more a note to myself than something else but this might be interesting for people out there.
+I wanted to calculate the thresholds at which it is better it is to use a fixed rather than a varint.
 " />
     <meta property="og:description" content="
 This article is much more a note to myself than something else but this might be interesting for people out there.
+I wanted to calculate the thresholds at which it is better it is to use a fixed rather than a varint.
 " />
     
     <meta name="author" content="Clément Jean" />
@@ -23,6 +25,7 @@ This article is much more a note to myself than something else but this might be
     <meta property="twitter:title" content="Protocol Buffers varint vs fixed" />
     
 
+    <link href="https://techhub.social/@clementjean" rel="me">
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" />
     <link rel="icon"  type="image/png"    href="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png">
@@ -39,7 +42,7 @@ This article is much more a note to myself than something else but this might be
             <p class="site-description">Eternal learner and challenges lover</p>
           </div>
 
-          <nav> 
+          <nav>
             <a class="black-red-link" href="/">Home</a>
 	          <a class="black-red-link" href="/categories">Categories</a>
             <a class="black-red-link" href="/about">About</a>
@@ -55,7 +58,7 @@ This article is much more a note to myself than something else but this might be
   <div class="entry">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
 <p>This article is much more a note to myself than something else but this might be interesting for people out there.</p>
-<p>I wanted to calculate the thresholds at which it is better it is to use a <code>fixed</code> rather than a varint. Now, knowing that the varint are encoded in base 128, this basically means that we are dealing with power of 128. This gives us the following table:</p>
+<p>I wanted to calculate the thresholds at which it is better it is to use a <code>fixed</code> rather than a varint. <!--desc--> Now, knowing that the varint are encoded in base 128, this basically means that we are dealing with power of 128. This gives us the following table:</p>
 <div class="table-responsive">
 <table class="table table-striped table-borderless">
   <thead>
@@ -144,19 +147,14 @@ This article is much more a note to myself than something else but this might be
     <div class="wrapper-footer">
       <div class="container">
         <footer class="footer">
-          
-<a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
-
-
-<a href="https://github.com/Clement-Jean/"><i class="svg-icon github"></i></a>
-
+          <a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
+<a href="https://github.com/Clement-Jean"><i class="svg-icon github"></i></a>
 <a href="https://www.linkedin.com/in/clement-jean"><i class="svg-icon linkedin"></i></a>
-
 <a href="/feed.xml"><i class="svg-icon rss"></i></a>
-
+<a href="https://www.twitter.com/ClmentJean1"><i class="svg-icon twitter"></i></a>
 <a href="http://stackoverflow.com/users/11269045/clément-jean"><i class="svg-icon stackoverflow"></i></a>
 
-
+<a href="https://techhub.social/@clementjean"><i class="svg-icon mastodon"></i></a>
 
         </footer>
       </div>

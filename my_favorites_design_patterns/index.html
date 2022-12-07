@@ -23,6 +23,7 @@ Recently, I was trying to handle errors in the programming language I'm developp
     <meta property="twitter:title" content="My favorites design patterns - Builder" />
     
 
+    <link href="https://techhub.social/@clementjean" rel="me">
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" />
     <link rel="icon"  type="image/png"    href="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png">
@@ -39,7 +40,7 @@ Recently, I was trying to handle errors in the programming language I'm developp
             <p class="site-description">Eternal learner and challenges lover</p>
           </div>
 
-          <nav> 
+          <nav>
             <a class="black-red-link" href="/">Home</a>
 	          <a class="black-red-link" href="/categories">Categories</a>
             <a class="black-red-link" href="/about">About</a>
@@ -55,7 +56,7 @@ Recently, I was trying to handle errors in the programming language I'm developp
   <div class="entry">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script>
 <p>Recently, I was trying to handle errors in the programming language I'm developping. Nothing fancy here and the problem was quickly solved with a simple:</p>
-<div class="code_switcher_container_parent 9025bb04-5c54-488a-a946-91393803faef"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent e946b06d-cc02-44a7-9312-9665de07a8a2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
 </div>
@@ -63,7 +64,7 @@ Recently, I was trying to handle errors in the programming language I'm developp
 <ul>
 <li>Lack of genericity: Each time I expected or got a different token, I needed to change the text in the message.</li>
 </ul>
-<div class="code_switcher_container_parent 39042098-9466-4ee6-b7c3-b6400a41fb0c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 8cb75e0e-4e61-4102-89bb-1d905c5a8a53"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 <span class="k">throw</span> <span class="nf">Error</span><span class="p">(</span><span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"Expected ')' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
@@ -71,18 +72,18 @@ Recently, I was trying to handle errors in the programming language I'm developp
 <ul>
 <li>Lack of testability: I basically wanted to be able to check if the error type and the error message were the same. But then if I have a stupid typo then my test fail.</li>
 </ul>
-<div class="code_switcher_container_parent 8e209a62-c29d-43f1-8b25-dcc0721fc20f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 06c63df5-9b4a-44f4-9b9a-9e5aa85da032"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ASSERT_EQ</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">Error</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">UNEXPECTED_TOKEN</span><span class="p">,</span> <span class="s">"xpected '(' but got "</span> <span class="o">+</span> <span class="n">token</span><span class="o">-&gt;</span><span class="n">get_literal</span><span class="p">());</span>
 </code></pre></div></div>
 </div>
 <p>So at that point, I decided to make the solution more generic and more testable. Basically, I wanted something roughly like:</p>
-<div class="code_switcher_container_parent 45744d53-9030-4eff-81b0-2fe434e4d6ea"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 4c650684-2d4e-4160-a62c-7a015e7cad5f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Error</span> <span class="n">error</span> <span class="o">=</span> <span class="n">expect</span><span class="p">(</span><span class="s">"("</span><span class="p">).</span><span class="n">got</span><span class="p">(</span><span class="s">"{"</span><span class="p">)</span>
 </code></pre></div></div>
 </div>
 <h2 id="the-solution">The solution</h2>
 <p>And here comes the Builder pattern. The idea is that we could build an object by changing the variables in an expressive way. So finally, I came up with this:</p>
-<div class="code_switcher_container_parent 4e0e3b75-2f87-4c44-9277-80c93620956a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 1844683a-e288-4070-a8f9-23f9ccb87b97"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Expect</span> <span class="p">{</span>
 <span class="nl">private:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_expected</span><span class="p">;</span>
@@ -101,7 +102,7 @@ Recently, I was trying to handle errors in the programming language I'm developp
 </code></pre></div></div>
 </div>
 <p>That you would use like:</p>
-<div class="code_switcher_container_parent f1046d04-2f51-45f7-9a59-c762b31a180b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent e8269c60-bd99-49ef-ae6e-c66d27c20911"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Expect</span><span class="o">::</span><span class="n">builder</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">"("</span><span class="p">).</span><span class="n">got</span><span class="p">(</span><span class="s">"{"</span><span class="p">).</span><span class="n">build</span><span class="p">()</span>
 </code></pre></div></div>
 </div>
@@ -137,19 +138,14 @@ Recently, I was trying to handle errors in the programming language I'm developp
     <div class="wrapper-footer">
       <div class="container">
         <footer class="footer">
-          
-<a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
-
-
-<a href="https://github.com/Clement-Jean/"><i class="svg-icon github"></i></a>
-
+          <a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
+<a href="https://github.com/Clement-Jean"><i class="svg-icon github"></i></a>
 <a href="https://www.linkedin.com/in/clement-jean"><i class="svg-icon linkedin"></i></a>
-
 <a href="/feed.xml"><i class="svg-icon rss"></i></a>
-
+<a href="https://www.twitter.com/ClmentJean1"><i class="svg-icon twitter"></i></a>
 <a href="http://stackoverflow.com/users/11269045/clément-jean"><i class="svg-icon stackoverflow"></i></a>
 
-
+<a href="https://techhub.social/@clementjean"><i class="svg-icon mastodon"></i></a>
 
         </footer>
       </div>

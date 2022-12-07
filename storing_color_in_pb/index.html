@@ -23,6 +23,7 @@ While working on a new course, I was looking for an example to store a Color in 
     <meta property="twitter:title" content="Storing Colors in Protocol Buffers" />
     
 
+    <link href="https://techhub.social/@clementjean" rel="me">
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" />
     <link rel="icon"  type="image/png"    href="https://raw.githubusercontent.com/Clement-Jean/clement-jean.github.io/master/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png">
@@ -39,7 +40,7 @@ While working on a new course, I was looking for an example to store a Color in 
             <p class="site-description">Eternal learner and challenges lover</p>
           </div>
 
-          <nav> 
+          <nav>
             <a class="black-red-link" href="/">Home</a>
 	          <a class="black-red-link" href="/categories">Categories</a>
             <a class="black-red-link" href="/about">About</a>
@@ -57,23 +58,23 @@ While working on a new course, I was looking for an example to store a Color in 
 <p>While working on a new course, I was looking for an example to store a Color in Protocol Buffers. At first this seemed like an easy task but it turned out to be an interesting example of optimization. Let's work through it.</p>
 <h2 id="quick-requirements">Quick Requirements</h2>
 <p>In order to define what's the most optimal message definition that we come with, we need a way to calculate the serialized size of that message. Fortunately, doing so is pretty easy with Protocol Buffers.</p>
-<ul class="code-tab-container f2775336-ce10-40a4-b07c-a04b1396adab"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'f2775336-ce10-40a4-b07c-a04b1396adab', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'f2775336-ce10-40a4-b07c-a04b1396adab', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'f2775336-ce10-40a4-b07c-a04b1396adab', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f2775336-ce10-40a4-b07c-a04b1396adab', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'f2775336-ce10-40a4-b07c-a04b1396adab', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'f2775336-ce10-40a4-b07c-a04b1396adab', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'f2775336-ce10-40a4-b07c-a04b1396adab', 6)">C++</a></li></ul><ul class="code-tab-switcher f2775336-ce10-40a4-b07c-a04b1396adab"><li class="code_switcher_container_parent active-tab code_switcher_python 9568785a-1d0f-45e9-a884-16e4bcb582b1"><div class="code_switcher_code_action_container"><div id="code_copied_snackbar">Copied!</div><button class="code_switcher_copy_button" title="Copy" onclick="copyText('9568785a-1d0f-45e9-a884-16e4bcb582b1')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container b0813d01-947e-4972-b626-aa8e67d09264"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'b0813d01-947e-4972-b626-aa8e67d09264', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'b0813d01-947e-4972-b626-aa8e67d09264', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'b0813d01-947e-4972-b626-aa8e67d09264', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'b0813d01-947e-4972-b626-aa8e67d09264', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'b0813d01-947e-4972-b626-aa8e67d09264', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'b0813d01-947e-4972-b626-aa8e67d09264', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'b0813d01-947e-4972-b626-aa8e67d09264', 6)">C++</a></li></ul><ul class="code-tab-switcher b0813d01-947e-4972-b626-aa8e67d09264"><li class="code_switcher_container_parent active-tab code_switcher_python 5b72dd16-aa72-43da-a806-10e47de5765c"><div class="code_switcher_code_action_container"><div id="code_copied_snackbar">Copied!</div><button class="code_switcher_copy_button" title="Copy" onclick="copyText('5b72dd16-aa72-43da-a806-10e47de5765c')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">SerializeToString</span><span class="p">())</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 2df50458-63e0-4a91-a821-ba32b9c5c369"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('2df50458-63e0-4a91-a821-ba32b9c5c369')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 79853a4b-94ec-4fd6-89a1-9995d20d56cf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('79853a4b-94ec-4fd6-89a1-9995d20d56cf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.Message</span><span class="o">;</span>
 
 <span class="kt">int</span> <span class="nf">calculateSize</span><span class="o">(</span><span class="nc">Message</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">getSerializedSize</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin a76bfc2e-44de-4d90-86db-18ba1c85628a"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('a76bfc2e-44de-4d90-86db-18ba1c85628a')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_kotlin 6a5e2889-30ed-4862-b347-059db3324d16"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('6a5e2889-30ed-4862-b347-059db3324d16')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.google.protobuf.Message</span>
 
 <span class="k">fun</span> <span class="nf">calculateSize</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">Message</span><span class="p">)</span> <span class="p">=</span> <span class="n">message</span><span class="p">.</span><span class="n">serializedSize</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go 50f82dc3-b814-4192-acf3-89f1c2b826f9"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('50f82dc3-b814-4192-acf3-89f1c2b826f9')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_go b5114f57-ff18-432a-ab40-9ec1bf03d219"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('b5114f57-ff18-432a-ab40-9ec1bf03d219')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="s">"google.golang.org/protobuf/proto"</span>
 
 <span class="k">func</span> <span class="n">calculateSize</span><span class="p">(</span><span class="n">message</span> <span class="n">proto</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
@@ -86,19 +87,19 @@ While working on a new course, I was looking for an example to store a Color in 
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp f116698d-23dc-4cd2-94b5-3daecf424804"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('f116698d-23dc-4cd2-94b5-3daecf424804')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp f837d957-376d-4bf6-8a5a-a5220f6a07ce"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('f837d957-376d-4bf6-8a5a-a5220f6a07ce')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Google.Protobuf</span>
 
 <span class="kt">int</span> <span class="nf">CalculateSize</span><span class="p">(</span><span class="n">IMessage</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="n">message</span><span class="p">.</span><span class="nf">CalculateSize</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js d2cd1265-eee7-474f-87ed-4c6c85792652"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('d2cd1265-eee7-474f-87ed-4c6c85792652')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_js 82752742-59e3-48d3-994f-9957478d5e93"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('82752742-59e3-48d3-994f-9957478d5e93')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">calculateSize</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">serializeBinary</span><span class="p">().</span><span class="nx">length</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 83f3c081-9f11-40ef-bca8-4f35dd24f91a"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('83f3c081-9f11-40ef-bca8-4f35dd24f91a')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 66e04329-b2fe-4e06-9605-1cda9688269f"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('66e04329-b2fe-4e06-9605-1cda9688269f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;google/protobuf/message.h&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">Message</span> <span class="o">*</span><span class="n">message</span><span class="p">)</span>
@@ -121,7 +122,7 @@ While working on a new course, I was looking for an example to store a Color in 
 <li>The non human readable solution: <code>int32</code> or <code>int64</code></li>
 </ul>
 <p>Let's try with the string and work our way through, here is the proto file we are gonna use:</p>
-<div class="code_switcher_container_parent d4200d8c-bee8-4ca9-ab97-c3830bb9bd7f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 8738ae12-1909-4724-8b30-71a0e86c841f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">option</span> <span class="na">java_package</span> <span class="o">=</span> <span class="s">"com.example"</span><span class="p">;</span>
@@ -135,37 +136,37 @@ While working on a new course, I was looking for an example to store a Color in 
 </code></pre></div></div>
 </div>
 <p>and here is the code that calculates the size for <code>Color</code> with value <code>#FFFFFFFF</code> (max color value):</p>
-<ul class="code-tab-container 542f8760-fd09-438c-998e-61df5a96cdcc"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', '542f8760-fd09-438c-998e-61df5a96cdcc', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '542f8760-fd09-438c-998e-61df5a96cdcc', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', '542f8760-fd09-438c-998e-61df5a96cdcc', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', '542f8760-fd09-438c-998e-61df5a96cdcc', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '542f8760-fd09-438c-998e-61df5a96cdcc', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', '542f8760-fd09-438c-998e-61df5a96cdcc', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '542f8760-fd09-438c-998e-61df5a96cdcc', 6)">C++</a></li></ul><ul class="code-tab-switcher 542f8760-fd09-438c-998e-61df5a96cdcc"><li class="code_switcher_container_parent active-tab code_switcher_python 244bc8a1-0ead-4926-b351-5bcdc942469d"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('244bc8a1-0ead-4926-b351-5bcdc942469d')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container be9488be-e816-4a68-bd40-8ca3f88fed26"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'be9488be-e816-4a68-bd40-8ca3f88fed26', 6)">C++</a></li></ul><ul class="code-tab-switcher be9488be-e816-4a68-bd40-8ca3f88fed26"><li class="code_switcher_container_parent active-tab code_switcher_python 774a439d-3d4b-4cff-9aea-eb59899d8a71"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('774a439d-3d4b-4cff-9aea-eb59899d8a71')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">proto.color_pb2</span> <span class="k">as</span> <span class="n">pb</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">calculate_size</span><span class="p">(</span><span class="n">pb</span><span class="p">.</span><span class="n">Color</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"FFFFFFFF"</span><span class="p">)))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 58959bb8-b956-4a99-a2eb-20ab6a3950f5"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('58959bb8-b956-4a99-a2eb-20ab6a3950f5')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java ecf4c138-9575-46a8-99f1-21d96ab8eef7"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('ecf4c138-9575-46a8-99f1-21d96ab8eef7')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.example.Color</span>
 
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">calculateSize</span><span class="o">(</span><span class="nc">Color</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">setValue</span><span class="o">(</span><span class="s">"FFFFFFFF"</span><span class="o">).</span><span class="na">build</span><span class="o">()));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin 42058c34-9b08-4403-9432-29594e3d3a1d"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('42058c34-9b08-4403-9432-29594e3d3a1d')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_kotlin c02c8c4a-befd-4045-b98f-2bf2ea7a945b"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('c02c8c4a-befd-4045-b98f-2bf2ea7a945b')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.example.color</span>
 
 <span class="nf">println</span><span class="p">(</span><span class="nf">calculateSize</span><span class="p">(</span><span class="nf">color</span> <span class="p">{</span> <span class="n">value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go 92e0ed4f-3925-4bc8-a3c6-30288dd41e6f"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('92e0ed4f-3925-4bc8-a3c6-30288dd41e6f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_go 73cb8589-20c8-4b54-814e-63d4819c75fa"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('73cb8589-20c8-4b54-814e-63d4819c75fa')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="n">pb</span> <span class="s">"example.com/m"</span>
 
 <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">calculateSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">Color</span><span class="p">{</span><span class="n">Value</span><span class="o">:</span> <span class="s">"FFFFFFFF"</span><span class="p">}))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 3e211e59-8ef5-4dfa-ac05-858e629cc4ec"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('3e211e59-8ef5-4dfa-ac05-858e629cc4ec')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp c6a2c38b-5c0e-4112-88e5-d9928eb1a7c9"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('c6a2c38b-5c0e-4112-88e5-d9928eb1a7c9')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Example</span><span class="p">;</span>
 
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="nf">CalculateSize</span><span class="p">(</span><span class="k">new</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">Value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js 8bd7142e-cc76-483d-860b-fe59c6d0d587"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('8bd7142e-cc76-483d-860b-fe59c6d0d587')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_js fa52d902-4ca6-4eaf-8fea-e6e8bbae4949"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('fa52d902-4ca6-4eaf-8fea-e6e8bbae4949')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span><span class="nx">Color</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./proto/color_pb</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">calculateSize</span><span class="p">(</span><span class="k">new</span> <span class="nx">Color</span><span class="p">().</span><span class="nx">setValue</span><span class="p">(</span><span class="dl">"</span><span class="s2">FFFFFFFF</span><span class="dl">"</span><span class="p">)));</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 880683b5-648b-4b31-a696-a954797fa367"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('880683b5-648b-4b31-a696-a954797fa367')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 73a3a616-066a-4ed1-b160-32397bdd542c"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('73a3a616-066a-4ed1-b160-32397bdd542c')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"color.pb.h"</span><span class="cp">
 </span>
 <span class="n">Color</span> <span class="n">color</span><span class="p">;</span>
@@ -186,15 +187,15 @@ While working on a new course, I was looking for an example to store a Color in 
 <p>🟢 green: is the <code>Length-delimited</code> field value. Here 46 is F (you can type <code>man ascii</code> and have a look at the Hexadecimal set).</p>
 <h2 id="lets-optimize-that">Let's optimize that</h2>
 <p>As mentioned earlier, the other way to solve that is to store the value in an integer. So let's check the decimal value of the biggest color that we can get, which is <code>FFFFFFFF</code>.</p>
-<ul class="code-tab-container 05438c84-608d-465b-8d3b-26cfc4c7855f"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '05438c84-608d-465b-8d3b-26cfc4c7855f', 0)">Linux/Mac</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '05438c84-608d-465b-8d3b-26cfc4c7855f', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher 05438c84-608d-465b-8d3b-26cfc4c7855f"><li class="code_switcher_container_parent active-tab code_switcher_shell 846503f3-1ab9-43d8-866f-c5534ac52f39"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('846503f3-1ab9-43d8-866f-c5534ac52f39')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 8cbf2418-aef0-46ed-941c-11ae074c292b"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '8cbf2418-aef0-46ed-941c-11ae074c292b', 0)">Linux/Mac</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '8cbf2418-aef0-46ed-941c-11ae074c292b', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher 8cbf2418-aef0-46ed-941c-11ae074c292b"><li class="code_switcher_container_parent active-tab code_switcher_shell a3f62719-4c12-418e-9a81-a2c1e43b7e8c"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('a3f62719-4c12-418e-9a81-a2c1e43b7e8c')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"ibase=16; FFFFFFFF"</span> | bc
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_shell ab4ba9dd-2f2f-453b-abaf-287155417e02"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('ab4ba9dd-2f2f-453b-abaf-287155417e02')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_shell 3574e888-b13a-4a31-bff8-582ee8f42475"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('3574e888-b13a-4a31-bff8-582ee8f42475')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>convert]::toint64<span class="o">(</span><span class="s2">"FFFFFFFF"</span>, 16<span class="o">)</span>
 </code></pre></div></div>
 </li></ul>
 <p>and this gives us: <strong>4,294,967,295</strong>. Sounds like this gonna fit inside an <code>int32</code> or even an <code>uint32</code> if we wanted to make class instantiation safer (not letting user enter negative value). So we now have:</p>
-<div class="code_switcher_container_parent 1bc62167-bee2-4300-b67c-c535d0ba4141"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 267bfb0f-b01a-4152-9453-204a09150c7b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
   <span class="kt">uint32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
@@ -241,7 +242,7 @@ While working on a new course, I was looking for an example to store a Color in 
 </div>
 <p>This table presents the field value thresholds and the bytes size for serialization of <code>uint32</code>. Can you see the problem here ? <strong>4,294,967,295</strong> is simply bigger than <strong>268,435,456</strong> and what it means is that, our value of <code>FFFFFFFF</code> will be serialized to 5 bytes.</p>
 <p>Do we know another type that could help us serialize in less bytes? Sure we do! We know that <code>fixed32</code> is an unsigned integer and it will always be serialized to 4 bytes. So we if change to:</p>
-<div class="code_switcher_container_parent 52438590-c265-4ace-af02-344d652564f5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 9f00026d-3013-46b2-a7bf-b4ba5c761b01"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
   <span class="kt">fixed32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
@@ -301,19 +302,14 @@ While working on a new course, I was looking for an example to store a Color in 
     <div class="wrapper-footer">
       <div class="container">
         <footer class="footer">
-          
-<a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
-
-
-<a href="https://github.com/Clement-Jean/"><i class="svg-icon github"></i></a>
-
+          <a href="mailto:clement.jean@epitech.eu"><i class="svg-icon email"></i></a>
+<a href="https://github.com/Clement-Jean"><i class="svg-icon github"></i></a>
 <a href="https://www.linkedin.com/in/clement-jean"><i class="svg-icon linkedin"></i></a>
-
 <a href="/feed.xml"><i class="svg-icon rss"></i></a>
-
+<a href="https://www.twitter.com/ClmentJean1"><i class="svg-icon twitter"></i></a>
 <a href="http://stackoverflow.com/users/11269045/clément-jean"><i class="svg-icon stackoverflow"></i></a>
 
-
+<a href="https://techhub.social/@clementjean"><i class="svg-icon mastodon"></i></a>
 
         </footer>
       </div>
