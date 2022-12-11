@@ -112,7 +112,7 @@ So, right now, we didn't implement `GetDummy` rpc endpoint. What happens if we t
 Let's skip the `Unimplemented` for now and let's take a look at the `Unsafe` type emdeding. Before explaining it though, I want to mention two things:
 
 - `Unsafe` sounds really bad. However in some specific cases, this embedding might actually be useful.
-- The type documentation says that this type is not recommended but once again, be aware that it might be useful.
+- The type documentation says that this type is not recommended, but once again, be aware that it might be useful.
 
 With that said, let's get started. Let's replace our type embedding:
 
