@@ -615,3 +615,10 @@ footer {
 .arrange-vertically > * {
   display: block;
 }
+
+.featured-image-post {
+	width: 100%;
+	height: 300px;
+  object-fit: cover;
+  object-position: center;
+}
