@@ -67,6 +67,70 @@ permalink: /about/
             </div>
             <ul class="timeline timeline-centered">
                 <li class="timeline-item period">
+                    <div class="timeline-info"></div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h2 class="timeline-title">Experience</h2>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Nov 2019 - Present</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <img src="{{ site.baseurl }}/images/e4e.png" />
+                        <h3 class="timeline-title">CTO</h3>
+                        <p align="justify">By managing a team of freelancer and developing software, I helped the company providing an Android app (Kotlin), backend server (Golang) and internal tools.</p>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Oct 2019 - Present</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>ShareAble OÜ</h3>
+                        <h3 class="timeline-title">Founder</h3>
+                        <ul>
+                            <li>Taught gRPC and Protobuf to ~70k students</li>
+                            <li>Made 5 courses on Udemy</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Apr 2016 - Jul 2016</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <img src="{{ site.baseurl }}/images/septeo.png" />
+                        <h3 class="timeline-title">C# developer</h3>
+                        <p align="justify">Automatic generation of pdf document from a word template. To do this a creation of a mini-language was the best way. The Architecture of the project was the big part of my job because it permitted to integrate my module in the ERP.</p>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Feb 2015 - Apr 2016</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <img src="{{ site.baseurl }}/images/epitech.png" />
+                        <h3 class="timeline-title">Regional teaching assistant</h3>
+                        <p align="justify">"These students are motors in their region to their peers and enjoy a series of benefits and special conditions. Because they engage with Epitech, Epitech agrees with them: Epitech is a school where the responsibility is shared and learned from the 1st years.". My job was teaching C, C++ and linux to younger generation of Epitech's students</p>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Jul 2014 - Dec 2014</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">C# developer</h3>
+                        <p align="justify">Creation of a web page (ASP.NET c#), which consist in that enterprise customers can download, print or view , according to the rights , files placed on AGT 's servers</p>
+                    </div>
+                </li>
+                <li class="timeline-item period">
                     <div class="timeline-content">
                         <h2 class="timeline-title">Education</h2>
                     </div>
@@ -134,45 +198,6 @@ permalink: /about/
                             <li>C++</li>
                             <li>C#</li>
                         </ul>
-                    </div>
-                </li>
-                <li class="timeline-item period">
-                    <div class="timeline-info"></div>
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h2 class="timeline-title">Experience</h2>
-                    </div>
-                </li>
-                <li class="timeline-item">
-                    <div class="timeline-info">
-                        <span>Apr 2016 - Jul 2016</span>
-                    </div>
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/septeo.png" />
-                        <h3 class="timeline-title">C# developer</h3>
-                        <p align="justify">Automatic generation of pdf document from a word template. To do this a creation of a mini-language was the best way. The Architecture of the project was the big part of my job because it permitted to integrate my module in the ERP.</p>
-                    </div>
-                </li>
-                <li class="timeline-item">
-                    <div class="timeline-info">
-                        <span>Feb 2015 - Apr 2016</span>
-                    </div>
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/epitech.png" />
-                        <h3 class="timeline-title">Regional teaching assistant</h3>
-                        <p align="justify">"These students are motors in their region to their peers and enjoy a series of benefits and special conditions. Because they engage with Epitech, Epitech agrees with them: Epitech is a school where the responsibility is shared and learned from the 1st years.". My job was teaching C, C++ and linux to younger generation of Epitech's students</p>
-                    </div>
-                </li>
-                <li class="timeline-item">
-                    <div class="timeline-info">
-                        <span>Jul 2014 - Dec 2014</span>
-                    </div>
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">C# developer</h3>
-                        <p align="justify">Creation of a web page (ASP.NET c#), which consist in that enterprise customers can download, print or view , according to the rights , files placed on AGT 's servers</p>
                     </div>
                 </li>
             </ul>
