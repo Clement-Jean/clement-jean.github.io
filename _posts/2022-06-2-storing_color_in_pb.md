@@ -77,7 +77,7 @@ When I see something like `#FFFFFFFF` or `#00000000` (RGBA), I directly think ab
 
 Let's try with the string and work our way through, here is the proto file we are gonna use:
 
-```proto
+```proto codeCopyEnabled
 syntax = "proto3";
 
 option java_package = "com.example";
