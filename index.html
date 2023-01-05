@@ -12,7 +12,7 @@ layout: default
       {% endif %}
       
       <div class="entry">
-        {{ post.excerpt }}
+        {{ post.excerpt | strip_html }}
       </div>
 
       <a href="{{ site.baseurl }}{{ post.url }}" class="read-more red-black-link">Read More</a>
