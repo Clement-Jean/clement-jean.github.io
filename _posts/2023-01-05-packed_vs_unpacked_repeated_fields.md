@@ -3,7 +3,6 @@ layout: post
 author: Clement
 title: Packed vs Unpacked Repeated Fields
 categories: [Protocol Buffers]
-image: /images/box.jpg
 ---
 
 As this is a common and not well documented mistake that developers are doing, I decided to do a post explaining the problem that you might face when using repeated fields in your Protobuf messages.

@@ -104,7 +104,7 @@ permalink: /about/
                     </div>
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/septeo.png" />
+                        <img src="{{ site.baseurl }}/images/septeo.svg" width="100" height="100" />
                         <h3 class="timeline-title">C# developer</h3>
                         <p align="justify">Automatic generation of pdf document from a word template. To do this a creation of a mini-language was the best way. The Architecture of the project was the big part of my job because it permitted to integrate my module in the ERP.</p>
                     </div>
@@ -115,7 +115,7 @@ permalink: /about/
                     </div>
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/epitech.png" />
+                        <img src="{{ site.baseurl }}/images/epitech.svg" width="150" height="100" />
                         <h3 class="timeline-title">Regional teaching assistant</h3>
                         <p align="justify">"These students are motors in their region to their peers and enjoy a series of benefits and special conditions. Because they engage with Epitech, Epitech agrees with them: Epitech is a school where the responsibility is shared and learned from the 1st years.". My job was teaching C, C++ and linux to younger generation of Epitech's students</p>
                     </div>
@@ -141,7 +141,7 @@ permalink: /about/
                     </div>
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/ckgsb.png" />
+                        <img src="{{ site.baseurl }}/images/ckgsb.svg" width="100" height="100" />
                         <h3 class="timeline-title">CKGSB</h3>
                         <p>Master of Business Administration - MBA</p>
                         <ul>
@@ -172,7 +172,7 @@ permalink: /about/
                     </div>
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/tsinghua.png" />
+                        <img src="{{ site.baseurl }}/images/tsinghua.png" width="100" height="100" />
                         <h3 class="timeline-title">Tsinghua University</h3>
                         <p>Computer Science - Master</p>
                         <ul>
@@ -190,7 +190,7 @@ permalink: /about/
                     </div>
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
-                        <img src="{{ site.baseurl }}/images/epitech.png" />
+                        <img src="{{ site.baseurl }}/images/epitech.svg" width="150" height="100" />
                         <h3 class="timeline-title">EPITECH</h3>
                         <p>Computer Engineering - Bachelor</p>
                         <ul>
