@@ -12,4 +12,4 @@ gem "jekyll-sitemap", "~> 1.4"
 
 gem "jekyll-feed", "~> 0.17"
 
-gem "jdvp-codetabs-commonmark", "~> 0.1.3"
+gem "jdvp-codetabs-commonmark", "~> 1.0.1"
