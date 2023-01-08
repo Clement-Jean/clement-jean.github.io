@@ -15,7 +15,7 @@ layout: default
         {{ post.excerpt | strip_html }}
       </div>
 
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more red-black-link">Read More</a>
+      <a href="{{ site.baseurl }}{{ post.url }}" alt="{{ post.title }}" class="read-more red-black-link">Read More</a>
     </article>
   {% endfor %}
 </div>
