@@ -33,7 +33,7 @@ repeated int32 ids = 1 [packed = false];
 
 <p>
 <details><summary><b>Refresher #3: Protobuf Text Format</b></summary>
-<p>Protobuf does not exclusively encode to binary. It is possible to encode to JSON or to a format that is close to JSON. This text format is generally used for improving readability/writeability (nobody want to read/write binary) and enhance your debugging or analysis of your messages. I will not go into too much details about this here, but to write a repeated field, you can simply repeated the field name as many times as you want to add value to the field, followed by a colon and the value. This looks like this:</p>
+<p>Protobuf does not exclusively encode to binary. It is possible to encode to JSON or to a format that is close to JSON. This text format is generally used for improving readability/writeability (nobody wants to read/write binary) and enhance your debugging or analysis of your messages. I will not go into too much detail about this here, but to write a repeated field, you can simply repeated the field name as many times as you want to add value to the field, followed by a colon and the value. This looks like this:</p>
 <p>
 {% highlight yaml %}
 ids: 1
@@ -66,7 +66,7 @@ message PackedRepeated {
 }
 ```
 
-And finally, we need to use the `--encode` flag from protoc, which let us take some binary content on the standard input and write some protobuf encoded message on the standard ouput. To take advantage of this we are going to display the content of a file on the standard output, pipe that to the standard input of protoc and finally, pipe the standard ouput of protoc to a command that display an hexadecimal dump.
+And finally, we need to use the `--encode` flag from protoc, which let us take some binary content on the standard input and write some protobuf encoded message on the standard output. To take advantage of this we are going to display the content of a file on the standard output, pipe that to the standard input of protoc and finally, pipe the standard output of protoc to a command that displays a hexadecimal dump.
 
 ```shell Linux/MacOS
 $ cat repeated.txt | protoc --encode=PackedRepeated proto/repeated.proto | hexdump -C
@@ -116,7 +116,7 @@ $ [Convert]::ToString(0x02, 2)
 10
 ```
 
-> Note: When you are using integer that are not fixed, you are dealing with varints. This means that the bigger the value, the bigger the amount of bytes it will be encoded to. In our example, we purposely chose small numbers so that they are encoded into 1 byte. The following encoding explanation is not correct for all numbers you might use.
+> Note: When you are using integers that are not fixed, you are dealing with varints. This means that the bigger the value, the bigger the number of bytes it will be encoded in. In our example, we purposely chose small numbers so that they are encoded into one byte. The following encoding explanation is not correct for all numbers you might use.
 
 - `0A` gives us `1010`. This is a byte that represent both the wire type (type of value) and the field tag. To get the wire type, we simply take the first 3 bits starting from the right. In our case this is `010` or 2. if you check the [Encoding](https://developers.google.com/protocol-buffers/docs/encoding#structure) page of Protobuf Documentation, this means that we have a Length-Delimited type. In other words, we have some kind of data that has a dynamic size. This is exactly what we have, this is a list. Then, we are left with a tag equal to 1.
 - `03` gives us `11`. This is the actual length of the list. Here we have 3 values.
@@ -151,7 +151,7 @@ $ (Get-Content ./repeated.txt | protoc --encode=UnpackedRepeated proto/repeated.
 0000000000000000 08 01 08 02 08 03                               ������
 ```
 
-And ... We have 6 bytes.
+And ... We have six bytes.
 
 There are two things we can notice here. The first is that now we don't have any `0A` byte. And the second one is that we are interleaving `08` with our values. Let's find out how this was encoded.
 
@@ -166,11 +166,11 @@ $ [Convert]::ToString(0x08, 2)
 1000
 ```
 
-- `08` gives us `1000`. Once again this is the combination of wire type and field tag. So we have 0 for the wire type, which correspond to varint. And then the field tag is 1.
+- `08` gives us `1000`. Once again this is the combination of wire type and field tag. So we have 0 for the wire type, which corresponds to varint. And then the field tag is 1.
 
 So in this case, we are basically encoding each value of the list as a separate field. Protobuf will then see that the `ids` field is repeated and that we are adding multiple values with the same field tag and it will just add these values to the list.
 
-In the end, Protobuf is encoding `UnpackedRepeated` into 6 bytes instead of 5. This sounds negligible here because we have a simple example but if you run the example on 100 ids:
+In the end, Protobuf is encoding `UnpackedRepeated` into six bytes instead of five. This sounds negligible here because we have a simple example but if you run the example on 100 ids:
 
 > You can generate the repeated.txt by running this in your shell:
 > ```shell Linux/MacOS codeCopyEnabled
