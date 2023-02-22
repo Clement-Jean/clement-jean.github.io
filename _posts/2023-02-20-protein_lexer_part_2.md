@@ -564,34 +564,34 @@ Now that we know the possible set of characters, we can do an `acceptWhile` to r
 //...
 
 func lexNumber(l *Impl) stateFn {
-	var t TokenType = TokenInt
+  var t TokenType = TokenInt
 
-	l.accept("+-")
+  l.accept("+-")
 
-	digits := "0123456789" // decimal
+  digits := "0123456789" // decimal
 
-	if l.accept("0") { // starts with 0
-		if l.accept("xX") {
-			digits = "0123456789abcdefABCDEF" // hexadecimal
-		} else {
-			digits = "01234567" // octal
-		}
-	}
+  if l.accept("0") { // starts with 0
+    if l.accept("xX") {
+      digits = "0123456789abcdefABCDEF" // hexadecimal
+    } else {
+      digits = "01234567" // octal
+    }
+  }
 
-	l.acceptWhile(digits)
+  l.acceptWhile(digits)
 
-	if l.accept(".") {
-		t = TokenFloat
-		l.acceptWhile("0123456789")
-	}
+  if l.accept(".") {
+    t = TokenFloat
+    l.acceptWhile("0123456789")
+  }
 
-	if l.accept("eE") { // exponent
-		t = TokenFloat
-		l.accept("+-")
-		l.acceptWhile("0123456789")
-	}
+  if l.accept("eE") { // exponent
+    t = TokenFloat
+    l.accept("+-")
+    l.acceptWhile("0123456789")
+  }
 
-	return l.emit(t)
+  return l.emit(t)
 }
 ```
 
@@ -602,8 +602,8 @@ func lexProto(l *Impl) stateFn {
   switch r := l.next(); {
   //...
   case r == '+' || r == '-' || r == '.' || ('0' <= r && r <= '9'):
-		l.backup()
-		return lexNumber
+    l.backup()
+    return lexNumber
   }
   //...
 }
@@ -623,7 +623,7 @@ and we still have an error. This is due to the fact that, in part 1, when we wer
 ```go lexer/impl.go
 //...
 case r == '.':
-	return l.emit(TokenDot)
+  return l.emit(TokenDot)
 //...
 ```
 
@@ -632,7 +632,7 @@ In Protobuf, numbers can start directly with a dot and thus our lexer will just 
 ```go lexer/impl.go
 //...
 case r == '.' && !unicode.IsNumber(l.peek()):
-	return l.emit(TokenDot)
+  return l.emit(TokenDot)
 //...
 ```
 
@@ -655,28 +655,28 @@ Now, we need to write some main function to run our lexer. It will read the firs
 package main
 
 import (
-	"log"
-	"os"
+  "log"
+  "os"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func main() {
-	args := os.Args[1:]
-	content, err := os.ReadFile(args[0])
-	if err != nil {
-		log.Fatal(err)
-	}
-	l := lexer.New(string(content))
+  args := os.Args[1:]
+  content, err := os.ReadFile(args[0])
+  if err != nil {
+    log.Fatal(err)
+  }
+  l := lexer.New(string(content))
 
-	for {
-		token := l.NextToken()
+  for {
+    token := l.NextToken()
 
-		log.Println(token)
-		if token.Type == lexer.EOF {
-			break
-		}
-	}
+    log.Println(token)
+    if token.Type == lexer.EOF {
+      break
+    }
+  }
 }
 ```
 
