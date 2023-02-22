@@ -486,3 +486,11 @@ Boom !
 We have a Lexer that is able to go through a text and identify the symbols that we defined as TokenType. Admittedly, this is not exceptional but we are now ready for the next part where we are going to skip whitespaces and comments, and lex Identifiers, Numbers (Int and Float), and Strings.
 
 **If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.**
+
+<div class="container">
+  <div class="row">
+		<div class="col text-center">
+			<a href="/protein_lexer_part_2" class="btn btn-danger text-center">Next Article</a>
+		</div>
+	</div>
+</div>
