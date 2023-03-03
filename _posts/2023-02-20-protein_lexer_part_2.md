@@ -104,7 +104,7 @@ and that's basically it! We run our test and we get:
 
 ```shell
 $ go test ./...
-ok      test.com/lexer  0.235s
+ok      github.com/Clement-Jean/protein/lexer  0.235s
 ```
 
 ## Comments
@@ -173,7 +173,7 @@ and run our tests:
 
 ```shell
 $ go test ./...
-ok      test.com/lexer  0.351s
+ok      github.com/Clement-Jean/protein/lexer  0.351s
 ```
 
 We pass the Line Comment tests, let's go to the multiline comment.
@@ -293,7 +293,7 @@ and our tests?
 
 ```shell
 $ go test ./...
-ok      test.com/lexer  0.741s
+ok      github.com/Clement-Jean/protein/lexer  0.741s
 ```
 
 ## Identifiers
@@ -363,7 +363,7 @@ We rerun our test:
 
 ```shell
 $ go test ./...
-ok      test.com/lexer  0.767s
+ok      github.com/Clement-Jean/protein/lexer  0.767s
 ```
 
 ## Strings
@@ -464,7 +464,7 @@ and the tests?
 
 ```shell
 go test ./...
-ok      test.com/lexer  0.374s
+ok      github.com/Clement-Jean/protein/lexer  0.374s
 ```
 
 ## Numbers
@@ -640,7 +640,7 @@ And our tests pass:
 
 ```shell
 go test ./...
-ok      test.com/lexer  0.763s
+ok      github.com/Clement-Jean/protein/lexer  0.763s
 ```
 
 > Note: I am aware that some invalid numbers can pass through this lexing function. For example, the invalid number `0XFF.5` will return you a float. However, this is not the lexer that should handle the verification of number, the parser will. The lexer's job is to return tokens.
@@ -710,8 +710,8 @@ In this article, we tokenized all the elements that we need to get started with 
     <div class="col text-center">
       <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Previous Article</a>
     </div>
-    <!-- <div class="col text-center">
-      <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Next Article</a>
-    </div> -->
+    <div class="col text-center">
+      <a href="/protein_lexer_part_2" class="btn btn-danger text-center">Next Article</a>
+    </div>
   </div>
 </div>

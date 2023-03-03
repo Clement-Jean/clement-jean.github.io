@@ -475,8 +475,7 @@ and now:
 
 ```shell
 $ go test ./...
-
-ok      test.com/lexer  0.809s
+ok      github.com/Clement-Jean/protein/lexer  0.809s
 ```
 
 Boom !
