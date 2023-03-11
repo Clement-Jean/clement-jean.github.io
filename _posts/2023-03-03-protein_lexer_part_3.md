@@ -94,17 +94,17 @@ ok      github.com/Clement-Jean/protein/lexer  0.857s
 
 ## Conclusion
 
-In this article, we made the final test for our lexer and we solved a critical bug for `Token` positions. We now have a functional lexer and in the next article we are going to start the parser!
+In this article, we created our first three parsing functions. We parsed syntax, package and imports. We are now ready to go more complicated statements.
 
 **If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.**
 
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Previous Article</a>
+      <a href="/protein_lexer_part_2" class="btn btn-danger text-center">Previous Article</a>
     </div>
-    <!-- <div class="col text-center">
-      <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Next Article</a>
-    </div> -->
+    <div class="col text-center">
+      <a href="/protein_parser_part_1" class="btn btn-danger text-center">Next Article</a>
+    </div>
   </div>
 </div>

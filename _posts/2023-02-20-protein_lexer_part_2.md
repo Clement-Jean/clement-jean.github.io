@@ -711,7 +711,7 @@ In this article, we tokenized all the elements that we need to get started with 
       <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Previous Article</a>
     </div>
     <div class="col text-center">
-      <a href="/protein_lexer_part_2" class="btn btn-danger text-center">Next Article</a>
+      <a href="/protein_lexer_part_3" class="btn btn-danger text-center">Next Article</a>
     </div>
   </div>
 </div>
