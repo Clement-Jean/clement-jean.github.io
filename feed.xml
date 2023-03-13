@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-13T10:00:10+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Protein: Parser (Part 1)</title><link href="https://clement-jean.github.io/protein_parser_part_1/" rel="alternate" type="text/html" title="Protein: Parser (Part 1)" /><published>2023-03-09T00:00:00+08:00</published><updated>2023-03-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_parser_part_1</id><content type="html" xml:base="https://clement-jean.github.io/protein_parser_part_1/"><![CDATA[<p>In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are reasy for this, it's gonna be fun!</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-13T10:06:13+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Protein: Parser (Part 1)</title><link href="https://clement-jean.github.io/protein_parser_part_1/" rel="alternate" type="text/html" title="Protein: Parser (Part 1)" /><published>2023-03-09T00:00:00+08:00</published><updated>2023-03-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_parser_part_1</id><content type="html" xml:base="https://clement-jean.github.io/protein_parser_part_1/"><![CDATA[<p>In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are ready for this, it's gonna be fun!</p>
 <h2 id="boilerplate">Boilerplate</h2>
 <p>As always, we need to think a little bit before to actually write the features themselves. The first thing that we can do to get us started is to write the Parser interface.</p>
-<ul class="code-tab-container 6a47d7d8-bbe1-4f1e-a3bc-d656de2c18cf"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '6a47d7d8-bbe1-4f1e-a3bc-d656de2c18cf', 0)">parser/parser.go</a></li></ul><ul class="code-tab-switcher 6a47d7d8-bbe1-4f1e-a3bc-d656de2c18cf"><li class="code_switcher_container_parent active-tab code_switcher_go 19dd501f-50c8-477c-872f-e309277213a2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 0a301b05-c410-4e62-bfe0-59a3d03df4a8"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '0a301b05-c410-4e62-bfe0-59a3d03df4a8', 0)">parser/parser.go</a></li></ul><ul class="code-tab-switcher 0a301b05-c410-4e62-bfe0-59a3d03df4a8"><li class="code_switcher_container_parent active-tab code_switcher_go 6d2ad0d0-335e-4d2d-b63c-c4cc26aa4265"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="c">// Parser is protein's parser</span>
@@ -17,16 +17,16 @@
 <li>We use the descriptor.proto file which defines Messages for describing elements in a Protobuf file.</li>
 </ul>
 <p>Both have pros and cons. If we go with the first one we have more control over our serialization. It means that we can optimize some elements' serialized data. However, it also means that we are not compatible with the official way and that's not good.
-For the using the official serialization, I think you get the idea. We have the pros being the cons of the other implementation, and the cons being the pros of the other implementation.</p>
-<p>In the end, for the sake of compatibility, I will be sacrificing some performance. However, these performance are only saving few bytes and having compatibility with programs serialized by protoc far overweights them.</p>
+For the &quot;using the official serialization&quot;, I think you get the idea. We have the pros being the cons of the other implementation, and the cons being the pros of the other implementation.</p>
+<p>In the end, for the sake of compatibility, I will be sacrificing some performance. However, these performances are only saving a few bytes and having compatibility with programs serialized by protoc far overweights them.</p>
 <h3 id="depending-on-protobuf">Depending on Protobuf</h3>
 <p>To use the descriptor, we are going to depend on Protobuf's library. To do that we are going to add in our dependency:</p>
-<div class="code_switcher_container_parent 174b9927-6c83-4022-b9c6-12c319d782a5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 6ce41eeb-6840-4a24-a085-b8a46f826f9c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go get google.golang.org/protobuf
 </code></pre></div></div>
 </div>
 <p>This will let us access <code>descriptorpb</code> package, which contains the <code>FileDescriptorProto</code> struct. If you look at the definition of that struct, you will see the following comment:</p>
-<div class="code_switcher_container_parent 0e27aa68-28ef-4e6e-af48-8d59e1a7408f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 46ae9e44-fc4d-4eb5-b03e-2bbeea11d5e5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Describes a complete .proto file.</span>
 <span class="k">type</span> <span class="n">FileDescriptorProto</span> <span class="k">struct</span>
 </code></pre></div></div>
@@ -34,7 +34,7 @@ For the using the official serialization, I think you get the idea. We have the 
 <p>That's exactly what we are trying to do.</p>
 <h3 id="back-to-interface">Back to interface</h3>
 <p>With that dependency on Protobuf, we can now finish our interface:</p>
-<ul class="code-tab-container 3543ecc4-9048-44a9-ae58-bdbd7b2bba3d"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '3543ecc4-9048-44a9-ae58-bdbd7b2bba3d', 0)">parser/parser.go</a></li></ul><ul class="code-tab-switcher 3543ecc4-9048-44a9-ae58-bdbd7b2bba3d"><li class="code_switcher_container_parent active-tab code_switcher_go b7fc9e64-27b9-4d98-8e22-9563c02744dc"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container f6d8f007-55af-4bb5-8a02-696aacc7e9e4"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f6d8f007-55af-4bb5-8a02-696aacc7e9e4', 0)">parser/parser.go</a></li></ul><ul class="code-tab-switcher f6d8f007-55af-4bb5-8a02-696aacc7e9e4"><li class="code_switcher_container_parent active-tab code_switcher_go 0f09c519-7fdb-4508-aa08-19a030b3d575"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="n">pb</span> <span class="s">"google.golang.org/protobuf/types/descriptorpb"</span>
@@ -49,7 +49,7 @@ For the using the official serialization, I think you get the idea. We have the 
 <h2 id="implementation">Implementation</h2>
 <p>Let's now implement the interface. But by now you know the drill. We are going to create a minimal implementation so that our first test fails. So what we need is an <code>Impl</code> struct and we need to implement <code>Parser</code> by writing the <code>Parse</code> function.</p>
 <p>For now, the <code>Parse</code> function will simply return an empty <code>FileDescriptorProto</code>.</p>
-<ul class="code-tab-container feeeefb4-54c5-4281-aba5-d3f37f564dd1"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'feeeefb4-54c5-4281-aba5-d3f37f564dd1', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher feeeefb4-54c5-4281-aba5-d3f37f564dd1"><li class="code_switcher_container_parent active-tab code_switcher_go 11f974e6-a2c5-4d7d-9eb4-ec28838500dc"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container cbc6b7d0-347c-49aa-a74e-de6930e72bb8"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'cbc6b7d0-347c-49aa-a74e-de6930e72bb8', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher cbc6b7d0-347c-49aa-a74e-de6930e72bb8"><li class="code_switcher_container_parent active-tab code_switcher_go fc435ae3-2e63-4b8a-98df-fa53ee88d6db"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -76,7 +76,7 @@ For the using the official serialization, I think you get the idea. We have the 
 </li></ul>
 <h3 id="first-test">First test</h3>
 <p>As our first test we are going to create the test for a syntax statement. This test will take advantage of the fact that <code>Lexer</code> is an interface by creating a <code>FakeLexer</code>. This fake lexer will simply iterate over an array of tokens and return them one by one.</p>
-<ul class="code-tab-container 8b41c4ed-42f0-4d0d-8327-1d57a7f78058"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '8b41c4ed-42f0-4d0d-8327-1d57a7f78058', 0)">parser/parser_test.go</a></li></ul><ul class="code-tab-switcher 8b41c4ed-42f0-4d0d-8327-1d57a7f78058"><li class="code_switcher_container_parent active-tab code_switcher_go e39abbae-8648-4bd8-9a7c-e6ab3c35ca00"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 6d9fa153-0afd-401b-af51-d5f50c56a13b"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '6d9fa153-0afd-401b-af51-d5f50c56a13b', 0)">parser/parser_test.go</a></li></ul><ul class="code-tab-switcher 6d9fa153-0afd-401b-af51-d5f50c56a13b"><li class="code_switcher_container_parent active-tab code_switcher_go f90e64b8-aefb-48fe-a9ca-e758981015c1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -100,8 +100,8 @@ For the using the official serialization, I think you get the idea. We have the 
 </code></pre></div></div>
 </li></ul>
 <p>This basically means that each time we are running a test in the parser, we are not going to run the lexer code. We are going to simply focus on our current features. So, if we encounter a bug, it means that it is in the parser, not anywhere else.</p>
-<p>With that, we can write out first test for <code>syntax = &quot;proto3&quot;;</code>.</p>
-<ul class="code-tab-container fb843e28-a5af-4d6b-b568-e9017e07349a"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'fb843e28-a5af-4d6b-b568-e9017e07349a', 0)">parser/parser_syntax_test.go</a></li></ul><ul class="code-tab-switcher fb843e28-a5af-4d6b-b568-e9017e07349a"><li class="code_switcher_container_parent active-tab code_switcher_go 39ea5daf-8c5a-4f25-8aea-a63f00b217d7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<p>With that, we can write our first test for <code>syntax = &quot;proto3&quot;;</code>.</p>
+<ul class="code-tab-container 7cc57c03-447d-45f0-bcc5-8b5fc60cd21c"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '7cc57c03-447d-45f0-bcc5-8b5fc60cd21c', 0)">parser/parser_syntax_test.go</a></li></ul><ul class="code-tab-switcher 7cc57c03-447d-45f0-bcc5-8b5fc60cd21c"><li class="code_switcher_container_parent active-tab code_switcher_go 9f360456-6759-4030-bea5-69720caeadd2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -129,7 +129,7 @@ For the using the official serialization, I think you get the idea. We have the 
 </code></pre></div></div>
 </li></ul>
 <p>Obviously:</p>
-<div class="code_switcher_container_parent 5baaf111-7d9c-4f19-8858-9c97c3c69d3b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent d67a5e46-977b-4f7f-b6ae-8c03464750b6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 <span class="nt">---</span> FAIL: TestParseSyntaxProto3 <span class="o">(</span>0.00s<span class="o">)</span>
     parser_syntax_test.go:22: syntax wrong. <span class="nv">expected</span><span class="o">=</span><span class="s1">'proto3'</span>, <span class="nv">got</span><span class="o">=</span><span class="s1">''</span>
@@ -138,7 +138,7 @@ FAIL
 </div>
 <h3 id="parsing">Parsing</h3>
 <p>We should now improve the <code>Parse</code> function to consume the <code>Lexer</code>'s tokens and do things with that. Here is the pseudo code:</p>
-<div class="code_switcher_container_parent d49080f1-647a-4c81-aabf-2d11eca9b951"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 431c36bd-c66b-43d6-b5c6-7200b225a2b2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">currToken</span><span class="o">.</span><span class="n">Type</span> <span class="o">!=</span> <span class="n">EOF</span> <span class="p">{</span>
   <span class="k">if</span> <span class="n">currToken</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="n">Identifier</span> <span class="p">{</span>
     <span class="n">fn</span> <span class="o">:=</span> <span class="n">parseFuncs</span><span class="p">[</span><span class="n">curToken</span><span class="o">.</span><span class="n">Literal</span><span class="p">]</span> <span class="c">// find the function depending on keyword</span>
@@ -148,7 +148,7 @@ FAIL
 </code></pre></div></div>
 </div>
 <p>You notice that we need a <code>currToken</code> representing the current token being parsed. We will also need the peek token for parsing syntax and other statements. This is because we are going to make sure each time that the peek token is correct, otherwise we will return an error. So <code>Impl</code> now has a <code>currToken</code> and <code>peekToken</code>:</p>
-<ul class="code-tab-container f752414e-4c2c-4180-aad6-3f374f5e9283"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f752414e-4c2c-4180-aad6-3f374f5e9283', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher f752414e-4c2c-4180-aad6-3f374f5e9283"><li class="code_switcher_container_parent active-tab code_switcher_go 6bbf738a-7288-47fd-b9d0-bb5e839304c7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container ae750261-c1ef-4eec-95f9-d822c9b348c1"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'ae750261-c1ef-4eec-95f9-d822c9b348c1', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher ae750261-c1ef-4eec-95f9-d822c9b348c1"><li class="code_switcher_container_parent active-tab code_switcher_go 75407b31-ec66-4dc5-ada6-a0c59e92c9e7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Impl</span> <span class="k">struct</span> <span class="p">{</span>
   <span class="n">l</span> <span class="n">lexer</span><span class="o">.</span><span class="n">Lexer</span>
   <span class="n">curToken</span>  <span class="n">lexer</span><span class="o">.</span><span class="n">Token</span>
@@ -157,7 +157,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>Now, we need to populate these tokens before being able to use them. The first time we need to initialize them is in the <code>New</code> function.</p>
-<ul class="code-tab-container f73442eb-4fd0-4c61-96b2-f13ac895e698"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f73442eb-4fd0-4c61-96b2-f13ac895e698', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher f73442eb-4fd0-4c61-96b2-f13ac895e698"><li class="code_switcher_container_parent active-tab code_switcher_go 85a48735-cd2f-455b-b605-3ab2e037f8b1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 6e689d6e-0065-4a9e-b009-b7f38b1b352f"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '6e689d6e-0065-4a9e-b009-b7f38b1b352f', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 6e689d6e-0065-4a9e-b009-b7f38b1b352f"><li class="code_switcher_container_parent active-tab code_switcher_go f8fa350c-4ab6-4c7d-b1e9-fc6a8c3310f8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">New</span><span class="p">(</span><span class="n">l</span> <span class="n">lexer</span><span class="o">.</span><span class="n">Lexer</span><span class="p">)</span> <span class="n">Parser</span> <span class="p">{</span>
   <span class="n">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Impl</span><span class="p">{</span><span class="n">l</span><span class="o">:</span> <span class="n">l</span><span class="p">}</span>
   <span class="n">p</span><span class="o">.</span><span class="n">nextToken</span><span class="p">()</span>
@@ -167,7 +167,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>But <code>nextToken</code> is not the <code>Lexer.NextToken</code>, this is a private function in <code>Parser</code>. This is a function that looks for the next non-space token.</p>
-<ul class="code-tab-container 63680e5e-84e5-4d0a-802a-ff61be58f3a0"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '63680e5e-84e5-4d0a-802a-ff61be58f3a0', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 63680e5e-84e5-4d0a-802a-ff61be58f3a0"><li class="code_switcher_container_parent active-tab code_switcher_go 21b561e2-09bb-4392-8168-baf6c30f8af6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 17e6795d-bd1c-4799-8cb6-e400cbc87e07"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '17e6795d-bd1c-4799-8cb6-e400cbc87e07', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 17e6795d-bd1c-4799-8cb6-e400cbc87e07"><li class="code_switcher_container_parent active-tab code_switcher_go 5c58664a-f639-45ff-805b-196c07d4a4ec"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">)</span> <span class="n">nextToken</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">for</span> <span class="n">p</span><span class="o">.</span><span class="n">curToken</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">peekToken</span><span class="p">;</span> <span class="n">p</span><span class="o">.</span><span class="n">curToken</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="n">lexer</span><span class="o">.</span><span class="n">TokenSpace</span><span class="p">;</span> <span class="n">p</span><span class="o">.</span><span class="n">curToken</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">NextToken</span><span class="p">()</span> <span class="p">{</span>
   <span class="p">}</span>
@@ -177,7 +177,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>With that we can start updating our <code>Parse</code> function.</p>
-<ul class="code-tab-container 6e146433-9ad0-4033-8192-895fce04f01d"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '6e146433-9ad0-4033-8192-895fce04f01d', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 6e146433-9ad0-4033-8192-895fce04f01d"><li class="code_switcher_container_parent active-tab code_switcher_go 0f22eeb4-9d7f-447b-9215-04b57e1169bf"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container b743cce5-acad-4ad8-afc2-e13bef3da26f"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'b743cce5-acad-4ad8-afc2-e13bef3da26f', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher b743cce5-acad-4ad8-afc2-e13bef3da26f"><li class="code_switcher_container_parent active-tab code_switcher_go 56567c38-b45c-4adb-b0c1-7595e4179116"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">)</span> <span class="n">Parse</span><span class="p">()</span> <span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span> <span class="p">{</span>
   <span class="n">d</span> <span class="o">:=</span> <span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">{}</span>
 
@@ -193,14 +193,14 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>Finally, we are going to register all the parsing functions that we are gonna write in this and next articles. We are going to have a map mapping &quot;syntax&quot; to parseSyntax, ...</p>
-<ul class="code-tab-container 2d49ba8a-e470-43e5-8265-61b7b782f6f4"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '2d49ba8a-e470-43e5-8265-61b7b782f6f4', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 2d49ba8a-e470-43e5-8265-61b7b782f6f4"><li class="code_switcher_container_parent active-tab code_switcher_go da92d15e-708d-4c0c-b9c5-20e9de879efb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container e70e0ffd-0c70-4046-b3ed-792a6efd71ff"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'e70e0ffd-0c70-4046-b3ed-792a6efd71ff', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher e70e0ffd-0c70-4046-b3ed-792a6efd71ff"><li class="code_switcher_container_parent active-tab code_switcher_go 47e8bc42-fa3e-4396-8a93-ee506c68677d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">parseFuncs</span> <span class="o">=</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">){</span>
   <span class="s">"syntax"</span><span class="o">:</span>  <span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">)</span> <span class="p">{</span> <span class="n">d</span><span class="o">.</span><span class="n">Syntax</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parseSyntax</span><span class="p">()</span> <span class="p">},</span>
 <span class="p">}</span>
 </code></pre></div></div>
 </li></ul>
 <p>With this we can finalize the <code>Parse</code> function by looking at the relevant function for the <code>currToken.Literal</code>.</p>
-<ul class="code-tab-container 34e804cb-fec0-48c7-a63d-7cab078be60e"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '34e804cb-fec0-48c7-a63d-7cab078be60e', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 34e804cb-fec0-48c7-a63d-7cab078be60e"><li class="code_switcher_container_parent active-tab code_switcher_go 1e17240b-49c9-48bb-892e-024b730fc86e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 5704411e-94b0-49f0-94d1-aceae8d9b27d"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '5704411e-94b0-49f0-94d1-aceae8d9b27d', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 5704411e-94b0-49f0-94d1-aceae8d9b27d"><li class="code_switcher_container_parent active-tab code_switcher_go faf97562-3032-4709-accc-2296f1bcbbb7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">)</span> <span class="n">Parse</span><span class="p">()</span> <span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span> <span class="p">{</span>
   <span class="n">d</span> <span class="o">:=</span> <span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">{}</span>
 
@@ -221,7 +221,7 @@ FAIL
 </li></ul>
 <h3 id="parsesyntax">parseSyntax()</h3>
 <p>Before actually parsing a syntax statement, we need two helper functions: <code>accept</code> and <code>acceptPeek</code>. <code>acceptPeek</code> will just call <code>accept</code> with the <code>peekToken.Type</code>. <code>accept</code> take a <code>TokenType</code> and checks if it exists in the following variadic arguments.</p>
-<ul class="code-tab-container cbbbd922-6b6e-42f8-8698-f08a9eef304c"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'cbbbd922-6b6e-42f8-8698-f08a9eef304c', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher cbbbd922-6b6e-42f8-8698-f08a9eef304c"><li class="code_switcher_container_parent active-tab code_switcher_go 8d43cf82-606b-4037-9d81-c8288d0f36f4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 57f5e83c-6160-48ce-b4f7-57d56e85c794"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '57f5e83c-6160-48ce-b4f7-57d56e85c794', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 57f5e83c-6160-48ce-b4f7-57d56e85c794"><li class="code_switcher_container_parent active-tab code_switcher_go bbea2b05-fd5c-4653-a02a-f614d4219dff"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">)</span> <span class="n">accept</span><span class="p">(</span><span class="n">original</span> <span class="n">lexer</span><span class="o">.</span><span class="n">TokenType</span><span class="p">,</span> <span class="n">expected</span> <span class="o">...</span><span class="n">lexer</span><span class="o">.</span><span class="n">TokenType</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
   <span class="k">if</span> <span class="o">!</span><span class="n">slices</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">original</span><span class="p">)</span> <span class="p">{</span>
     <span class="c">// TODO: add error</span>
@@ -240,8 +240,8 @@ FAIL
 <span class="p">}</span>
 </code></pre></div></div>
 </li></ul>
-<p>And now we ready for our <code>parseSyntax</code> function. We are first going to check that we have an <code>=</code> after syntax. Then we check that we have a String, if its the case we are going to take the value inside the quotes. And finally, we are going to check that there is a semicolon at the end of the statement.</p>
-<ul class="code-tab-container dfbde100-f495-4eda-a2fa-820ca84b30e5"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'dfbde100-f495-4eda-a2fa-820ca84b30e5', 0)">parser/syntax.go</a></li></ul><ul class="code-tab-switcher dfbde100-f495-4eda-a2fa-820ca84b30e5"><li class="code_switcher_container_parent active-tab code_switcher_go f3c47df6-35d8-4c35-b0ae-e3968e9ddf70"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<p>And now we ready for our <code>parseSyntax</code> function. We are first going to check that we have an <code>=</code> after syntax. Then we check that we have a String, if it’s the case we are going to take the value inside the quotes. And finally, we are going to check that there is a semicolon at the end of the statement.</p>
+<ul class="code-tab-container 6d24a671-70d0-4f23-b0c1-809316533d63"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '6d24a671-70d0-4f23-b0c1-809316533d63', 0)">parser/syntax.go</a></li></ul><ul class="code-tab-switcher 6d24a671-70d0-4f23-b0c1-809316533d63"><li class="code_switcher_container_parent active-tab code_switcher_go ccc642cb-11c2-4a97-8caf-c93f253d2cac"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -267,7 +267,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>The <code>destringify</code> function looks like the following:</p>
-<ul class="code-tab-container 405f2a61-a88b-49d8-a7f5-791e81131cfa"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '405f2a61-a88b-49d8-a7f5-791e81131cfa', 0)">parser/utils.go</a></li></ul><ul class="code-tab-switcher 405f2a61-a88b-49d8-a7f5-791e81131cfa"><li class="code_switcher_container_parent active-tab code_switcher_go 5e667da1-c48d-4eb8-a31b-4b45145cbc54"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 97e0ee72-376c-4b82-8f9e-5450c717d393"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '97e0ee72-376c-4b82-8f9e-5450c717d393', 0)">parser/utils.go</a></li></ul><ul class="code-tab-switcher 97e0ee72-376c-4b82-8f9e-5450c717d393"><li class="code_switcher_container_parent active-tab code_switcher_go 1d46abda-a5b4-40aa-9429-9b6a3bb05f93"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="s">"strings"</span>
@@ -279,9 +279,9 @@ FAIL
 <span class="p">}</span>
 </code></pre></div></div>
 </li></ul>
-<p>As mentionned, it takes the values between the quotes.</p>
+<p>As mentioned, it takes the values between the quotes.</p>
 <p>With our <code>parseSyntax</code> finished, we can rerun the test and:</p>
-<div class="code_switcher_container_parent 3b3e280c-e749-445e-b657-b18098e5d281"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent a8f7e536-1847-4b73-b23b-ce44381774ca"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 ok      github.com/Clement-Jean/protein/parser  1.361s
 </code></pre></div></div>
@@ -294,7 +294,7 @@ ok      github.com/Clement-Jean/protein/parser  1.361s
 <li><code>import weak &quot;my.proto&quot;;</code></li>
 </ul>
 <p>Let's write the tests:</p>
-<ul class="code-tab-container 1bc82e7d-f272-4dfd-ac2b-b48bc1a5e62f"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '1bc82e7d-f272-4dfd-ac2b-b48bc1a5e62f', 0)">parser/parser_import_test.go</a></li></ul><ul class="code-tab-switcher 1bc82e7d-f272-4dfd-ac2b-b48bc1a5e62f"><li class="code_switcher_container_parent active-tab code_switcher_go ef3277c2-96b5-432e-8edf-5e174a982931"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 03c7586c-e691-48a7-b6f9-668b47202ecd"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '03c7586c-e691-48a7-b6f9-668b47202ecd', 0)">parser/parser_import_test.go</a></li></ul><ul class="code-tab-switcher 03c7586c-e691-48a7-b6f9-668b47202ecd"><li class="code_switcher_container_parent active-tab code_switcher_go e9dd64f8-de14-4001-b35e-7666e43af005"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -385,7 +385,7 @@ ok      github.com/Clement-Jean/protein/parser  1.361s
 </code></pre></div></div>
 </li></ul>
 <p>Obviously:</p>
-<div class="code_switcher_container_parent 1deb7626-d2d3-41e4-8562-64fbf7b45d16"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent ffdf13a0-c80b-472d-bff9-f623e052a93b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 <span class="nt">---</span> FAIL: TestParseImport <span class="o">(</span>0.00s<span class="o">)</span>
     parser_import_test.go:25: import wrong. <span class="nv">expected</span><span class="o">=</span><span class="s1">'[google/protobuf/empty.proto]'</span>, <span class="nv">got</span><span class="o">=</span><span class="s1">'[]'</span>
@@ -397,7 +397,7 @@ FAIL
 </code></pre></div></div>
 </div>
 <p>Even though the 2nd and 3rd one are rarely used, we still need to support them. To do so, we are going to need to create an enum called <code>DependencyType</code> which will have the variants: None, Public, and Weak. After that, we are going to check if we have an identifier and depending on the <code>Literal</code>, we are going to return the type.</p>
-<ul class="code-tab-container 47c9d6e8-fff7-42a7-a58e-939b5f16d774"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '47c9d6e8-fff7-42a7-a58e-939b5f16d774', 0)">parser/import.go</a></li></ul><ul class="code-tab-switcher 47c9d6e8-fff7-42a7-a58e-939b5f16d774"><li class="code_switcher_container_parent active-tab code_switcher_go 5d78e27a-e766-433c-8dea-e5fd00ca1c83"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 4f9121b8-ca83-4583-acde-4fe454782066"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '4f9121b8-ca83-4583-acde-4fe454782066', 0)">parser/import.go</a></li></ul><ul class="code-tab-switcher 4f9121b8-ca83-4583-acde-4fe454782066"><li class="code_switcher_container_parent active-tab code_switcher_go 5ad87172-b0b0-421a-a61f-1223f6863fad"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -448,7 +448,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>And the last thing we need to do is register that to the <code>parseFuncs</code>.</p>
-<ul class="code-tab-container 48f1a5cc-d2e5-43e4-a24a-3ff734f6944d"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '48f1a5cc-d2e5-43e4-a24a-3ff734f6944d', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 48f1a5cc-d2e5-43e4-a24a-3ff734f6944d"><li class="code_switcher_container_parent active-tab code_switcher_go 40c60054-3961-4d40-8a6c-4c0e0499d842"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container aa1f2443-9882-451e-ab59-7c196726be68"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'aa1f2443-9882-451e-ab59-7c196726be68', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher aa1f2443-9882-451e-ab59-7c196726be68"><li class="code_switcher_container_parent active-tab code_switcher_go 85d8e22d-97d9-4a9c-acf8-a11da19208b0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">parseFuncs</span> <span class="o">=</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">){</span>
   <span class="s">"syntax"</span><span class="o">:</span>  <span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">)</span> <span class="p">{</span> <span class="n">d</span><span class="o">.</span><span class="n">Syntax</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parseSyntax</span><span class="p">()</span> <span class="p">},</span>
   <span class="s">"import"</span><span class="o">:</span> <span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">)</span> <span class="p">{</span>
@@ -469,15 +469,15 @@ FAIL
 </li></ul>
 <p>We basically append the dependency and if we have a public or weak dependency we add its index into <code>PublicDependency</code> and <code>WeakDependency</code> respectively.</p>
 <p>We rerun our test:</p>
-<div class="code_switcher_container_parent 7a54c35a-cdc5-4192-a8e7-106b9ba94a2d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 1d934c96-d96d-4d11-b8e4-6aeea4e11af1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 ok      github.com/Clement-Jean/protein/parser  0.450s
 </code></pre></div></div>
 </div>
 <h3 id="parsepackage">parsePackage()</h3>
-<p>Once again this function is pretty similar. The main difference is that we are goin to look for identifiers and fully qualified names (identifiers sperated by dots).</p>
+<p>Once again this function is pretty similar. The main difference is that we are going to look for identifiers and fully qualified names (identifiers separated by dots).</p>
 <p>Let's write some tests.</p>
-<ul class="code-tab-container b7719adc-2576-45d9-aeb4-1fc1cdaf58c9"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'b7719adc-2576-45d9-aeb4-1fc1cdaf58c9', 0)">parser/parser_package_test.go</a></li></ul><ul class="code-tab-switcher b7719adc-2576-45d9-aeb4-1fc1cdaf58c9"><li class="code_switcher_container_parent active-tab code_switcher_go 2c8128ca-e350-4561-8dc9-72d349f1c19c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container ab4f0dc8-c570-4958-a3f2-868f7c590c7b"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'ab4f0dc8-c570-4958-a3f2-868f7c590c7b', 0)">parser/parser_package_test.go</a></li></ul><ul class="code-tab-switcher ab4f0dc8-c570-4958-a3f2-868f7c590c7b"><li class="code_switcher_container_parent active-tab code_switcher_go e236879e-a0ec-4814-9f30-31c610f69885"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -522,7 +522,7 @@ ok      github.com/Clement-Jean/protein/parser  0.450s
 </code></pre></div></div>
 </li></ul>
 <p>Let's fail our tests:</p>
-<div class="code_switcher_container_parent b4a83d8b-44c2-4e1f-9239-0d0bcb638963"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent bce7414b-56c6-4115-afc7-d5fbf2b2d092"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 <span class="nt">---</span> FAIL: TestParsePackage <span class="o">(</span>0.00s<span class="o">)</span>
     parser_package_test.go:21: package wrong. <span class="nv">expected</span><span class="o">=</span><span class="s1">'google'</span>, <span class="nv">got</span><span class="o">=</span><span class="s1">''</span>
@@ -532,7 +532,7 @@ FAIL
 </code></pre></div></div>
 </div>
 <p>And now we can implement the <code>parsePackage</code> function. We are going to check that we have at least one identifier, and then if we have a dot we are going to make sure that we have another identifier after. Finally, we will be looking for the semicolon.</p>
-<ul class="code-tab-container 2a98e3c6-9900-4311-8fac-bbd47216bba6"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '2a98e3c6-9900-4311-8fac-bbd47216bba6', 0)">parser/package.go</a></li></ul><ul class="code-tab-switcher 2a98e3c6-9900-4311-8fac-bbd47216bba6"><li class="code_switcher_container_parent active-tab code_switcher_go cd05f3fa-7f4f-491d-885b-11289e79e50f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 2afd0c52-66b7-4fdc-81ee-8b29ff7afeb5"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '2afd0c52-66b7-4fdc-81ee-8b29ff7afeb5', 0)">parser/package.go</a></li></ul><ul class="code-tab-switcher 2afd0c52-66b7-4fdc-81ee-8b29ff7afeb5"><li class="code_switcher_container_parent active-tab code_switcher_go 9abe5c0a-2b9b-43c7-a0dc-6545736df723"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">parser</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -571,7 +571,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>The last thing to do is to register this function in our <code>parseFuncs</code>.</p>
-<ul class="code-tab-container ca0a1041-2053-4ea7-a997-a66c51343db2"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'ca0a1041-2053-4ea7-a997-a66c51343db2', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher ca0a1041-2053-4ea7-a997-a66c51343db2"><li class="code_switcher_container_parent active-tab code_switcher_go 96299c5b-fcfa-4c26-8ac2-d5ac50b21d64"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 42dc0bdb-c0f8-4f85-ad5e-188b0b3c2681"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '42dc0bdb-c0f8-4f85-ad5e-188b0b3c2681', 0)">parser/impl.go</a></li></ul><ul class="code-tab-switcher 42dc0bdb-c0f8-4f85-ad5e-188b0b3c2681"><li class="code_switcher_container_parent active-tab code_switcher_go e6670e71-753a-40de-b21d-1b086b7b1249"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">parseFuncs</span> <span class="o">=</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">){</span>
   <span class="s">"syntax"</span><span class="o">:</span>  <span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">)</span> <span class="p">{</span> <span class="n">d</span><span class="o">.</span><span class="n">Syntax</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parseSyntax</span><span class="p">()</span> <span class="p">},</span>
   <span class="s">"package"</span><span class="o">:</span> <span class="k">func</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Impl</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">FileDescriptorProto</span><span class="p">)</span> <span class="p">{</span> <span class="n">d</span><span class="o">.</span><span class="n">Package</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parsePackage</span><span class="p">()</span> <span class="p">},</span>
@@ -592,7 +592,7 @@ FAIL
 </code></pre></div></div>
 </li></ul>
 <p>and we rerun our tests.</p>
-<div class="code_switcher_container_parent ecca0a36-c43c-469f-aa09-ddea10353e3d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 8617f1dc-f385-43ff-894a-1ff49b44c543"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> ./...
 ok      github.com/Clement-Jean/protein/parser  0.847s
 </code></pre></div></div>
@@ -609,7 +609,7 @@ ok      github.com/Clement-Jean/protein/parser  0.847s
       <a href="/protein_lexer_part_1" class="btn btn-danger text-center">Next Article</a>
     </div> -->
   </div>
-</div>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><category term="Go" /><summary type="html"><![CDATA[In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are reasy for this, it's gonna be fun!]]></summary></entry><entry><title type="html">Protein: Lexer (Part 3)</title><link href="https://clement-jean.github.io/protein_lexer_part_3/" rel="alternate" type="text/html" title="Protein: Lexer (Part 3)" /><published>2023-03-03T00:00:00+08:00</published><updated>2023-03-03T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_lexer_part_3</id><content type="html" xml:base="https://clement-jean.github.io/protein_lexer_part_3/"><![CDATA[<p>This article is a small one intended to solve a bug related to token position. As of right now, we only tested that our token got the right literal and the right token kind. In this article, we are going to add the position checking in our tests.</p>
+</div>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><category term="Go" /><summary type="html"><![CDATA[In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are ready for this, it's gonna be fun!]]></summary></entry><entry><title type="html">Protein: Lexer (Part 3)</title><link href="https://clement-jean.github.io/protein_lexer_part_3/" rel="alternate" type="text/html" title="Protein: Lexer (Part 3)" /><published>2023-03-03T00:00:00+08:00</published><updated>2023-03-03T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_lexer_part_3</id><content type="html" xml:base="https://clement-jean.github.io/protein_lexer_part_3/"><![CDATA[<p>This article is a small one intended to solve a bug related to token position. As of right now, we only tested that our token got the right literal and the right token kind. In this article, we are going to add the position checking in our tests.</p>
 <h2 id="position-checking">Position Checking</h2>
 <p>Adding position checking in our test is pretty trivial since it's 3 ifs checking <code>Offset</code>, <code>Line</code>, and <code>Column</code>. So let's add that:</p>
 <ul class="code-tab-container f914ed39-f919-43eb-b262-d8493d03e522"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f914ed39-f919-43eb-b262-d8493d03e522', 0)">lexer/impl.go</a></li></ul><ul class="code-tab-switcher f914ed39-f919-43eb-b262-d8493d03e522"><li class="code_switcher_container_parent active-tab code_switcher_go ef704163-5a77-4fea-a701-ad151aa835f4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
