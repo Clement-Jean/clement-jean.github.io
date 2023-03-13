@@ -5,7 +5,7 @@ title: "Protein: Parser (Part 1)"
 categories: [Protocol Buffers, Go]
 ---
 
-In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are reasy for this, it's gonna be fun!
+In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are ready for this, it's gonna be fun!
 
 ## Boilerplate
 
@@ -27,9 +27,9 @@ This doesn't seem like a fancy interface but we do have a problem. What is our p
 - We use the descriptor.proto file which defines Messages for describing elements in a Protobuf file.
 
 Both have pros and cons. If we go with the first one we have more control over our serialization. It means that we can optimize some elements' serialized data. However, it also means that we are not compatible with the official way and that's not good.
-For the using the official serialization, I think you get the idea. We have the pros being the cons of the other implementation, and the cons being the pros of the other implementation.
+For the "using the official serialization", I think you get the idea. We have the pros being the cons of the other implementation, and the cons being the pros of the other implementation.
 
-In the end, for the sake of compatibility, I will be sacrificing some performance. However, these performance are only saving few bytes and having compatibility with programs serialized by protoc far overweights them.
+In the end, for the sake of compatibility, I will be sacrificing some performance. However, these performances are only saving a few bytes and having compatibility with programs serialized by protoc far overweights them.
 
 ### Depending on Protobuf
 
@@ -124,7 +124,7 @@ func (l *FakeLexer) NextToken() lexer.Token {
 
 This basically means that each time we are running a test in the parser, we are not going to run the lexer code. We are going to simply focus on our current features. So, if we encounter a bug, it means that it is in the parser, not anywhere else.
 
-With that, we can write out first test for `syntax = "proto3";`.
+With that, we can write our first test for `syntax = "proto3";`.
 
 ```go parser/parser_syntax_test.go
 package parser
@@ -276,7 +276,7 @@ func (p *Impl) acceptPeek(tt ...lexer.TokenType) bool {
 }
 ```
 
-And now we ready for our `parseSyntax` function. We are first going to check that we have an `=` after syntax. Then we check that we have a String, if its the case we are going to take the value inside the quotes. And finally, we are going to check that there is a semicolon at the end of the statement.
+And now we ready for our `parseSyntax` function. We are first going to check that we have an `=` after syntax. Then we check that we have a String, if it’s the case we are going to take the value inside the quotes. And finally, we are going to check that there is a semicolon at the end of the statement.
 
 ```go parser/syntax.go
 package parser
@@ -317,7 +317,7 @@ func destringify(s string) string {
 }
 ```
 
-As mentionned, it takes the values between the quotes.
+As mentioned, it takes the values between the quotes.
 
 With our `parseSyntax` finished, we can rerun the test and:
 
@@ -523,7 +523,7 @@ ok      github.com/Clement-Jean/protein/parser  0.450s
 
 ### parsePackage()
 
-Once again this function is pretty similar. The main difference is that we are goin to look for identifiers and fully qualified names (identifiers sperated by dots).
+Once again this function is pretty similar. The main difference is that we are going to look for identifiers and fully qualified names (identifiers separated by dots).
 
 Let's write some tests.
 
