@@ -16,8 +16,8 @@ package parser
 
 // Parser is protein's parser
 type Parser interface {
-	// Parse returns ???
-	Parse() ???
+  // Parse returns ???
+  Parse() ???
 }
 ```
 
@@ -59,8 +59,8 @@ import pb "google.golang.org/protobuf/types/descriptorpb"
 
 // Parser is protein's parser
 type Parser interface {
-	// Parse returns the representation of a file in Protobuf Descriptor
-	Parse() pb.FileDescriptorProto
+  // Parse returns the representation of a file in Protobuf Descriptor
+  Parse() pb.FileDescriptorProto
 }
 ```
 
@@ -74,24 +74,24 @@ For now, the `Parse` function will simply return an empty `FileDescriptorProto`.
 package parser
 
 import (
-	pb "google.golang.org/protobuf/types/descriptorpb"
+  pb "google.golang.org/protobuf/types/descriptorpb"
 )
 
 // Impl is the implementation for the Parser interface.
 type Impl struct {
-	l lexer.Lexer
+  l lexer.Lexer
 }
 
 // New creates a new instance of the Parser
 func New(l lexer.Lexer) Parser {
-	p := &Impl{l: l}
-	return p
+  p := &Impl{l: l}
+  return p
 }
 
 // Parse populates a FileDescriptorProto
 func (p *Impl) Parse() pb.FileDescriptorProto {
-	d := pb.FileDescriptorProto{}
-	return d
+  d := pb.FileDescriptorProto{}
+  return d
 }
 ```
 
@@ -103,22 +103,22 @@ As our first test we are going to create the test for a syntax statement. This t
 package parser
 
 import (
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 type FakeLexer struct {
-	i      int
-	tokens []lexer.Token
+  i      int
+  tokens []lexer.Token
 }
 
 func (l *FakeLexer) NextToken() lexer.Token {
-	if l.i >= len(l.tokens) {
-		return lexer.Token{Type: lexer.EOF, Position: lexer.Position{}}
-	}
+  if l.i >= len(l.tokens) {
+    return lexer.Token{Type: lexer.EOF, Position: lexer.Position{}}
+  }
 
-	token := l.tokens[l.i]
-	l.i++
-	return token
+  token := l.tokens[l.i]
+  l.i++
+  return token
 }
 ```
 
@@ -130,26 +130,26 @@ With that, we can write out first test for `syntax = "proto3";`.
 package parser
 
 import (
-	"testing"
+  "testing"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func TestParseSyntaxProto3(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "syntax"},
-		{Type: lexer.TokenEqual, Literal: "="},
-		{Type: lexer.TokenStr, Literal: "\"proto3\""},
-		{Type: lexer.TokenSemicolon, Literal: ";"},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := "proto3"
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "syntax"},
+    {Type: lexer.TokenEqual, Literal: "="},
+    {Type: lexer.TokenStr, Literal: "\"proto3\""},
+    {Type: lexer.TokenSemicolon, Literal: ";"},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := "proto3"
 
-	if syntax := d.GetSyntax(); syntax != expected {
-		t.Fatalf("syntax wrong. expected='%s', got='%s'", expected, syntax)
-	}
+  if syntax := d.GetSyntax(); syntax != expected {
+    t.Fatalf("syntax wrong. expected='%s', got='%s'", expected, syntax)
+  }
 }
 ```
 
@@ -166,12 +166,12 @@ FAIL
 
 We should now improve the `Parse` function to consume the `Lexer`'s tokens and do things with that. Here is the pseudo code:
 
-```
-while currToken.Type != EOF {
-	if currToken.Type == Identifier {
-		fn := parseFuncs[curToken.Literal] // find the function depending on keyword
-		fn(&descriptor) // populate the descriptor
-	}
+```go
+for currToken.Type != EOF {
+  if currToken.Type == Identifier {
+    fn := parseFuncs[curToken.Literal] // find the function depending on keyword
+    fn(&descriptor) // populate the descriptor
+  }
 }
 ```
 
@@ -179,9 +179,9 @@ You notice that we need a `currToken` representing the current token being parse
 
 ```go parser/impl.go
 type Impl struct {
-	l lexer.Lexer
-	curToken  lexer.Token
-	peekToken lexer.Token
+  l lexer.Lexer
+  curToken  lexer.Token
+  peekToken lexer.Token
 }
 ```
 
@@ -189,10 +189,10 @@ Now, we need to populate these tokens before being able to use them. The first t
 
 ```go parser/impl.go
 func New(l lexer.Lexer) Parser {
-	p := &Impl{l: l}
-	p.nextToken()
-	p.nextToken()
-	return p
+  p := &Impl{l: l}
+  p.nextToken()
+  p.nextToken()
+  return p
 }
 ```
 
@@ -200,10 +200,10 @@ But `nextToken` is not the `Lexer.NextToken`, this is a private function in `Par
 
 ```go parser/impl.go
 func (p *Impl) nextToken() {
-	for p.curToken = p.peekToken; p.curToken.Type == lexer.TokenSpace; p.curToken = p.l.NextToken() {
-	}
-	for p.peekToken = p.l.NextToken(); p.peekToken.Type == lexer.TokenSpace; p.peekToken = p.l.NextToken() {
-	}
+  for p.curToken = p.peekToken; p.curToken.Type == lexer.TokenSpace; p.curToken = p.l.NextToken() {
+  }
+  for p.peekToken = p.l.NextToken(); p.peekToken.Type == lexer.TokenSpace; p.peekToken = p.l.NextToken() {
+  }
 }
 ```
 
@@ -211,16 +211,16 @@ With that we can start updating our `Parse` function.
 
 ```go parser/impl.go
 func (p *Impl) Parse() pb.FileDescriptorProto {
-	d := pb.FileDescriptorProto{}
+  d := pb.FileDescriptorProto{}
 
-	for p.curToken.Type != lexer.EOF {
-		if p.curToken.Type == lexer.TokenIdentifier {
-			//Do something with token
-		}
-		p.nextToken()
-	}
+  for p.curToken.Type != lexer.EOF {
+    if p.curToken.Type == lexer.TokenIdentifier {
+      //Do something with token
+    }
+    p.nextToken()
+  }
 
-	return d
+  return d
 }
 ```
 
@@ -228,7 +228,7 @@ Finally, we are going to register all the parsing functions that we are gonna wr
 
 ```go parser/impl.go
 var parseFuncs = map[string]func(p *Impl, d *pb.FileDescriptorProto){
-	"syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
+  "syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
 }
 ```
 
@@ -236,20 +236,20 @@ With this we can finalize the `Parse` function by looking at the relevant functi
 
 ```go parser/impl.go
 func (p *Impl) Parse() pb.FileDescriptorProto {
-	d := pb.FileDescriptorProto{}
+  d := pb.FileDescriptorProto{}
 
-	for p.curToken.Type != lexer.EOF {
-		if p.curToken.Type == lexer.TokenIdentifier {
-			fn, ok := parseFuncs[p.curToken.Literal]
-			if !ok { // keyword not found
-				break
-			}
-			fn(p, &d)
-		}
-		p.nextToken()
-	}
+  for p.curToken.Type != lexer.EOF {
+    if p.curToken.Type == lexer.TokenIdentifier {
+      fn, ok := parseFuncs[p.curToken.Literal]
+      if !ok { // keyword not found
+        break
+      }
+      fn(p, &d)
+    }
+    p.nextToken()
+  }
 
-	return d
+  return d
 }
 ```
 
@@ -259,20 +259,20 @@ Before actually parsing a syntax statement, we need two helper functions: `accep
 
 ```go parser/impl.go
 func (p *Impl) accept(original lexer.TokenType, expected ...lexer.TokenType) bool {
-	if !slices.Contains(expected, original) {
-		// TODO: add error
-		return false
-	}
+  if !slices.Contains(expected, original) {
+    // TODO: add error
+    return false
+  }
 
-	p.nextToken()
-	return true
+  p.nextToken()
+  return true
 }
 
 // acceptPeek returns true and advance token
 // if tt contains the peekToken.Type
 // else it returns false
 func (p *Impl) acceptPeek(tt ...lexer.TokenType) bool {
-	return p.accept(p.peekToken.Type, tt...)
+  return p.accept(p.peekToken.Type, tt...)
 }
 ```
 
@@ -282,24 +282,24 @@ And now we ready for our `parseSyntax` function. We are first going to check tha
 package parser
 
 import (
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func (p *Impl) parseSyntax() *string {
-	if !p.acceptPeek(lexer.TokenEqual) {
-		return nil
-	}
-	if !p.acceptPeek(lexer.TokenStr) {
-		return nil
-	}
+  if !p.acceptPeek(lexer.TokenEqual) {
+    return nil
+  }
+  if !p.acceptPeek(lexer.TokenStr) {
+    return nil
+  }
 
-	s := destringify(p.curToken.Literal)
+  s := destringify(p.curToken.Literal)
 
-	if !p.acceptPeek(lexer.TokenSemicolon) {
-		return nil
-	}
+  if !p.acceptPeek(lexer.TokenSemicolon) {
+    return nil
+  }
 
-	return &s
+  return &s
 }
 ```
 
@@ -311,9 +311,9 @@ package parser
 import "strings"
 
 func destringify(s string) string {
-	return strings.TrimFunc(s, func(r rune) bool {
-		return r == '\'' || r == '"'
-	})
+  return strings.TrimFunc(s, func(r rune) bool {
+    return r == '\'' || r == '"'
+  })
 }
 ```
 
@@ -340,89 +340,89 @@ Let's write the tests:
 package parser
 
 import (
-	"testing"
+  "testing"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func TestParseImport(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "import"},
-		{Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
-		{Type: lexer.TokenSemicolon, Literal: ";"},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := []string{"google/protobuf/empty.proto"}
-	public := []int32{}
-	weak := []int32{}
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "import"},
+    {Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
+    {Type: lexer.TokenSemicolon, Literal: ";"},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := []string{"google/protobuf/empty.proto"}
+  public := []int32{}
+  weak := []int32{}
 
-	if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
-		t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
-	}
+  if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
+    t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
+  }
 
-	if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
-		t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
-	}
+  if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
+    t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
+  }
 
-	if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
-		t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
-	}
+  if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
+    t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
+  }
 }
 
 func TestParsePublicImport(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "import"},
-		{Type: lexer.TokenIdentifier, Literal: "public"},
-		{Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
-		{Type: lexer.TokenSemicolon, Literal: ";"},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := []string{"google/protobuf/empty.proto"}
-	public := []int32{0}
-	weak := []int32{}
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "import"},
+    {Type: lexer.TokenIdentifier, Literal: "public"},
+    {Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
+    {Type: lexer.TokenSemicolon, Literal: ";"},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := []string{"google/protobuf/empty.proto"}
+  public := []int32{0}
+  weak := []int32{}
 
-	if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
-		t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
-	}
+  if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
+    t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
+  }
 
-	if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
-		t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
-	}
+  if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
+    t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
+  }
 
-	if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
-		t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
-	}
+  if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
+    t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
+  }
 }
 
 func TestParseWeakImport(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "import"},
-		{Type: lexer.TokenIdentifier, Literal: "weak"},
-		{Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
-		{Type: lexer.TokenSemicolon, Literal: ";"},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := []string{"google/protobuf/empty.proto"}
-	public := []int32{}
-	weak := []int32{0}
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "import"},
+    {Type: lexer.TokenIdentifier, Literal: "weak"},
+    {Type: lexer.TokenStr, Literal: "\"google/protobuf/empty.proto\""},
+    {Type: lexer.TokenSemicolon, Literal: ";"},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := []string{"google/protobuf/empty.proto"}
+  public := []int32{}
+  weak := []int32{0}
 
-	if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
-		t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
-	}
+  if imp := d.GetDependency(); slices.Compare(imp, expected) != 0 {
+    t.Fatalf("import wrong. expected='%v', got='%v'", expected, imp)
+  }
 
-	if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
-		t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
-	}
+  if p := d.GetPublicDependency(); slices.Compare(p, public) != 0 {
+    t.Fatalf("public import wrong. expected='%v', got='%v'", public, p)
+  }
 
-	if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
-		t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
-	}
+  if w := d.GetWeakDependency(); slices.Compare(w, weak) != 0 {
+    t.Fatalf("weak import wrong. expected='%v', got='%v'", weak, w)
+  }
 }
 ```
 
@@ -445,49 +445,49 @@ Even though the 2nd and 3rd one are rarely used, we still need to support them. 
 package parser
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 type DependencyType int
 
 const (
-	None DependencyType = iota
-	Public
-	Weak
+  None DependencyType = iota
+  Public
+  Weak
 )
 
 func (p *Impl) parseImport() (string, DependencyType) {
-	if !p.acceptPeek(lexer.TokenStr, lexer.TokenIdentifier) {
-		return "", None
-	}
+  if !p.acceptPeek(lexer.TokenStr, lexer.TokenIdentifier) {
+    return "", None
+  }
 
-	depType := None
+  depType := None
 
-	if p.curToken.Type == lexer.TokenIdentifier {
-		switch p.curToken.Literal {
-		case "public":
-			depType = Public
-		case "weak":
-			depType = Weak
-		default:
-			return "", None
-		}
+  if p.curToken.Type == lexer.TokenIdentifier {
+    switch p.curToken.Literal {
+    case "public":
+      depType = Public
+    case "weak":
+      depType = Weak
+    default:
+      return "", None
+    }
 
-		if !p.acceptPeek(lexer.TokenStr) {
-			// TODO: add error
-			return "", None
-		}
-	}
+    if !p.acceptPeek(lexer.TokenStr) {
+      // TODO: add error
+      return "", None
+    }
+  }
 
-	s := destringify(p.curToken.Literal)
+  s := destringify(p.curToken.Literal)
 
-	if !p.acceptPeek(lexer.TokenSemicolon) {
-		return "", None
-	}
+  if !p.acceptPeek(lexer.TokenSemicolon) {
+    return "", None
+  }
 
-	return s, depType
+  return s, depType
 }
 ```
 
@@ -495,20 +495,20 @@ And the last thing we need to do is register that to the `parseFuncs`.
 
 ```go parser/impl.go
 var parseFuncs = map[string]func(p *Impl, d *pb.FileDescriptorProto){
-	"syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
-	"import": func(p *Impl, d *pb.FileDescriptorProto) {
-		dep, t := p.parseImport()
-		if len(dep) != 0 {
-			i := int32(len(d.Dependency))
-			d.Dependency = append(d.Dependency, dep)
-			switch t {
-			case Public:
-				d.PublicDependency = append(d.PublicDependency, i)
-			case Weak:
-				d.WeakDependency = append(d.WeakDependency, i)
-			}
-		}
-	},
+  "syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
+  "import": func(p *Impl, d *pb.FileDescriptorProto) {
+    dep, t := p.parseImport()
+    if len(dep) != 0 {
+      i := int32(len(d.Dependency))
+      d.Dependency = append(d.Dependency, dep)
+      switch t {
+      case Public:
+        d.PublicDependency = append(d.PublicDependency, i)
+      case Weak:
+        d.WeakDependency = append(d.WeakDependency, i)
+      }
+    }
+  },
 }
 ```
 
@@ -531,43 +531,43 @@ Let's write some tests.
 package parser
 
 import (
-	"testing"
+  "testing"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func TestParsePackage(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "package", Position: lexer.Position{}},
-		{Type: lexer.TokenIdentifier, Literal: "google", Position: lexer.Position{}},
-		{Type: lexer.TokenSemicolon, Literal: ";", Position: lexer.Position{}},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := "google"
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "package", Position: lexer.Position{}},
+    {Type: lexer.TokenIdentifier, Literal: "google", Position: lexer.Position{}},
+    {Type: lexer.TokenSemicolon, Literal: ";", Position: lexer.Position{}},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := "google"
 
-	if pkg := d.GetPackage(); pkg != expected {
-		t.Fatalf("package wrong. expected='%s', got='%s'", expected, pkg)
-	}
+  if pkg := d.GetPackage(); pkg != expected {
+    t.Fatalf("package wrong. expected='%s', got='%s'", expected, pkg)
+  }
 }
 
 func TestParsePackageFullIdentifier(t *testing.T) {
-	tokens := []lexer.Token{
-		{Type: lexer.TokenIdentifier, Literal: "package", Position: lexer.Position{}},
-		{Type: lexer.TokenIdentifier, Literal: "google", Position: lexer.Position{}},
-		{Type: lexer.TokenDot, Literal: ".", Position: lexer.Position{}},
-		{Type: lexer.TokenIdentifier, Literal: "protobuf", Position: lexer.Position{}},
-		{Type: lexer.TokenSemicolon, Literal: ";", Position: lexer.Position{}},
-	}
-	l := &FakeLexer{tokens: tokens}
-	p := New(l)
-	d := p.Parse()
-	expected := "google.protobuf"
+  tokens := []lexer.Token{
+    {Type: lexer.TokenIdentifier, Literal: "package", Position: lexer.Position{}},
+    {Type: lexer.TokenIdentifier, Literal: "google", Position: lexer.Position{}},
+    {Type: lexer.TokenDot, Literal: ".", Position: lexer.Position{}},
+    {Type: lexer.TokenIdentifier, Literal: "protobuf", Position: lexer.Position{}},
+    {Type: lexer.TokenSemicolon, Literal: ";", Position: lexer.Position{}},
+  }
+  l := &FakeLexer{tokens: tokens}
+  p := New(l)
+  d := p.Parse()
+  expected := "google.protobuf"
 
-	if pkg := d.GetPackage(); pkg != expected {
-		t.Fatalf("package wrong. expected='%s', got='%s'", expected, pkg)
-	}
+  if pkg := d.GetPackage(); pkg != expected {
+    t.Fatalf("package wrong. expected='%s', got='%s'", expected, pkg)
+  }
 }
 ```
 
@@ -588,37 +588,37 @@ And now we can implement the `parsePackage` function. We are going to check that
 package parser
 
 import (
-	"strings"
+  "strings"
 
-	"github.com/Clement-Jean/protein/lexer"
+  "github.com/Clement-Jean/protein/lexer"
 )
 
 func (p *Impl) parsePackage() *string {
-	if !p.acceptPeek(lexer.TokenIdentifier) {
-		return nil
-	}
+  if !p.acceptPeek(lexer.TokenIdentifier) {
+    return nil
+  }
 
-	var parts []string
+  var parts []string
 
-	for p.curToken.Type == lexer.TokenIdentifier {
-		parts = append(parts, p.curToken.Literal)
-		if p.peekToken.Type != lexer.TokenDot {
-			break
-		}
+  for p.curToken.Type == lexer.TokenIdentifier {
+    parts = append(parts, p.curToken.Literal)
+    if p.peekToken.Type != lexer.TokenDot {
+      break
+    }
 
-		p.nextToken()
+    p.nextToken()
 
-		if !p.acceptPeek(lexer.TokenIdentifier) {
-			return nil
-		}
-	}
-	s := strings.Join(parts, ".")
+    if !p.acceptPeek(lexer.TokenIdentifier) {
+      return nil
+    }
+  }
+  s := strings.Join(parts, ".")
 
-	if !p.acceptPeek(lexer.TokenSemicolon) {
-		return nil
-	}
+  if !p.acceptPeek(lexer.TokenSemicolon) {
+    return nil
+  }
 
-	return &s
+  return &s
 }
 ```
 
@@ -626,21 +626,21 @@ The last thing to do is to register this function in our `parseFuncs`.
 
 ```go parser/impl.go
 var parseFuncs = map[string]func(p *Impl, d *pb.FileDescriptorProto){
-	"syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
-	"package": func(p *Impl, d *pb.FileDescriptorProto) { d.Package = p.parsePackage() },
-	"import": func(p *Impl, d *pb.FileDescriptorProto) {
-		dep, t := p.parseImport()
-		if len(dep) != 0 {
-			i := int32(len(d.Dependency))
-			d.Dependency = append(d.Dependency, dep)
-			switch t {
-			case Public:
-				d.PublicDependency = append(d.PublicDependency, i)
-			case Weak:
-				d.WeakDependency = append(d.WeakDependency, i)
-			}
-		}
-	},
+  "syntax":  func(p *Impl, d *pb.FileDescriptorProto) { d.Syntax = p.parseSyntax() },
+  "package": func(p *Impl, d *pb.FileDescriptorProto) { d.Package = p.parsePackage() },
+  "import": func(p *Impl, d *pb.FileDescriptorProto) {
+    dep, t := p.parseImport()
+    if len(dep) != 0 {
+      i := int32(len(d.Dependency))
+      d.Dependency = append(d.Dependency, dep)
+      switch t {
+      case Public:
+        d.PublicDependency = append(d.PublicDependency, i)
+      case Weak:
+        d.WeakDependency = append(d.WeakDependency, i)
+      }
+    }
+  },
 }
 ```
 
@@ -653,9 +653,7 @@ ok      github.com/Clement-Jean/protein/parser  0.847s
 
 # Conclusion
 
-## Conclusion
-
-
+In this article, we created our first three parsing functions. We parsed syntax, package and imports. We are now ready to go more complicated statements.
 
 **If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.**
 
