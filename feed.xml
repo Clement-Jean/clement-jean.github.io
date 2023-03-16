@@ -1,4 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-13T10:06:13+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Protein: Parser (Part 1)</title><link href="https://clement-jean.github.io/protein_parser_part_1/" rel="alternate" type="text/html" title="Protein: Parser (Part 1)" /><published>2023-03-09T00:00:00+08:00</published><updated>2023-03-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_parser_part_1</id><content type="html" xml:base="https://clement-jean.github.io/protein_parser_part_1/"><![CDATA[<p>In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are ready for this, it's gonna be fun!</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-16T14:06:07+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Go Monorepos - Intro</title><link href="https://clement-jean.github.io/go-monorepos-intro/" rel="alternate" type="text/html" title="Go Monorepos - Intro" /><published>2023-03-16T00:00:00+08:00</published><updated>2023-03-16T00:00:00+08:00</updated><id>https://clement-jean.github.io/go-monorepos-intro</id><content type="html" xml:base="https://clement-jean.github.io/go-monorepos-intro/"><![CDATA[<p>Recently I've discovered two interesting was in creating monorepos for go projects. In this article we are going to talk about the advantages and disadvantages of each of these techniques.</p>
+<p>This article is an introduction. I will skip over details here because the setup is generally dependent on the technologies you use. <strong>If this article makes you want to know more about the subject, I invite you to tell me with which technology I should set a monorepo for (e.g. gRPC)</strong>.</p>
+<h1 id="go-workspaces">Go Workspaces</h1>
+<p>The first of these techniques are using Go workspaces. This is nice to be able to do that without any other technology than Go. The goal here is basically to create submodules and link them to the workspace. Let's see an example.</p>
+<p>Let's say that we have a server and a client. We will then have the following file architecture:</p>
+<div class="code_switcher_container_parent 4e0a5866-ea12-48a2-a773-806ded0d6324"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>.
+├── client
+└── server
+</code></pre></div>
+<p>with that we can start initializing our modules. You can either go into each folder and run <code>go mod init &lt;module_name&gt;</code>, or you can automatize the process and run something like:</p>
+<ul class="code-tab-container 55ec11f2-c4eb-43f1-94ba-ab27f2afbbdf"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '55ec11f2-c4eb-43f1-94ba-ab27f2afbbdf', 0)">Linux/MacOS</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', '55ec11f2-c4eb-43f1-94ba-ab27f2afbbdf', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher 55ec11f2-c4eb-43f1-94ba-ab27f2afbbdf"><li class="code_switcher_container_parent active-tab code_switcher_shell 94def7de-be84-4110-8291-6b914d38a734"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-maxdepth</span> 1 <span class="nt">-type</span> d <span class="nt">-not</span> <span class="nt">-path</span> <span class="nb">.</span> <span class="nt">-execdir</span> sh <span class="nt">-c</span> <span class="s2">"pushd {}; go mod init '&lt;module_name&gt;/{}'; popd"</span> <span class="s2">";"</span>
+</code></pre></div></div>
+</li><li class="code_switcher_container_parent code_switcher_shell bb3d2cfc-64e0-4f2f-9c0f-4315feaae0e1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Get-ChildItem <span class="nb">.</span> <span class="nt">-Name</span> <span class="nt">-Directory</span> | ForEach-Object <span class="o">{</span> Push-Location <span class="nv">$_</span><span class="p">;</span> go mod init <span class="s2">"&lt;module_name&gt;/</span><span class="nv">$_</span><span class="s2">"</span> <span class="p">;</span> Pop-Location <span class="o">}</span>
+</code></pre></div></div>
+</li></ul>
+<p>These commands will enter each directory, run <code>go mod init</code>, and get out of the directories. <strong>Be careful though, if you have other folders that you don't want to use as modules, you will have to create more complex commands</strong>.</p>
+<p>Once we have this, we can create our workspace. To do that, we simply run:</p>
+<div class="code_switcher_container_parent c119084e-dfe4-4685-91dc-9bc8efb6e9b4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go work init client server
+</code></pre></div></div>
+</div>
+<p>And that's basically it. Client and Server and individual projects that can have their own set of dependencies and you can run each of them at the root folder by running:</p>
+<div class="code_switcher_container_parent a9a3f867-5593-4f8c-95b5-5b1057abe0fc"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go run ./server
+</code></pre></div></div>
+</div>
+<p>and</p>
+<div class="code_switcher_container_parent 8bfd9aa0-a71e-477b-ab47-5e84c6aa6b07"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go run ./client
+</code></pre></div></div>
+</div>
+<h2 id="advantages">Advantages</h2>
+<ul>
+<li>This is pretty low-tech. We only need Go.</li>
+<li>Pretty quick setup for new projects.</li>
+<li>Each of the module can get their own dependencies and they can also share some.</li>
+</ul>
+<h2 id="disadvantages">Disadvantages</h2>
+<ul>
+<li>All the subprojects need to be written in Go for it to work as intended.</li>
+<li>Setup for already existing and complex projects might be hard.</li>
+</ul>
+<h1 id="bazel">Bazel</h1>
+<p>Because setting up a project in Bazel is highly dependent on which technology you want to use, I will not go into to much details here. But the idea with Bazel is that we can have the same kind of monorepo as we saw but we can do this is multi-languages.</p>
+<p>If we have a client written in JS and a backend written in Go, we will have a BUILD.bazel file for each subprojects defining how to build each part of the projects. And at the root level we will have a WORKSPACE.bazel file which describes all the build dependencies.</p>
+<p>Finally, if you are working with Go modules, <a href="https://github.com/bazelbuild/bazel-gazelle">Gazelle</a> (a BUILD.bazel file generator) can help you write all the build boilerplate for you and let you focus on your code.</p>
+<h2 id="advantages-1">Advantages</h2>
+<ul>
+<li>Once it is set up, it is very efficient to run commands.</li>
+<li>Multi-language monorepos.</li>
+<li>Setup for already existing and complex projects is easier with Gazelle. Note that this is only for Go.</li>
+</ul>
+<h2 id="disadvantages-1">Disadvantages</h2>
+<ul>
+<li>Harder upfront cost for setup.</li>
+</ul>
+<h1 id="conclusion">Conclusion</h1>
+<p>In this article, we got an overview of two ways of building monorepos in Go or in multi-language setups. We saw that when we have a newer project we can use Go Workspaces as this is a low-tech way of starting building a monorepo. However, if we decide to have a multi-language setup we will have to move to Bazel. <strong>There are obviously more choices to be made depending on the kind of project you are making and that's why I want your feedback on what I should build</strong>.</p>
+<p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Go" /><category term="Bazel" /><summary type="html"><![CDATA[Recently I've discovered two interesting was in creating monorepos for go projects. In this article we are going to talk about the advantages and disadvantages of each of these techniques.]]></summary></entry><entry><title type="html">Protein: Parser (Part 1)</title><link href="https://clement-jean.github.io/protein_parser_part_1/" rel="alternate" type="text/html" title="Protein: Parser (Part 1)" /><published>2023-03-09T00:00:00+08:00</published><updated>2023-03-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/protein_parser_part_1</id><content type="html" xml:base="https://clement-jean.github.io/protein_parser_part_1/"><![CDATA[<p>In this article we are going to finally get to building the Parser. We are going to start parsing syntax, package and import statements, and we are going to see how to represent our serializable AST. Hope you are ready for this, it's gonna be fun!</p>
 <h2 id="boilerplate">Boilerplate</h2>
 <p>As always, we need to think a little bit before to actually write the features themselves. The first thing that we can do to get us started is to write the Parser interface.</p>
 <ul class="code-tab-container 0a301b05-c410-4e62-bfe0-59a3d03df4a8"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '0a301b05-c410-4e62-bfe0-59a3d03df4a8', 0)">parser/parser.go</a></li></ul><ul class="code-tab-switcher 0a301b05-c410-4e62-bfe0-59a3d03df4a8"><li class="code_switcher_container_parent active-tab code_switcher_go 6d2ad0d0-335e-4d2d-b63c-c4cc26aa4265"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
@@ -2747,219 +2807,4 @@ Protobuf payload length: 510 bytes
 <ul>
 <li>From 268,435,456 to whatever limit you 32 bits type has, it is better to use a <code>fixed32</code>.</li>
 <li>From 72,057,594,037,927,936 to whatever limit you 64 bits type has, it is better to use a <code>fixed64</code>.</li>
-</ul>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><summary type="html"><![CDATA[This article is much more a note to myself than something else but this might be interesting for people out there. I wanted to calculate the thresholds at which it is better it is to use a fixed rather than a varint.]]></summary></entry><entry><title type="html">Storing Colors in Protocol Buffers</title><link href="https://clement-jean.github.io/storing_color_in_pb/" rel="alternate" type="text/html" title="Storing Colors in Protocol Buffers" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>https://clement-jean.github.io/storing_color_in_pb</id><content type="html" xml:base="https://clement-jean.github.io/storing_color_in_pb/"><![CDATA[<p>While working on a new course, I was looking for an example to store a Color in Protocol Buffers. At first this seemed like an easy task but it turned out to be an interesting example of optimization. Let's work through it.</p>
-<h2 id="quick-requirements">Quick Requirements</h2>
-<p>In order to define what's the most optimal message definition that we come with, we need a way to calculate the serialized size of that message. Fortunately, doing so is pretty easy with Protocol Buffers.</p>
-<ul class="code-tab-container b4f6bff6-63a5-437a-9737-e1c9dbf295fa"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'b4f6bff6-63a5-437a-9737-e1c9dbf295fa', 6)">C++</a></li></ul><ul class="code-tab-switcher b4f6bff6-63a5-437a-9737-e1c9dbf295fa"><li class="code_switcher_container_parent active-tab code_switcher_python 8dfd3042-9ace-4232-82ac-16410afefdeb"><div class="code_switcher_code_action_container"><div id="code_copied_snackbar">Copied!</div><button class="code_switcher_copy_button" title="Copy" onclick="copyText('8dfd3042-9ace-4232-82ac-16410afefdeb')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-  <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">SerializeToString</span><span class="p">())</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 61b2a164-be63-49d4-8150-13b22b56796a"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('61b2a164-be63-49d4-8150-13b22b56796a')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.Message</span><span class="o">;</span>
-
-<span class="kt">int</span> <span class="nf">calculateSize</span><span class="o">(</span><span class="nc">Message</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">getSerializedSize</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin bdbad1d3-f5b9-47e1-a3e2-9d56701e9465"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('bdbad1d3-f5b9-47e1-a3e2-9d56701e9465')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.google.protobuf.Message</span>
-
-<span class="k">fun</span> <span class="nf">calculateSize</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">Message</span><span class="p">)</span> <span class="p">=</span> <span class="n">message</span><span class="p">.</span><span class="n">serializedSize</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go 2f658e8d-5589-4634-a304-6f67111b371f"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('2f658e8d-5589-4634-a304-6f67111b371f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="s">"google.golang.org/protobuf/proto"</span>
-
-<span class="k">func</span> <span class="n">calculateSize</span><span class="p">(</span><span class="n">message</span> <span class="n">proto</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-  <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">Fatalln</span><span class="p">(</span><span class="s">"Failed to encode:"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 3ec21dc6-2072-4a40-98b8-dd8e20044781"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('3ec21dc6-2072-4a40-98b8-dd8e20044781')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Google.Protobuf</span>
-
-<span class="kt">int</span> <span class="nf">CalculateSize</span><span class="p">(</span><span class="n">IMessage</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="n">message</span><span class="p">.</span><span class="nf">CalculateSize</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js 20d5e1a4-43a2-4ebd-955a-ac0f534ff502"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('20d5e1a4-43a2-4ebd-955a-ac0f534ff502')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">calculateSize</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">serializeBinary</span><span class="p">().</span><span class="nx">length</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 91f8a3fb-008c-44bd-962d-01d3725c0235"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('91f8a3fb-008c-44bd-962d-01d3725c0235')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;google/protobuf/message.h&gt;</span><span class="cp">
-</span>
-<span class="kt">int</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">Message</span> <span class="o">*</span><span class="n">message</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">out</span><span class="p">;</span>
-  <span class="kt">bool</span> <span class="n">serialized</span> <span class="o">=</span> <span class="n">message</span><span class="o">-&gt;</span><span class="n">SerializeToString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">);</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">serialized</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-
-  <span class="k">return</span> <span class="n">out</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</li></ul>
-<h2 id="a-primitive-implementation">A primitive implementation</h2>
-<p>When I see something like <code>#FFFFFFFF</code> or <code>#00000000</code> (RGBA), I directly think about two things:</p>
-<ul>
-<li>The human readable solution: <code>string</code></li>
-<li>The non human readable solution: <code>int32</code> or <code>int64</code></li>
-</ul>
-<p>Let's try with the string and work our way through, here is the proto file we are gonna use:</p>
-<div class="code_switcher_container_parent ef5bb1bb-f326-42d6-b5eb-10cdf2caa15b"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('ef5bb1bb-f326-42d6-b5eb-10cdf2caa15b')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
-
-<span class="k">option</span> <span class="na">java_package</span> <span class="o">=</span> <span class="s">"com.example"</span><span class="p">;</span>
-<span class="k">option</span> <span class="na">java_multiple_files</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-<span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"example.com/m"</span><span class="p">;</span>
-<span class="k">option</span> <span class="na">csharp_namespace</span> <span class="o">=</span> <span class="s">"Example"</span><span class="p">;</span>
-
-<span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
-  <span class="kt">string</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</div>
-<p>and here is the code that calculates the size for <code>Color</code> with value <code>#FFFFFFFF</code> (max color value):</p>
-<ul class="code-tab-container 795361a8-3551-41f3-a3e1-d043328ad6e4"><li class="active-tab code_switcher_python"><a onclick="selectTab('code_switcher_python', '795361a8-3551-41f3-a3e1-d043328ad6e4', 0)">Python</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '795361a8-3551-41f3-a3e1-d043328ad6e4', 1)">Java</a></li><li class=" code_switcher_kotlin"><a onclick="selectTab('code_switcher_kotlin', '795361a8-3551-41f3-a3e1-d043328ad6e4', 2)">Kotlin</a></li><li class=" code_switcher_go"><a onclick="selectTab('code_switcher_go', '795361a8-3551-41f3-a3e1-d043328ad6e4', 3)">Go</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '795361a8-3551-41f3-a3e1-d043328ad6e4', 4)">C#</a></li><li class=" code_switcher_js"><a onclick="selectTab('code_switcher_js', '795361a8-3551-41f3-a3e1-d043328ad6e4', 5)">JS</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '795361a8-3551-41f3-a3e1-d043328ad6e4', 6)">C++</a></li></ul><ul class="code-tab-switcher 795361a8-3551-41f3-a3e1-d043328ad6e4"><li class="code_switcher_container_parent active-tab code_switcher_python e30dfab1-85ea-4e82-ac66-3cd61277588c"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('e30dfab1-85ea-4e82-ac66-3cd61277588c')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">proto.color_pb2</span> <span class="k">as</span> <span class="n">pb</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">calculate_size</span><span class="p">(</span><span class="n">pb</span><span class="p">.</span><span class="n">Color</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"FFFFFFFF"</span><span class="p">)))</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java f9d036c1-2d7c-41bb-9cf6-de23933e1400"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('f9d036c1-2d7c-41bb-9cf6-de23933e1400')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.example.Color</span>
-
-<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">calculateSize</span><span class="o">(</span><span class="nc">Color</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">setValue</span><span class="o">(</span><span class="s">"FFFFFFFF"</span><span class="o">).</span><span class="na">build</span><span class="o">()));</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_kotlin 0b83dd00-b489-48d9-acbf-ceed11146449"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('0b83dd00-b489-48d9-acbf-ceed11146449')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.example.color</span>
-
-<span class="nf">println</span><span class="p">(</span><span class="nf">calculateSize</span><span class="p">(</span><span class="nf">color</span> <span class="p">{</span> <span class="n">value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}))</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_go 96aee934-c2f3-4178-953a-414ca30489bf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('96aee934-c2f3-4178-953a-414ca30489bf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="n">pb</span> <span class="s">"example.com/m"</span>
-
-<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">calculateSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">Color</span><span class="p">{</span><span class="n">Value</span><span class="o">:</span> <span class="s">"FFFFFFFF"</span><span class="p">}))</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp e84a6cee-c9b1-4ee4-8fb1-a7fc54995803"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('e84a6cee-c9b1-4ee4-8fb1-a7fc54995803')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Example</span><span class="p">;</span>
-
-<span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="nf">CalculateSize</span><span class="p">(</span><span class="k">new</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">Value</span> <span class="p">=</span> <span class="s">"FFFFFFFF"</span> <span class="p">}));</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_js 1275b9c4-d414-4a14-96f1-00aea97fb9bf"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('1275b9c4-d414-4a14-96f1-00aea97fb9bf')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span><span class="nx">Color</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./proto/color_pb</span><span class="dl">'</span><span class="p">);</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">calculateSize</span><span class="p">(</span><span class="k">new</span> <span class="nx">Color</span><span class="p">().</span><span class="nx">setValue</span><span class="p">(</span><span class="dl">"</span><span class="s2">FFFFFFFF</span><span class="dl">"</span><span class="p">)));</span>
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 330d54a6-a37e-4204-90aa-fc46553197f7"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('330d54a6-a37e-4204-90aa-fc46553197f7')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"color.pb.h"</span><span class="cp">
-</span>
-<span class="n">Color</span> <span class="n">color</span><span class="p">;</span>
-
-<span class="n">color</span><span class="p">.</span><span class="n">set_value</span><span class="p">(</span><span class="s">"FFFFFFFF"</span><span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">calculate_size</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</code></pre></div></div>
-</li></ul>
-<p>And that should give us a 10 bytes serialization, because this will be encoded as the following:</p>
-<p class="text-center h4">
-  <span style="color: blue">0a</span>
-  <span style="color: red">08</span>
-  <span style="color: green">46 46 46 46 46 46 46 46</span>
-</p>
-<p>where:</p>
-<p>🔵 blue: is the combinaison between field tag and field type in one byte (read more <a href="https://developers.google.com/protocol-buffers/docs/encoding#structure">here</a>). In our case our tag is 1 and the type is what's called <code>Length-delimited</code>.</p>
-<p>🔴 red: is the size of the <code>Length-delimited</code> field, here 8.</p>
-<p>🟢 green: is the <code>Length-delimited</code> field value. Here 46 is F (you can type <code>man ascii</code> and have a look at the Hexadecimal set).</p>
-<h2 id="lets-optimize-that">Let's optimize that</h2>
-<p>As mentioned earlier, the other way to solve that is to store the value in an integer. So let's check the decimal value of the biggest color that we can get, which is <code>FFFFFFFF</code>.</p>
-<ul class="code-tab-container f9501029-5830-432b-96e6-56b33db404dd"><li class="active-tab code_switcher_shell"><a onclick="selectTab('code_switcher_shell', 'f9501029-5830-432b-96e6-56b33db404dd', 0)">Linux/Mac</a></li><li class=" code_switcher_shell"><a onclick="selectTab('code_switcher_shell', 'f9501029-5830-432b-96e6-56b33db404dd', 1)">Windows (Powershell)</a></li></ul><ul class="code-tab-switcher f9501029-5830-432b-96e6-56b33db404dd"><li class="code_switcher_container_parent active-tab code_switcher_shell d5e62729-f56b-4ed8-bca2-f6eec57aec5f"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('d5e62729-f56b-4ed8-bca2-f6eec57aec5f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"ibase=16; FFFFFFFF"</span> | bc
-</code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_shell 0a5fb56c-27aa-4464-80f7-a63258c3453f"><div class="code_switcher_code_action_container"><button class="code_switcher_copy_button" title="Copy" onclick="copyText('0a5fb56c-27aa-4464-80f7-a63258c3453f')"></button><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>convert]::toint64<span class="o">(</span><span class="s2">"FFFFFFFF"</span>, 16<span class="o">)</span>
-</code></pre></div></div>
-</li></ul>
-<p>and this gives us: <strong>4,294,967,295</strong>. Sounds like this gonna fit inside an <code>int32</code> or even an <code>uint32</code> if we wanted to make class instantiation safer (not letting user enter negative value). So we now have:</p>
-<div class="code_switcher_container_parent d8aa26ba-f47b-4903-b658-fb37f3bd79d2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
-  <span class="kt">uint32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</div>
-<p>and by using the same code for calculating the size we obtain: <strong>6 bytes</strong>.</p>
-<h2 id="a-step-further">A step further</h2>
-<p>Let's take a look at a table that I made for another post.</p>
-<div class="table-responsive">
-<table class="table table-striped table-borderless">
-  <thead>
-    <tr>
-      <th scope="col" class="text-center">Threshold value</th>
-      <th scope="col" class="text-center">Bytes size (without tag)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row" class="text-center">0</th>
-      <td class="text-center">0</td>
-    </tr>
-    <tr>
-      <th scope="row" class="text-center">1</th>
-      <td class="text-center">1</td>
-    </tr>
-    <tr>
-      <th scope="row" class="text-center">128</th>
-      <td class="text-center">2</td>
-    </tr>
-		<tr>
-      <th scope="row" class="text-center">16,384</th>
-      <td class="text-center">3</td>
-    </tr>
-		<tr>
-      <th scope="row" class="text-center">2,097,152</th>
-      <td class="text-center">4</td>
-    </tr>
-		<tr>
-      <th scope="row" class="text-center">268,435,456</th>
-      <td class="text-center">5</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<p>This table presents the field value thresholds and the bytes size for serialization of <code>uint32</code>. Can you see the problem here ? <strong>4,294,967,295</strong> is simply bigger than <strong>268,435,456</strong> and what it means is that, our value of <code>FFFFFFFF</code> will be serialized to 5 bytes.</p>
-<p>Do we know another type that could help us serialize in less bytes? Sure we do! We know that <code>fixed32</code> is an unsigned integer and it will always be serialized to 4 bytes. So we if change to:</p>
-<div class="code_switcher_container_parent 7e03d739-ce75-4c9e-b12a-d67f603d8c88"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Color</span> <span class="p">{</span>
-  <span class="kt">fixed32</span> <span class="na">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</div>
-<p>the value <code>FFFFFFFF</code> will be serialized into:</p>
-<p class="text-center h4">
-  <span style="color: blue">0d</span>
-  <span style="color: green">ff ff ff ff</span>
-</p>
-<p>and we are done!</p>
-<h2 id="wait-a-minute-">Wait a minute ...</h2>
-<p>This seems to vary with our data/color distribution, isn't it ?</p>
-<div class="text-center">
-  <img src="/images/threshold_color.png" alt="Threshold color between uint32 and fixed32">
-</div>
-<p>It varies. However you can see the number of colors that can be efficiently serialized with a <code>uint32</code> is pretty small. The dots here represent the threshold that I showed in the table presented in &quot;A step further&quot; and here we can see that the threshold at <strong>2,097,152</strong> or <code>001FFFFF</code> is where it becomes efficient to store with a <code>fixed32</code>.</p>
-<p>Let's calculate the percentage of colors that can be efficiently stored with an <code>uint32</code>.</p>
-<p class="text-center h4">
-  (<span style="color: blue">2097152</span> / <span style="color: red">4294967295</span>) * 100 ~= 0.05
-</p>
-<p>where:</p>
-<p>🔵 blue: is the threshold at which it becomes more optimal to save with <code>fixed32</code>.</p>
-<p>🔴 red: biggest number that we can have (<code>FFFFFFFF</code>).</p>
-<p>So in conclusion only 0.05% of the possible numbers will be not optimally serialized. I think we can agree on the fact that is acceptable.</p>
-<h2 id="conclusion">Conclusion</h2>
-<p>Protocol Buffers are providing us with a lot of types for numbers, and choosing the right one is important for optimizing you payload or serialized data size. If you want to know more about how to choose between them, you might consider joining <a href="https://www.udemy.com/course/protocol-buffers/?referralCode=CB382B4ED9936D6C6193">my Udemy course</a> on Protocol Buffers.</p>
-<p>Hope you enjoyed this article, I will be glad to get some feedback on this. Especially if you find a more efficient way to serialize this data. Check the about page to find all the ways you can us for reaching to me.</p>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><summary type="html"><![CDATA[While working on a new course, I was looking for an example to store a Color in Protocol Buffers. At first this seemed like an easy task but it turned out to be an interesting example of optimization. Let's work through it.]]></summary></entry></feed>
+</ul>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><summary type="html"><![CDATA[This article is much more a note to myself than something else but this might be interesting for people out there. I wanted to calculate the thresholds at which it is better it is to use a fixed rather than a varint.]]></summary></entry></feed>
