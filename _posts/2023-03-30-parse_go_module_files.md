@@ -113,6 +113,12 @@ $ go run main.go
 
 We now have our Go version at runtime and we can use it for logging, selecting features, ...
 
+# The Problem
+
+Obviously, what we saw is far from great. What if we compile our go project to binary and the go.mod is not around anymore. Well, basically it doesn't work.
+
+I'm presenting to you this idea because combined with the right tool to build your project, you can actually embed the version inside your binary. This can be done with ldflags (check [Alex Ellis blog post](https://blog.alexellis.io/inject-build-time-vars-golang/) on the subject). But this can also be done with Bazel and [stamping](https://bazel.build/docs/user-manual#workspace-status). If you are interested in knowing how to do that, let me know.
+
 # Conclusion
 
 In this short post, we saw how to get the go version on which a go project is compiled at runtime. This can be used in multiple ways, but the use case that has come to me is mostly logging. I hope this is interesting for you.
