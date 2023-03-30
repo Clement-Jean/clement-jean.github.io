@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-30T17:38:12+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Parse go module files</title><link href="https://clement-jean.github.io/parse_go_module_files/" rel="alternate" type="text/html" title="Parse go module files" /><published>2023-03-30T00:00:00+08:00</published><updated>2023-03-30T00:00:00+08:00</updated><id>https://clement-jean.github.io/parse_go_module_files</id><content type="html" xml:base="https://clement-jean.github.io/parse_go_module_files/"><![CDATA[<p>Did you ever need to know, inside your program, on which go version you are running? That's what we are going to solve today. The most common use case for this is logging. We want to be able to debug by reproducing the environment of where the binary is running as close as possible. This starts by knowing which version of go we are using.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-03-30T17:48:01+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Parse go module files</title><link href="https://clement-jean.github.io/parse_go_module_files/" rel="alternate" type="text/html" title="Parse go module files" /><published>2023-03-30T00:00:00+08:00</published><updated>2023-03-30T00:00:00+08:00</updated><id>https://clement-jean.github.io/parse_go_module_files</id><content type="html" xml:base="https://clement-jean.github.io/parse_go_module_files/"><![CDATA[<p>Did you ever need to know, inside your program, on which go version you are running? That's what we are going to solve today. The most common use case for this is logging. We want to be able to debug by reproducing the environment of where the binary is running as close as possible. This starts by knowing which version of go we are using.</p>
 <h1 id="setup">Setup</h1>
 <p>To get started doing that, we will need a go module. Let's create that:</p>
-<div class="code_switcher_container_parent a8ca26ac-e14c-496f-b890-238af4d7907d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent e4af0931-25ac-4f64-bd81-9ddf33f5a50f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go mod init test.com
 </code></pre></div></div>
 </div>
 <p>We should now have a go.mod file in our folder. If you inspect this file, we can get the go version which will be used for compiling the project. It looks like this:</p>
-<ul class="code-tab-container 1b1baf64-39cb-4539-a796-0695f46e6a5c"><li class="active-tab code_switcher_text"><a onclick="selectTab('code_switcher_text', '1b1baf64-39cb-4539-a796-0695f46e6a5c', 0)">go.mod</a></li></ul><ul class="code-tab-switcher 1b1baf64-39cb-4539-a796-0695f46e6a5c"><li class="code_switcher_container_parent active-tab code_switcher_text 3102b1d7-37f7-403f-a165-b83147e09680"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 7d44c3d0-e0a1-435a-b679-1d3026817ea1"><li class="active-tab code_switcher_text"><a onclick="selectTab('code_switcher_text', '7d44c3d0-e0a1-435a-b679-1d3026817ea1', 0)">go.mod</a></li></ul><ul class="code-tab-switcher 7d44c3d0-e0a1-435a-b679-1d3026817ea1"><li class="code_switcher_container_parent active-tab code_switcher_text 68064775-28d6-439a-934b-17d1ca389070"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module test.com
 
 go 1.20
@@ -15,7 +15,7 @@ go 1.20
 <p>That's pretty much it. We will use this file to get the info we want.</p>
 <h1 id="go-command">Go Command</h1>
 <p>One thing that I learned recently is that we can actually get a JSON representation of or modules, workspaces, ... via the command line. To do that, we can run the following command:</p>
-<div class="code_switcher_container_parent 54180119-a32d-4361-a52a-bafba10dbf0b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 83404b15-fe1a-4278-81d5-b92160059e1b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go mod edit <span class="nt">-json</span>
 <span class="o">{</span>
   <span class="s2">"Module"</span>: <span class="o">{</span>
@@ -33,7 +33,7 @@ go 1.20
 <h1 id="parsing-json">Parsing JSON</h1>
 <p>The only thing left to do is execute this command in our main, Unmarshal the JSON result and we should be able to get the version.</p>
 <p>First, let's define the structs into which we will Unmarshal to.</p>
-<ul class="code-tab-container 66cb1e13-bcf8-4578-9b9e-6f88398b0885"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '66cb1e13-bcf8-4578-9b9e-6f88398b0885', 0)">main.go</a></li></ul><ul class="code-tab-switcher 66cb1e13-bcf8-4578-9b9e-6f88398b0885"><li class="code_switcher_container_parent active-tab code_switcher_go 850e5b4f-3341-4a31-ae28-43136fe3bd11"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 47075950-44c1-48fa-91d1-b64e6e379ca8"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '47075950-44c1-48fa-91d1-b64e6e379ca8', 0)">main.go</a></li></ul><ul class="code-tab-switcher 47075950-44c1-48fa-91d1-b64e6e379ca8"><li class="code_switcher_container_parent active-tab code_switcher_go c6b2657a-46c1-4513-a738-5959ad9e3828"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Module</span> <span class="k">struct</span> <span class="p">{</span>
   <span class="n">Path</span> <span class="kt">string</span>
 <span class="p">}</span>
@@ -46,14 +46,14 @@ go 1.20
 </li></ul>
 <p>Notice here that I'm not taking Require, Exclude, ... into account. We only want the Go string.</p>
 <p>After that, the rest is pretty easy. We can execute a command line and get its stdout result like so:</p>
-<div class="code_switcher_container_parent 5f561033-d3b0-4c27-900b-c1d3ee3ebd5d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 1faae0b0-dd7e-444d-b8a6-7fd939688fde"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">exec</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">"go"</span><span class="p">,</span> <span class="s">"mod"</span><span class="p">,</span> <span class="s">"edit"</span><span class="p">,</span> <span class="s">"-json"</span><span class="p">)</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
 </code></pre></div></div>
 </div>
 <p>I'm skipping the err handling here by dropping the error with _ but make sure to handle this for production-grade scripts.</p>
 <p>And finally, we use <code>json.Unmarshal</code> function which takes the ouput of the command line, and the destination of where we want to populate the data. In our case, this is an instance of GoMod.</p>
 <p>In the end, the main function looks like:</p>
-<ul class="code-tab-container c683a0b8-b923-40e0-85bd-3ff0ef5d15cc"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'c683a0b8-b923-40e0-85bd-3ff0ef5d15cc', 0)">main.go</a></li></ul><ul class="code-tab-switcher c683a0b8-b923-40e0-85bd-3ff0ef5d15cc"><li class="code_switcher_container_parent active-tab code_switcher_go 857999c7-84da-490e-9cde-d0b5a1090665"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 058e30d6-fca9-4438-81c6-9737d02505d5"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '058e30d6-fca9-4438-81c6-9737d02505d5', 0)">main.go</a></li></ul><ul class="code-tab-switcher 058e30d6-fca9-4438-81c6-9737d02505d5"><li class="code_switcher_container_parent active-tab code_switcher_go 4d68ab82-7d94-4265-b3e7-9122d34991e7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
 <span class="k">import</span> <span class="p">(</span>
@@ -82,12 +82,15 @@ go 1.20
 </code></pre></div></div>
 </li></ul>
 <p>We can run that, and we get:</p>
-<div class="code_switcher_container_parent 1c4408df-647b-4014-ab91-2e3aabeda06b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 465e812f-b982-49f6-bede-25b5cc5e27ab"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run main.go
 1.20
 </code></pre></div></div>
 </div>
 <p>We now have our Go version at runtime and we can use it for logging, selecting features, ...</p>
+<h1 id="the-problem">The Problem</h1>
+<p>Obviously, what we saw is far from great. What if we compile our go project to binary and the go.mod is not around anymore. Well, basically it doesn't work.</p>
+<p>I'm presenting to you this idea because combined with the right tool to build your project, you can actually embed the version inside your binary. This can be done with ldflags (check <a href="https://blog.alexellis.io/inject-build-time-vars-golang/">Alex Ellis blog post</a> on the subject). But this can also be done with Bazel and <a href="https://bazel.build/docs/user-manual#workspace-status">stamping</a>. If you are interested in knowing how to do that, let me know.</p>
 <h1 id="conclusion">Conclusion</h1>
 <p>In this short post, we saw how to get the go version on which a go project is compiled at runtime. This can be used in multiple ways, but the use case that has come to me is mostly logging. I hope this is interesting for you.</p>
 <p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Go" /><summary type="html"><![CDATA[Did you ever need to know, inside your program, on which go version you are running? That's what we are going to solve today. The most common use case for this is logging. We want to be able to debug by reproducing the environment of where the binary is running as close as possible. This starts by knowing which version of go we are using.]]></summary></entry><entry><title type="html">Go Monorepos - Intro</title><link href="https://clement-jean.github.io/go-monorepos-intro/" rel="alternate" type="text/html" title="Go Monorepos - Intro" /><published>2023-03-16T00:00:00+08:00</published><updated>2023-03-16T00:00:00+08:00</updated><id>https://clement-jean.github.io/go-monorepos-intro</id><content type="html" xml:base="https://clement-jean.github.io/go-monorepos-intro/"><![CDATA[<p>Recently I've discovered two interesting was in creating monorepos for go projects. In this article we are going to talk about the advantages and disadvantages of each of these techniques.</p>
