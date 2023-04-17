@@ -194,8 +194,8 @@ def get_option_value(opts, id):
 using pb = global::Google.Protobuf;
 
 static private T GetOptionValue<T>(
-	this pb.Reflection.MethodDescriptor md, // MethodDescriptor and not MethodOptions as promised (sorry!)
-	pb::Extension<pb.Reflection.MethodOptions, T> id
+  this pb.Reflection.MethodDescriptor md, // MethodDescriptor and not MethodOptions as promised (sorry!)
+  pb::Extension<pb.Reflection.MethodOptions, T> id
 ) => md.GetOptions().GetExtension(id);
 ```
 
@@ -205,55 +205,55 @@ The next step is to get a `MethodDescriptor` out of a `ServiceDescriptor`. This 
 
 ```go main.go
 func getServiceMethod(
-	sd protoreflect.ServiceDescriptor,
-	fn func(md protoreflect.MethodDescriptor) bool,
+  sd protoreflect.ServiceDescriptor,
+  fn func(md protoreflect.MethodDescriptor) bool,
 ) *protoreflect.MethodDescriptor {
-	for i := 0; i < sd.Methods().Len(); i++ {
-		md := sd.Methods().Get(i)
+  for i := 0; i < sd.Methods().Len(); i++ {
+    md := sd.Methods().Get(i)
 
-		if fn(md) {
-			return &md
-		}
-	}
+    if fn(md) {
+      return &md
+    }
+  }
 
-	return nil
+  return nil
 }
 ```
 ```cpp main.cc
 #include <functional>
 
 std::optional<const MethodDescriptor *> get_service_method(
-	const ServiceDescriptor *sd,
-	const std::function<bool(const MethodDescriptor *)> &predicate
+  const ServiceDescriptor *sd,
+  const std::function<bool(const MethodDescriptor *)> &predicate
 ) {
-	if (!sd)
-		return std::nullopt;
+  if (!sd)
+    return std::nullopt;
 
-	for (int i = 0; i < sd->method_count(); ++i) {
-		auto md = sd->method(i);
+  for (int i = 0; i < sd->method_count(); ++i) {
+    auto md = sd->method(i);
 
-		if (predicate(md))
-			return md;
-	}
+    if (predicate(md))
+      return md;
+  }
 
-	return std::nullopt;
+  return std::nullopt;
 }
 ```
 ```java main.java
 import com.google.protobuf.Descriptors;
 
 private static <T> Optional<Descriptors.MethodDescriptor> getServiceMethod(
-	Descriptors.ServiceDescriptor sd,
-	Function<Descriptors.MethodDescriptor, Boolean> predicate
+  Descriptors.ServiceDescriptor sd,
+  Function<Descriptors.MethodDescriptor, Boolean> predicate
 ) {
-	for (int i = 0; i < sd.getMethods().size(); ++i) {
-		Descriptors.MethodDescriptor method = sd.getMethods().get(i);
+  for (int i = 0; i < sd.getMethods().size(); ++i) {
+    Descriptors.MethodDescriptor method = sd.getMethods().get(i);
 
-		if (predicate.apply(method))
-			return Optional.of(method);
-	}
+    if (predicate.apply(method))
+      return Optional.of(method);
+  }
 
-	return Optional.empty();
+  return Optional.empty();
 }
 ```
 ```python main.py
@@ -266,12 +266,12 @@ def get_service_method(sd, predicate):
 ```
 ```csharp main.cs
 static private IEnumerable<pb.Reflection.MethodDescriptor> GetServiceMethod(
-	this IEnumerable<pb.Reflection.ServiceDescriptor> services,
-	Func<pb.Reflection.MethodDescriptor, bool> predicate
+  this IEnumerable<pb.Reflection.ServiceDescriptor> services,
+  Func<pb.Reflection.MethodDescriptor, bool> predicate
 ) => from svc in services
-		 from method in svc.Methods
-		 where predicate(method)
-		 select method;
+     from method in svc.Methods
+     where predicate(method)
+     select method;
 ```
 
 ### Putting Everything Together
@@ -280,81 +280,81 @@ And finally the idea is to call `GetServiceMethod` on all the `ServiceDescriptor
 
 ```go main.go
 func getMethodOptionValue[T string | int | bool](
-	sd protoreflect.ServiceDescriptor,
-	id protoreflect.ExtensionType,
+  sd protoreflect.ServiceDescriptor,
+  id protoreflect.ExtensionType,
 ) *T {
-	var value *T = nil
+  var value *T = nil
 
-	getServiceMethod(sd, func(md protoreflect.MethodDescriptor) bool {
-		opts, ok := md.Options().(*descriptorpb.MethodOptions)
+  getServiceMethod(sd, func(md protoreflect.MethodDescriptor) bool {
+    opts, ok := md.Options().(*descriptorpb.MethodOptions)
 
-		if !ok {
-			return false
-		}
+    if !ok {
+      return false
+    }
 
-		if tmp := getOptionValue[T](opts, id); tmp != nil {
-			value = tmp
-			return true
-		}
+    if tmp := getOptionValue[T](opts, id); tmp != nil {
+      value = tmp
+      return true
+    }
 
-		return false
-	})
+    return false
+  })
 
-	return value
+  return value
 }
 
 func getMethodExtension[T string | int | bool](
-	fd protoreflect.FileDescriptor,
-	id protoreflect.ExtensionType,
+  fd protoreflect.FileDescriptor,
+  id protoreflect.ExtensionType,
 ) *T {
-	for i := 0; i < fd.Services().Len(); i++ {
-		sd := fd.Services().Get(i)
+  for i := 0; i < fd.Services().Len(); i++ {
+    sd := fd.Services().Get(i)
 
-		if value := getMethodOptionValue[T](sd, id); value != nil {
-			return value
-		}
-	}
+    if value := getMethodOptionValue[T](sd, id); value != nil {
+      return value
+    }
+  }
 
-	return nil
+  return nil
 }
 ```
 ```cpp main.cc
 template<typename U>
 std::optional<U> get_method_option_value(
-	const ServiceDescriptor *sd, // in C++ we can access the ServiceDescriptor directly
-	const auto &id
+  const ServiceDescriptor *sd, // in C++ we can access the ServiceDescriptor directly
+  const auto &id
 ) {
-	if (!sd)
-		return std::nullopt;
+  if (!sd)
+    return std::nullopt;
 
-	std::optional<U> value;
+  std::optional<U> value;
 
-	get_service_method(sd, [&value, &id](const MethodDescriptor *md) -> bool {
-		auto opts = md->options();
+  get_service_method(sd, [&value, &id](const MethodDescriptor *md) -> bool {
+    auto opts = md->options();
 
-		if (auto tmp = get_option_value<U>(opts, id))
-			value = tmp;
+    if (auto tmp = get_option_value<U>(opts, id))
+      value = tmp;
 
-		return value != std::nullopt;
-	});
+    return value != std::nullopt;
+  });
 
-	return value;
+  return value;
 }
 ```
 ```java main.java
 private static <T> Optional<T> getMethodExtension(
-	Descriptors.FileDescriptor fd,
-	GeneratedMessage.GeneratedExtension<DescriptorProtos.MethodOptions, ?> id
+  Descriptors.FileDescriptor fd,
+  GeneratedMessage.GeneratedExtension<DescriptorProtos.MethodOptions, ?> id
 ) {
-	for (int i = 0; i < fd.getServices().size(); ++i) {
-		Descriptors.ServiceDescriptor sd = fd.getServices().get(i);
-		Optional<T> world = getMethodOptionValue(sd, Hello.hello);
+  for (int i = 0; i < fd.getServices().size(); ++i) {
+    Descriptors.ServiceDescriptor sd = fd.getServices().get(i);
+    Optional<T> world = getMethodOptionValue(sd, Hello.hello);
 
-		if (world.isPresent())
-			return world;
-	}
+    if (world.isPresent())
+      return world;
+  }
 
-	return Optional.empty();
+  return Optional.empty();
 }
 ```
 ```python main.py
@@ -373,12 +373,12 @@ def get_method_extension(fd, id):
 ```
 ```csharp main.cs
 static private T GetMethodOptionValue<T>(
-	this pb.Reflection.FileDescriptor fd,
-	pb::Extension<pb.Reflection.MethodOptions, T> id
+  this pb.Reflection.FileDescriptor fd,
+  pb::Extension<pb.Reflection.MethodOptions, T> id
 ) => fd.Services
-			 .GetServiceMethod(md => md.GetOptionValue(id) != null)
-			 .FirstOrDefault()
-			 .GetOptionValue(id);
+       .GetServiceMethod(md => md.GetOptionValue(id) != null)
+       .FirstOrDefault()
+       .GetOptionValue(id);
 ```
 
 ### Usage
@@ -389,37 +389,37 @@ Let's see how to use that in our main function.
 import "fmt"
 
 func main() {
-	// pb.File_proto_world_proto is the generated FileDescriptor
-	// and pb.E_Hello the generated custom option
-	world := getMethodExtension[string](pb.File_proto_world_proto, pb.E_Hello)
+  // pb.File_proto_world_proto is the generated FileDescriptor
+  // and pb.E_Hello the generated custom option
+  world := getMethodExtension[string](pb.File_proto_world_proto, pb.E_Hello)
 
-	if world != nil {
-		fmt.Println(*world)
-	}
+  if world != nil {
+    fmt.Println(*world)
+  }
 }
 ```
 ```cpp main.cc
 #include <iostream>
 
 int main() {
-	// HelloWorldService is the generated service
-	auto sd = HelloWorldService::descriptor();
-	// hello is the generated custom option
-	auto world = get_method_option_value<std::string>(sd, hello);
+  // HelloWorldService is the generated service
+  auto sd = HelloWorldService::descriptor();
+  // hello is the generated custom option
+  auto world = get_method_option_value<std::string>(sd, hello);
 
-	if (world)
-		std::cout << *world << std::endl;
-	return 0;
+  if (world)
+    std::cout << *world << std::endl;
+  return 0;
 }
 ```
 ```java main.java
 public static void main(String[] args) {
-	// World is the FileDescriptor for the file world.proto
-	Descriptors.FileDescriptor fd = World.getDescriptor();
-	// Hello.hello is the generated custom option
-	Optional<String> world = getMethodExtension(fd, Hello.hello);
+  // World is the FileDescriptor for the file world.proto
+  Descriptors.FileDescriptor fd = World.getDescriptor();
+  // Hello.hello is the generated custom option
+  Optional<String> world = getMethodExtension(fd, Hello.hello);
 
-	world.ifPresent(w -> System.out.println(w));
+  world.ifPresent(w -> System.out.println(w));
 }
 ```
 ```python main.py
@@ -430,13 +430,13 @@ print(get_method_extension(DESCRIPTOR, "hello"))
 ```csharp main.cs
 static public void Main(String[] args)
 {
-	// HelloExtensions.Hello is the generated custom option
-	var id = HelloExtensions.Hello;
-	// WorldReflection.Descriptor is the FileDescriptor for the file world.proto
-	string world = WorldReflection.Descriptor.GetMethodOptionValue(id);
+  // HelloExtensions.Hello is the generated custom option
+  var id = HelloExtensions.Hello;
+  // WorldReflection.Descriptor is the FileDescriptor for the file world.proto
+  string world = WorldReflection.Descriptor.GetMethodOptionValue(id);
 
-	if (world.Length != 0)
-		System.Console.WriteLine(world);
+  if (world.Length != 0)
+    System.Console.WriteLine(world);
 }
 ```
 
@@ -455,9 +455,9 @@ Then, we can use it like so:
 
 ```proto
 service CheckoutService {
-	rpc Checkout (CheckoutRequest) returns (CheckoutResponse) {
-		option (is_authenticated) = true;
-	};
+  rpc Checkout (CheckoutRequest) returns (CheckoutResponse) {
+    option (is_authenticated) = true;
+  };
 }
 ```
 
