@@ -1,0 +1,12 @@
+load("@rules_java//java:defs.bzl", "java_binary")
+
+java_binary(
+    name = "test_java",
+    srcs = ["main.java"],
+    main_class = "com.clementjean.test.HelloWorldApp",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//proto:proto_java_proto",
+        "@com_google_protobuf//java/core",
+    ],
+)

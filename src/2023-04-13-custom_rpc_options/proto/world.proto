@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "proto/hello.proto";
+
+option go_package = "github.com/Clement-Jean/test/proto";
+option java_package = "com.clementjean.test";
+option java_multiple_files = true;
+option cc_generic_services = true;
+
+message HelloWorldRequest {}
+message HelloWorldResponse {}
+
+service HelloWorldService {
+  rpc HelloWorld (HelloWorldRequest) returns (HelloWorldResponse) {
+    option (hello) = "world";
+  };
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/Clement-Jean/test/proto";
+option java_package = "com.clementjean.test";
+option java_multiple_files = true;
+
+extend google.protobuf.MethodOptions {
+  string hello = 1000;
+}

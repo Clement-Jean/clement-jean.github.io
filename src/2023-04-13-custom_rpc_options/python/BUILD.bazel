@@ -1,0 +1,10 @@
+py_binary(
+    name = "test_py",
+    srcs = [
+        "main.py",
+        "//proto:hello_pb2.py",
+        "//proto:world_pb2.py",
+    ],
+    main = "main.py",
+    python_version = "PY3",
+)

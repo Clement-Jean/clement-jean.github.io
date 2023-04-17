@@ -1,0 +1,15 @@
+load("@rules_dotnet//dotnet:defs.bzl", "csharp_binary")
+
+csharp_binary(
+    name = "test_csharp",
+    srcs = [
+        "main.cs",
+        "//proto:Hello.cs",
+        "//proto:World.cs",
+    ],
+    target_frameworks = ["net7.0"],
+    deps = [
+        "@csharp_deps//Google.Protobuf:google.protobuf",
+        "@csharp_deps//microsoft.netcore.app.ref",
+    ],
+)

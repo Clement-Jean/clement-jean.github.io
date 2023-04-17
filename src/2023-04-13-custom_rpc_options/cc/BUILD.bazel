@@ -1,0 +1,10 @@
+cc_binary(
+    name = "test_cc",
+    srcs = ["main.cc"],
+    copts = [
+        "-std=c++20",
+    ],
+    deps = [
+        "//proto:proto_cc_proto",
+    ],
+)
