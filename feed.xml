@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-04-17T19:48:39+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Custom RPC Options in Protobuf</title><link href="https://clement-jean.github.io/custom_rpc_options/" rel="alternate" type="text/html" title="Custom RPC Options in Protobuf" /><published>2023-04-17T00:00:00+08:00</published><updated>2023-04-17T00:00:00+08:00</updated><id>https://clement-jean.github.io/custom_rpc_options</id><content type="html" xml:base="https://clement-jean.github.io/custom_rpc_options/"><![CDATA[<p>Recently I had to design authentication for a Blazor Application. After finishing implementing, I soon faced the need to know which RPC endpoint needs authentication and which doesn't. And while part of the problem is a solved one, I still needed a mechanism to let me define this. Let's see how.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-04-17T19:53:50+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Custom RPC Options in Protobuf</title><link href="https://clement-jean.github.io/custom_rpc_options/" rel="alternate" type="text/html" title="Custom RPC Options in Protobuf" /><published>2023-04-17T00:00:00+08:00</published><updated>2023-04-17T00:00:00+08:00</updated><id>https://clement-jean.github.io/custom_rpc_options</id><content type="html" xml:base="https://clement-jean.github.io/custom_rpc_options/"><![CDATA[<p>Recently I had to design authentication for a Blazor Application. After finishing implementing, I soon faced the need to know which RPC endpoint needs authentication and which doesn't. And while part of the problem is a solved one, I still needed a mechanism to let me define this. Let's see how.</p>
 <blockquote>
 <p>All the code (<strong>only running through Bazel right now</strong>) is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-04-13-custom_rpc_options">here</a></p>
 </blockquote>
 <h2 id="custom-options">Custom Options</h2>
 <p>Before explaining what my solution to the problem is, I'd like to make sure you understand what are custom options in Protobuf and how to define one. If you are confident about this skill, feel free to skip to the next section.</p>
 <p><strong>A custom option is a way to define metadata for a proto file, message, enum, fields, service and rpc</strong>. Generally, we are used to these:</p>
-<div class="code_switcher_container_parent 99ad849a-9956-4521-ad1c-9bd0b86eda71"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent d74402bf-904a-4f51-a25f-ed9209754cbb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"github.com/Clement-Jean/test"</span><span class="p">;</span>
 </code></pre></div></div>
 </div>
 <p>being placed at the top of the proto file. But it is important to know that you can make a field or message deprecated like so:</p>
-<div class="code_switcher_container_parent b9629258-4721-4481-a680-013dbf4fe4f8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 23e47230-73c9-48fc-b3a1-22e5507578cf"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Test</span> <span class="p">{</span>
   <span class="k">option</span> <span class="na">deprecated</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
@@ -20,7 +20,7 @@
 </div>
 <p>Now, I agree that, in most of the cases, these option are more informational than anything else. They do not necessarily impact the code generation but they are here to document the code. Also, knowing that Protobuf has reflection, we can use them in our code. This means that we could have a tool checking for deprecated messages, fields, ... and give us warnings when we use them in our code base.</p>
 <p>How do we define one, though? Well, it turns out that this is pretty simple. We need to use the <code>extend</code> concept and define which kind of option we want to extend. Let's first take a look at what kind of options we have:</p>
-<ul class="code-tab-container 2c926000-c0ca-4e10-8de2-ef9f30c94ce0"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '2c926000-c0ca-4e10-8de2-ef9f30c94ce0', 0)">descriptor.proto</a></li></ul><ul class="code-tab-switcher 2c926000-c0ca-4e10-8de2-ef9f30c94ce0"><li class="code_switcher_container_parent active-tab code_switcher_proto afae0768-7515-4613-8f97-d443df00567d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container a69a288a-4b16-4379-bd19-441b0ff97a4f"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'a69a288a-4b16-4379-bd19-441b0ff97a4f', 0)">descriptor.proto</a></li></ul><ul class="code-tab-switcher a69a288a-4b16-4379-bd19-441b0ff97a4f"><li class="code_switcher_container_parent active-tab code_switcher_proto b0258e83-2249-49f0-a298-e94a40282743"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">FileOptions</span> <span class="p">{</span>
   <span class="c1">//...</span>
 
@@ -66,7 +66,7 @@
 </li></ul>
 <p>That's actually every concept that we have in Protobuf! So let's define a simple option now. We will define an option called <code>hello</code> of type string. And for making this related to the problem that I'm trying to solve, let's define that option in <code>MethodOptions</code> which represents the options for RPC endpoints.</p>
 <p>So we will extend <code>MethodOptions</code>:</p>
-<ul class="code-tab-container 379bba40-65fa-44b9-837c-41657569a261"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '379bba40-65fa-44b9-837c-41657569a261', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 379bba40-65fa-44b9-837c-41657569a261"><li class="code_switcher_container_parent active-tab code_switcher_proto b87b8073-1b70-4ee3-bc5c-45f2445f1885"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 1e2b15ec-20f4-4d00-91dd-a01b76440277"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '1e2b15ec-20f4-4d00-91dd-a01b76440277', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 1e2b15ec-20f4-4d00-91dd-a01b76440277"><li class="code_switcher_container_parent active-tab code_switcher_proto 8a0eb00a-e193-4c35-998c-93009a2f15df"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">import</span> <span class="s">"google/protobuf/descriptor.proto"</span><span class="p">;</span>
@@ -75,7 +75,7 @@
 </code></pre></div></div>
 </li></ul>
 <p>And then inside this <code>extend</code> we can just write the hello field:</p>
-<ul class="code-tab-container 4a8553c0-5df9-4360-9551-5729dab2dc74"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '4a8553c0-5df9-4360-9551-5729dab2dc74', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 4a8553c0-5df9-4360-9551-5729dab2dc74"><li class="code_switcher_container_parent active-tab code_switcher_proto cf3b2b6d-5506-4064-98c8-1b2f1537a8fd"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e"><li class="code_switcher_container_parent active-tab code_switcher_proto ee8d3116-2b6e-4064-8c4b-7d60db650df7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">hello</span> <span class="o">=</span> <span class="err">??</span><span class="p">;</span>
 <span class="p">}</span>
@@ -83,7 +83,7 @@
 </li></ul>
 <p>But what is the tag that we need to use? Well, if you noticed in the <code>descriptor.proto</code> we have an extension range. These are the numbers we can use for tag. For now, we will use 1000, however, be aware that some of these tags are reserved by some already defined options. <strong>So if you were to use a tool that defines options that have the same tag number, there would be conflicts</strong>.</p>
 <p>We now have:</p>
-<ul class="code-tab-container e91e2bda-4bd4-43ce-bc4d-db7d9480798a"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'e91e2bda-4bd4-43ce-bc4d-db7d9480798a', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher e91e2bda-4bd4-43ce-bc4d-db7d9480798a"><li class="code_switcher_container_parent active-tab code_switcher_proto 7184429d-819c-49fc-be99-34a7a912ea2a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 53c8cb35-3e3e-40ef-bbec-3df99fca4fbb"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '53c8cb35-3e3e-40ef-bbec-3df99fca4fbb', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 53c8cb35-3e3e-40ef-bbec-3df99fca4fbb"><li class="code_switcher_container_parent active-tab code_switcher_proto e8fe5665-95e0-4633-a59b-f59246a6dc3e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">hello</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
 <span class="p">}</span>
@@ -92,7 +92,7 @@
 <h2 id="reflection">Reflection</h2>
 <p>Let us now use that option and read the value in code.</p>
 <p>To use it, this is pretty simple, we just need to import the file in which we wrote the <code>extend</code> and make sure we use the option on an RPC endpoint.</p>
-<ul class="code-tab-container f5ab865f-eebc-4f51-a883-396b81a28c0d"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'f5ab865f-eebc-4f51-a883-396b81a28c0d', 0)">world.proto</a></li></ul><ul class="code-tab-switcher f5ab865f-eebc-4f51-a883-396b81a28c0d"><li class="code_switcher_container_parent active-tab code_switcher_proto 2f8c8834-9296-4284-aed2-d5dc16f1a41d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container f9225a84-799e-4324-95ee-528637aa7d2c"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'f9225a84-799e-4324-95ee-528637aa7d2c', 0)">world.proto</a></li></ul><ul class="code-tab-switcher f9225a84-799e-4324-95ee-528637aa7d2c"><li class="code_switcher_container_parent active-tab code_switcher_proto 72d412d5-43d2-4726-9683-fef9d8d1bf55"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">import</span> <span class="s">"hello.proto"</span><span class="p">;</span>
@@ -109,7 +109,7 @@
 <p>We can generate the proto files out of world.proto and hello.proto. And after that we can take a bottom-up approach to read this value through reflection. By bottom up, I mean that we are going to first see how to read the value of a <code>MethodOptions</code>, then we will go to getting a <code>MethodDescriptor</code> out of a <code>ServiceDescriptor</code>, and finally getting a <code>ServiceDescriptor</code> out a <code>FileDescriptor</code>.</p>
 <h3 id="getting-an-option-value">Getting an Option Value</h3>
 <p>The first thing we are going to deal with is <code>MethodOptions</code>. These represent the options set on an RPC endpoint. In most of the implementations, we can check the existence of an option so this is as simple as &quot;check if there is the option with a given id on this method, if yes return the value, otherwise return null&quot;.</p>
-<ul class="code-tab-container 193f6403-d44a-47fc-82cf-650a7b03aa6b"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '193f6403-d44a-47fc-82cf-650a7b03aa6b', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '193f6403-d44a-47fc-82cf-650a7b03aa6b', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '193f6403-d44a-47fc-82cf-650a7b03aa6b', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '193f6403-d44a-47fc-82cf-650a7b03aa6b', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '193f6403-d44a-47fc-82cf-650a7b03aa6b', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 193f6403-d44a-47fc-82cf-650a7b03aa6b"><li class="code_switcher_container_parent active-tab code_switcher_go 5542db40-b771-4bfd-afda-b6eb2dbd3407"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container fcd577bd-3550-49b5-b4d2-38c88a913bd4"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 4)">main.cs</a></li></ul><ul class="code-tab-switcher fcd577bd-3550-49b5-b4d2-38c88a913bd4"><li class="code_switcher_container_parent active-tab code_switcher_go 289556d4-cef4-484c-bcff-c5ebff7de340"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
   <span class="s">"google.golang.org/protobuf/proto"</span>
   <span class="s">"google.golang.org/protobuf/reflect/protoreflect"</span>
@@ -129,7 +129,7 @@
   <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 3c2d0778-f731-4308-b90b-2acde11609f1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 378461b7-ed26-49a2-8d57-562a9e3e1415"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;optional&gt;</span><span class="cp">
 </span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="p">;</span>
@@ -144,7 +144,7 @@
     <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 8c82c4ef-532c-42e2-9f2b-0051b615417b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java aa643bc5-7e76-4d26-afb0-10a2251988f2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.DescriptorProtos</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.google.protobuf.GeneratedMessage</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.Optional</span><span class="o">;</span>
@@ -158,7 +158,7 @@
     <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python 92af6647-029c-4a0a-b765-9d3bca47b153"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python 3c348e8e-c6bb-4d74-970e-87ea9ee7ef2b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_option_value</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">.</span><span class="n">ListFields</span><span class="p">():</span>
     <span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">=</span> <span class="n">field</span>
@@ -166,71 +166,71 @@
     <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s">""</span> <span class="ow">and</span> <span class="n">desc</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">value</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp a5bfc5e2-1a2c-4188-907a-1305c49350e0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 80aa4465-73fc-4929-99f8-a0f98ecc415e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">pb</span> <span class="p">=</span> <span class="k">global</span><span class="p">::</span><span class="n">Google</span><span class="p">.</span><span class="n">Protobuf</span><span class="p">;</span>
 
 <span class="k">static</span> <span class="k">private</span> <span class="n">T</span> <span class="n">GetOptionValue</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span>
-	<span class="k">this</span> <span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span> <span class="n">md</span><span class="p">,</span> <span class="c1">// MethodDescriptor and not MethodOptions as promised (sorry!)</span>
-	<span class="n">pb</span><span class="p">::</span><span class="n">Extension</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodOptions</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">id</span>
+  <span class="k">this</span> <span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span> <span class="n">md</span><span class="p">,</span> <span class="c1">// MethodDescriptor and not MethodOptions as promised (sorry!)</span>
+  <span class="n">pb</span><span class="p">::</span><span class="n">Extension</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodOptions</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">id</span>
 <span class="p">)</span> <span class="p">=&gt;</span> <span class="n">md</span><span class="p">.</span><span class="nf">GetOptions</span><span class="p">().</span><span class="nf">GetExtension</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
 </code></pre></div></div>
 </li></ul>
 <h3 id="getting-a-method">Getting a Method</h3>
 <p>The next step is to get a <code>MethodDescriptor</code> out of a <code>ServiceDescriptor</code>. This is done so that we can later call the GetOptionValue function on the options of that method (if any). We will basically loop over all the methods of a service and check for a predicate on each. If the predicate returns true, we &quot;select&quot; that method.</p>
-<ul class="code-tab-container a948735e-bc3d-4187-b3d9-027998cd1e96"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'a948735e-bc3d-4187-b3d9-027998cd1e96', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'a948735e-bc3d-4187-b3d9-027998cd1e96', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'a948735e-bc3d-4187-b3d9-027998cd1e96', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'a948735e-bc3d-4187-b3d9-027998cd1e96', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'a948735e-bc3d-4187-b3d9-027998cd1e96', 4)">main.cs</a></li></ul><ul class="code-tab-switcher a948735e-bc3d-4187-b3d9-027998cd1e96"><li class="code_switcher_container_parent active-tab code_switcher_go e2630c56-33f0-466d-acbc-da42e5666b23"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 2702dc2a-8694-47bf-a3cc-151a70bac359"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '2702dc2a-8694-47bf-a3cc-151a70bac359', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '2702dc2a-8694-47bf-a3cc-151a70bac359', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '2702dc2a-8694-47bf-a3cc-151a70bac359', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '2702dc2a-8694-47bf-a3cc-151a70bac359', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '2702dc2a-8694-47bf-a3cc-151a70bac359', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 2702dc2a-8694-47bf-a3cc-151a70bac359"><li class="code_switcher_container_parent active-tab code_switcher_go fa9a47a5-d5ea-47c3-9d3b-080e0642e67f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">getServiceMethod</span><span class="p">(</span>
-	<span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
-	<span class="n">fn</span> <span class="k">func</span><span class="p">(</span><span class="n">md</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span><span class="p">)</span> <span class="kt">bool</span><span class="p">,</span>
+  <span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
+  <span class="n">fn</span> <span class="k">func</span><span class="p">(</span><span class="n">md</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span><span class="p">)</span> <span class="kt">bool</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">*</span><span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span> <span class="p">{</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">.</span><span class="n">Methods</span><span class="p">()</span><span class="o">.</span><span class="n">Len</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="n">md</span> <span class="o">:=</span> <span class="n">sd</span><span class="o">.</span><span class="n">Methods</span><span class="p">()</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">.</span><span class="n">Methods</span><span class="p">()</span><span class="o">.</span><span class="n">Len</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="n">md</span> <span class="o">:=</span> <span class="n">sd</span><span class="o">.</span><span class="n">Methods</span><span class="p">()</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-		<span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">md</span><span class="p">)</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="o">&amp;</span><span class="n">md</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
+    <span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">md</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="o">&amp;</span><span class="n">md</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-	<span class="k">return</span> <span class="no">nil</span>
+  <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp c61fbbef-c79e-4e55-b820-87fd3e83a014"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp d80b6486-f705-4f4b-aaf5-220a9cf34a8b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp">
 </span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*&gt;</span> <span class="n">get_service_method</span><span class="p">(</span>
-	<span class="k">const</span> <span class="n">ServiceDescriptor</span> <span class="o">*</span><span class="n">sd</span><span class="p">,</span>
-	<span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">(</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">predicate</span>
+  <span class="k">const</span> <span class="n">ServiceDescriptor</span> <span class="o">*</span><span class="n">sd</span><span class="p">,</span>
+  <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">(</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">predicate</span>
 <span class="p">)</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sd</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 
-	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">-&gt;</span><span class="n">method_count</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">auto</span> <span class="n">md</span> <span class="o">=</span> <span class="n">sd</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">-&gt;</span><span class="n">method_count</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">md</span> <span class="o">=</span> <span class="n">sd</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 
-		<span class="k">if</span> <span class="p">(</span><span class="n">predicate</span><span class="p">(</span><span class="n">md</span><span class="p">))</span>
-			<span class="k">return</span> <span class="n">md</span><span class="p">;</span>
-	<span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">predicate</span><span class="p">(</span><span class="n">md</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">md</span><span class="p">;</span>
+  <span class="p">}</span>
 
-	<span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 772a54af-194f-4b08-a033-0c1a4bb15f6b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 5ac93b1b-b564-4bda-873b-ccb9d51921e0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.Descriptors</span><span class="o">;</span>
 
 <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span><span class="o">&gt;</span> <span class="nf">getServiceMethod</span><span class="o">(</span>
-	<span class="nc">Descriptors</span><span class="o">.</span><span class="na">ServiceDescriptor</span> <span class="n">sd</span><span class="o">,</span>
-	<span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">&gt;</span> <span class="n">predicate</span>
+  <span class="nc">Descriptors</span><span class="o">.</span><span class="na">ServiceDescriptor</span> <span class="n">sd</span><span class="o">,</span>
+  <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">&gt;</span> <span class="n">predicate</span>
 <span class="o">)</span> <span class="o">{</span>
-	<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">.</span><span class="na">getMethods</span><span class="o">().</span><span class="na">size</span><span class="o">();</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span> <span class="n">method</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="na">getMethods</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sd</span><span class="o">.</span><span class="na">getMethods</span><span class="o">().</span><span class="na">size</span><span class="o">();</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span> <span class="n">method</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="na">getMethods</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="n">predicate</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">method</span><span class="o">))</span>
-			<span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
-	<span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">predicate</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">method</span><span class="o">))</span>
+      <span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
+  <span class="o">}</span>
 
-	<span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+  <span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python e8f10ad2-e765-45fa-a250-bfdad1f4ef2d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python ccdd5efd-ef12-4822-afb9-b915ffc21e2c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">predicate</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">sd</span><span class="p">.</span><span class="n">methods_by_name</span><span class="p">:</span>
     <span class="n">md</span> <span class="o">=</span> <span class="n">sd</span><span class="p">.</span><span class="n">methods_by_name</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span>
@@ -238,98 +238,98 @@
     <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">md</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">md</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 2d61d046-147a-42ef-a0a0-c436e3cdc415"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 9dc70dea-2203-44b4-aa7e-a7dccc100770"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">private</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span><span class="p">&gt;</span> <span class="nf">GetServiceMethod</span><span class="p">(</span>
-	<span class="k">this</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">ServiceDescriptor</span><span class="p">&gt;</span> <span class="n">services</span><span class="p">,</span>
-	<span class="n">Func</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="n">predicate</span>
+  <span class="k">this</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">ServiceDescriptor</span><span class="p">&gt;</span> <span class="n">services</span><span class="p">,</span>
+  <span class="n">Func</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="n">predicate</span>
 <span class="p">)</span> <span class="p">=&gt;</span> <span class="k">from</span> <span class="n">svc</span> <span class="k">in</span> <span class="n">services</span>
-		 <span class="k">from</span> <span class="n">method</span> <span class="k">in</span> <span class="n">svc</span><span class="p">.</span><span class="n">Methods</span>
-		 <span class="k">where</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-		 <span class="k">select</span> <span class="n">method</span><span class="p">;</span>
+     <span class="k">from</span> <span class="n">method</span> <span class="k">in</span> <span class="n">svc</span><span class="p">.</span><span class="n">Methods</span>
+     <span class="k">where</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+     <span class="k">select</span> <span class="n">method</span><span class="p">;</span>
 </code></pre></div></div>
 </li></ul>
 <h3 id="putting-everything-together">Putting Everything Together</h3>
 <p>And finally the idea is to call <code>GetServiceMethod</code> on all the <code>ServiceDescriptor</code>s and with the predicate is true we can call <code>GetOptionValue</code> on the method selected.</p>
-<ul class="code-tab-container e407706a-6097-4aff-88e2-7ec38f245534"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'e407706a-6097-4aff-88e2-7ec38f245534', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'e407706a-6097-4aff-88e2-7ec38f245534', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'e407706a-6097-4aff-88e2-7ec38f245534', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'e407706a-6097-4aff-88e2-7ec38f245534', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'e407706a-6097-4aff-88e2-7ec38f245534', 4)">main.cs</a></li></ul><ul class="code-tab-switcher e407706a-6097-4aff-88e2-7ec38f245534"><li class="code_switcher_container_parent active-tab code_switcher_go 00560bb1-75c6-4af0-b5e4-8ac835a5da0a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container fb8a519e-7034-470c-85df-3cbef5239867"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'fb8a519e-7034-470c-85df-3cbef5239867', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'fb8a519e-7034-470c-85df-3cbef5239867', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'fb8a519e-7034-470c-85df-3cbef5239867', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'fb8a519e-7034-470c-85df-3cbef5239867', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'fb8a519e-7034-470c-85df-3cbef5239867', 4)">main.cs</a></li></ul><ul class="code-tab-switcher fb8a519e-7034-470c-85df-3cbef5239867"><li class="code_switcher_container_parent active-tab code_switcher_go 3329cd12-0d6d-44d7-af64-ef8927764c73"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">getMethodOptionValue</span><span class="p">[</span><span class="n">T</span> <span class="kt">string</span> <span class="o">|</span> <span class="kt">int</span> <span class="o">|</span> <span class="kt">bool</span><span class="p">](</span>
-	<span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
-	<span class="n">id</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ExtensionType</span><span class="p">,</span>
+  <span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
+  <span class="n">id</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ExtensionType</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">*</span><span class="n">T</span> <span class="p">{</span>
-	<span class="k">var</span> <span class="n">value</span> <span class="o">*</span><span class="n">T</span> <span class="o">=</span> <span class="no">nil</span>
+  <span class="k">var</span> <span class="n">value</span> <span class="o">*</span><span class="n">T</span> <span class="o">=</span> <span class="no">nil</span>
 
-	<span class="n">getServiceMethod</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">md</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-		<span class="n">opts</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">md</span><span class="o">.</span><span class="n">Options</span><span class="p">()</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">descriptorpb</span><span class="o">.</span><span class="n">MethodOptions</span><span class="p">)</span>
+  <span class="n">getServiceMethod</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">md</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="n">opts</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">md</span><span class="o">.</span><span class="n">Options</span><span class="p">()</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">descriptorpb</span><span class="o">.</span><span class="n">MethodOptions</span><span class="p">)</span>
 
-		<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="no">false</span>
-		<span class="p">}</span>
+    <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="no">false</span>
+    <span class="p">}</span>
 
-		<span class="k">if</span> <span class="n">tmp</span> <span class="o">:=</span> <span class="n">getOptionValue</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">opts</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span> <span class="n">tmp</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
-			<span class="n">value</span> <span class="o">=</span> <span class="n">tmp</span>
-			<span class="k">return</span> <span class="no">true</span>
-		<span class="p">}</span>
+    <span class="k">if</span> <span class="n">tmp</span> <span class="o">:=</span> <span class="n">getOptionValue</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">opts</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span> <span class="n">tmp</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">tmp</span>
+      <span class="k">return</span> <span class="no">true</span>
+    <span class="p">}</span>
 
-		<span class="k">return</span> <span class="no">false</span>
-	<span class="p">})</span>
+    <span class="k">return</span> <span class="no">false</span>
+  <span class="p">})</span>
 
-	<span class="k">return</span> <span class="n">value</span>
+  <span class="k">return</span> <span class="n">value</span>
 <span class="p">}</span>
 
 <span class="k">func</span> <span class="n">getMethodExtension</span><span class="p">[</span><span class="n">T</span> <span class="kt">string</span> <span class="o">|</span> <span class="kt">int</span> <span class="o">|</span> <span class="kt">bool</span><span class="p">](</span>
-	<span class="n">fd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">FileDescriptor</span><span class="p">,</span>
-	<span class="n">id</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ExtensionType</span><span class="p">,</span>
+  <span class="n">fd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">FileDescriptor</span><span class="p">,</span>
+  <span class="n">id</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ExtensionType</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">*</span><span class="n">T</span> <span class="p">{</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fd</span><span class="o">.</span><span class="n">Services</span><span class="p">()</span><span class="o">.</span><span class="n">Len</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="n">sd</span> <span class="o">:=</span> <span class="n">fd</span><span class="o">.</span><span class="n">Services</span><span class="p">()</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fd</span><span class="o">.</span><span class="n">Services</span><span class="p">()</span><span class="o">.</span><span class="n">Len</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="n">sd</span> <span class="o">:=</span> <span class="n">fd</span><span class="o">.</span><span class="n">Services</span><span class="p">()</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-		<span class="k">if</span> <span class="n">value</span> <span class="o">:=</span> <span class="n">getMethodOptionValue</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">sd</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span> <span class="n">value</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="n">value</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">:=</span> <span class="n">getMethodOptionValue</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">sd</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span> <span class="n">value</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">value</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-	<span class="k">return</span> <span class="no">nil</span>
+  <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 1d0805d0-9e27-40ce-a1c1-21acac50c66f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 5a8c1a3f-80cb-4605-b9f9-61c11c4974c3"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="n">get_method_option_value</span><span class="p">(</span>
-	<span class="k">const</span> <span class="n">ServiceDescriptor</span> <span class="o">*</span><span class="n">sd</span><span class="p">,</span> <span class="c1">// in C++ we can access the ServiceDescriptor directly</span>
-	<span class="k">const</span> <span class="k">auto</span> <span class="o">&amp;</span><span class="n">id</span>
+  <span class="k">const</span> <span class="n">ServiceDescriptor</span> <span class="o">*</span><span class="n">sd</span><span class="p">,</span> <span class="c1">// in C++ we can access the ServiceDescriptor directly</span>
+  <span class="k">const</span> <span class="k">auto</span> <span class="o">&amp;</span><span class="n">id</span>
 <span class="p">)</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sd</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 
-	<span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="n">value</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="n">value</span><span class="p">;</span>
 
-	<span class="n">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">id</span><span class="p">](</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*</span><span class="n">md</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="p">{</span>
-		<span class="k">auto</span> <span class="n">opts</span> <span class="o">=</span> <span class="n">md</span><span class="o">-&gt;</span><span class="n">options</span><span class="p">();</span>
+  <span class="n">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">id</span><span class="p">](</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*</span><span class="n">md</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">opts</span> <span class="o">=</span> <span class="n">md</span><span class="o">-&gt;</span><span class="n">options</span><span class="p">();</span>
 
-		<span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">get_option_value</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">id</span><span class="p">))</span>
-			<span class="n">value</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">get_option_value</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">id</span><span class="p">))</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
 
-		<span class="k">return</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
-	<span class="p">});</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+  <span class="p">});</span>
 
-	<span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 8b9177f6-f4fe-49b1-ac01-b78cee473ebb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 68bd03da-9397-43e5-b189-a198ca28a8cd"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">getMethodExtension</span><span class="o">(</span>
-	<span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span><span class="o">,</span>
-	<span class="nc">GeneratedMessage</span><span class="o">.</span><span class="na">GeneratedExtension</span><span class="o">&lt;</span><span class="nc">DescriptorProtos</span><span class="o">.</span><span class="na">MethodOptions</span><span class="o">,</span> <span class="o">?&gt;</span> <span class="n">id</span>
+  <span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span><span class="o">,</span>
+  <span class="nc">GeneratedMessage</span><span class="o">.</span><span class="na">GeneratedExtension</span><span class="o">&lt;</span><span class="nc">DescriptorProtos</span><span class="o">.</span><span class="na">MethodOptions</span><span class="o">,</span> <span class="o">?&gt;</span> <span class="n">id</span>
 <span class="o">)</span> <span class="o">{</span>
-	<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fd</span><span class="o">.</span><span class="na">getServices</span><span class="o">().</span><span class="na">size</span><span class="o">();</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nc">Descriptors</span><span class="o">.</span><span class="na">ServiceDescriptor</span> <span class="n">sd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="na">getServices</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-		<span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">world</span> <span class="o">=</span> <span class="n">getMethodOptionValue</span><span class="o">(</span><span class="n">sd</span><span class="o">,</span> <span class="nc">Hello</span><span class="o">.</span><span class="na">hello</span><span class="o">);</span>
+  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fd</span><span class="o">.</span><span class="na">getServices</span><span class="o">().</span><span class="na">size</span><span class="o">();</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Descriptors</span><span class="o">.</span><span class="na">ServiceDescriptor</span> <span class="n">sd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="na">getServices</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+    <span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">world</span> <span class="o">=</span> <span class="n">getMethodOptionValue</span><span class="o">(</span><span class="n">sd</span><span class="o">,</span> <span class="nc">Hello</span><span class="o">.</span><span class="na">hello</span><span class="o">);</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="n">world</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span>
-			<span class="k">return</span> <span class="n">world</span><span class="o">;</span>
-	<span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">world</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span>
+      <span class="k">return</span> <span class="n">world</span><span class="o">;</span>
+  <span class="o">}</span>
 
-	<span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+  <span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python 9814040e-c26b-4ab0-814c-150e3fdbd7f6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python 4fe72a2a-43ff-477b-9057-00279a8bbc35"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_method_option_value</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
   <span class="n">md</span> <span class="o">=</span> <span class="n">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">md</span><span class="p">:</span> <span class="n">get_option_value</span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="n">GetOptions</span><span class="p">(),</span> <span class="nb">id</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">)</span>
 
@@ -343,87 +343,87 @@
     <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">value</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp ea031b9e-2e07-42b8-95f8-569847696c44"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp ef2911bd-53a1-43bb-be4b-6fd54ac06f8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">private</span> <span class="n">T</span> <span class="n">GetMethodOptionValue</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span>
-	<span class="k">this</span> <span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">FileDescriptor</span> <span class="n">fd</span><span class="p">,</span>
-	<span class="n">pb</span><span class="p">::</span><span class="n">Extension</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodOptions</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">id</span>
+  <span class="k">this</span> <span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">FileDescriptor</span> <span class="n">fd</span><span class="p">,</span>
+  <span class="n">pb</span><span class="p">::</span><span class="n">Extension</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodOptions</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">id</span>
 <span class="p">)</span> <span class="p">=&gt;</span> <span class="n">fd</span><span class="p">.</span><span class="n">Services</span>
-			 <span class="p">.</span><span class="nf">GetServiceMethod</span><span class="p">(</span><span class="n">md</span> <span class="p">=&gt;</span> <span class="n">md</span><span class="p">.</span><span class="nf">GetOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
-			 <span class="p">.</span><span class="nf">FirstOrDefault</span><span class="p">()</span>
-			 <span class="p">.</span><span class="nf">GetOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+       <span class="p">.</span><span class="nf">GetServiceMethod</span><span class="p">(</span><span class="n">md</span> <span class="p">=&gt;</span> <span class="n">md</span><span class="p">.</span><span class="nf">GetOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+       <span class="p">.</span><span class="nf">FirstOrDefault</span><span class="p">()</span>
+       <span class="p">.</span><span class="nf">GetOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
 </code></pre></div></div>
 </li></ul>
 <h3 id="usage">Usage</h3>
 <p>Let's see how to use that in our main function.</p>
-<ul class="code-tab-container f916909a-7937-4414-9b7b-ea35e2c87e47"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'f916909a-7937-4414-9b7b-ea35e2c87e47', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'f916909a-7937-4414-9b7b-ea35e2c87e47', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'f916909a-7937-4414-9b7b-ea35e2c87e47', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'f916909a-7937-4414-9b7b-ea35e2c87e47', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'f916909a-7937-4414-9b7b-ea35e2c87e47', 4)">main.cs</a></li></ul><ul class="code-tab-switcher f916909a-7937-4414-9b7b-ea35e2c87e47"><li class="code_switcher_container_parent active-tab code_switcher_go 92c5fd90-f7ff-4625-b3b1-33a6c15c3d71"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38"><li class="code_switcher_container_parent active-tab code_switcher_go 27ee38fd-c473-493d-aaaa-70e5170124de"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="s">"fmt"</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="c">// pb.File_proto_world_proto is the generated FileDescriptor</span>
-	<span class="c">// and pb.E_Hello the generated custom option</span>
-	<span class="n">world</span> <span class="o">:=</span> <span class="n">getMethodExtension</span><span class="p">[</span><span class="kt">string</span><span class="p">](</span><span class="n">pb</span><span class="o">.</span><span class="n">File_proto_world_proto</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">E_Hello</span><span class="p">)</span>
+  <span class="c">// pb.File_proto_world_proto is the generated FileDescriptor</span>
+  <span class="c">// and pb.E_Hello the generated custom option</span>
+  <span class="n">world</span> <span class="o">:=</span> <span class="n">getMethodExtension</span><span class="p">[</span><span class="kt">string</span><span class="p">](</span><span class="n">pb</span><span class="o">.</span><span class="n">File_proto_world_proto</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">E_Hello</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="n">world</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
-		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="o">*</span><span class="n">world</span><span class="p">)</span>
-	<span class="p">}</span>
+  <span class="k">if</span> <span class="n">world</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="o">*</span><span class="n">world</span><span class="p">)</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp e6ec080f-6744-4825-ab30-2f01535b6897"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 0bad56a8-da07-45b1-a2dc-0dd43d832a64"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="c1">// HelloWorldService is the generated service</span>
-	<span class="k">auto</span> <span class="n">sd</span> <span class="o">=</span> <span class="n">HelloWorldService</span><span class="o">::</span><span class="n">descriptor</span><span class="p">();</span>
-	<span class="c1">// hello is the generated custom option</span>
-	<span class="k">auto</span> <span class="n">world</span> <span class="o">=</span> <span class="n">get_method_option_value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">hello</span><span class="p">);</span>
+  <span class="c1">// HelloWorldService is the generated service</span>
+  <span class="k">auto</span> <span class="n">sd</span> <span class="o">=</span> <span class="n">HelloWorldService</span><span class="o">::</span><span class="n">descriptor</span><span class="p">();</span>
+  <span class="c1">// hello is the generated custom option</span>
+  <span class="k">auto</span> <span class="n">world</span> <span class="o">=</span> <span class="n">get_method_option_value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">hello</span><span class="p">);</span>
 
-	<span class="k">if</span> <span class="p">(</span><span class="n">world</span><span class="p">)</span>
-		<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">world</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">world</span><span class="p">)</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">world</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 3a9020db-9d20-452f-8f60-773e578952d0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java cd773d3c-c9a2-4fbf-bf90-0fed7584f4a7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-	<span class="c1">// World is the FileDescriptor for the file world.proto</span>
-	<span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">getDescriptor</span><span class="o">();</span>
-	<span class="c1">// Hello.hello is the generated custom option</span>
-	<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">world</span> <span class="o">=</span> <span class="n">getMethodExtension</span><span class="o">(</span><span class="n">fd</span><span class="o">,</span> <span class="nc">Hello</span><span class="o">.</span><span class="na">hello</span><span class="o">);</span>
+  <span class="c1">// World is the FileDescriptor for the file world.proto</span>
+  <span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">getDescriptor</span><span class="o">();</span>
+  <span class="c1">// Hello.hello is the generated custom option</span>
+  <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">world</span> <span class="o">=</span> <span class="n">getMethodExtension</span><span class="o">(</span><span class="n">fd</span><span class="o">,</span> <span class="nc">Hello</span><span class="o">.</span><span class="na">hello</span><span class="o">);</span>
 
-	<span class="n">world</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">w</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">w</span><span class="o">));</span>
+  <span class="n">world</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">w</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">w</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python cb894b07-11e3-4e3e-aee7-26246e7077cd"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python c9511230-4363-4e90-a7d9-725598a56df1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">proto.world_pb2</span> <span class="kn">import</span> <span class="n">DESCRIPTOR</span> <span class="c1"># FileDescriptor for world.proto
 </span>
 <span class="k">print</span><span class="p">(</span><span class="n">get_method_extension</span><span class="p">(</span><span class="n">DESCRIPTOR</span><span class="p">,</span> <span class="s">"hello"</span><span class="p">))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 7aca6953-83e0-41da-b3c1-e021494675a0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 51054cea-75ae-427f-b17d-28f0018b2728"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">public</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
-	<span class="c1">// HelloExtensions.Hello is the generated custom option</span>
-	<span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">HelloExtensions</span><span class="p">.</span><span class="n">Hello</span><span class="p">;</span>
-	<span class="c1">// WorldReflection.Descriptor is the FileDescriptor for the file world.proto</span>
-	<span class="kt">string</span> <span class="n">world</span> <span class="p">=</span> <span class="n">WorldReflection</span><span class="p">.</span><span class="n">Descriptor</span><span class="p">.</span><span class="nf">GetMethodOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+  <span class="c1">// HelloExtensions.Hello is the generated custom option</span>
+  <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">HelloExtensions</span><span class="p">.</span><span class="n">Hello</span><span class="p">;</span>
+  <span class="c1">// WorldReflection.Descriptor is the FileDescriptor for the file world.proto</span>
+  <span class="kt">string</span> <span class="n">world</span> <span class="p">=</span> <span class="n">WorldReflection</span><span class="p">.</span><span class="n">Descriptor</span><span class="p">.</span><span class="nf">GetMethodOptionValue</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
 
-	<span class="k">if</span> <span class="p">(</span><span class="n">world</span><span class="p">.</span><span class="n">Length</span> <span class="p">!=</span> <span class="m">0</span><span class="p">)</span>
-		<span class="n">System</span><span class="p">.</span><span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">world</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">world</span><span class="p">.</span><span class="n">Length</span> <span class="p">!=</span> <span class="m">0</span><span class="p">)</span>
+    <span class="n">System</span><span class="p">.</span><span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">world</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 </li></ul>
 <h2 id="back-to-the-problem">Back to the Problem</h2>
 <p>Now, as I mentioned I was trying to detect which routes need authentication with the help of such a custom option. It is not that hard to imagine the code we saw in the previous section work for an extension like the following:</p>
-<div class="code_switcher_container_parent f8febf3d-abbc-4702-bba1-1169af358cd0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent e19890b9-d5cb-44b0-b408-b9b023085d1a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">bool</span> <span class="na">is_authenticated</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 </div>
 <p>Then, we can use it like so:</p>
-<div class="code_switcher_container_parent 6ae0ff59-74c7-4852-94d7-1402757a599b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 6c5795b1-f03d-42f8-a8db-31539a2d721e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">service</span> <span class="n">CheckoutService</span> <span class="p">{</span>
-	<span class="k">rpc</span> <span class="n">Checkout</span> <span class="p">(</span><span class="n">CheckoutRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">CheckoutResponse</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">option</span> <span class="p">(</span><span class="n">is_authenticated</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-	<span class="p">};</span>
+  <span class="k">rpc</span> <span class="n">Checkout</span> <span class="p">(</span><span class="n">CheckoutRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">CheckoutResponse</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">option</span> <span class="p">(</span><span class="n">is_authenticated</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">};</span>
 <span class="p">}</span>
 </code></pre></div></div>
 </div>
