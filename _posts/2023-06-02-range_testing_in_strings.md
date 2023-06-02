@@ -7,7 +7,7 @@ categories: [Go, Protobuf]
 
 Recently, I've been working on adding support for `SourceCodeInfo` into [Protein](https://github.com/Clement-Jean/protein). This required checking a lot of Column/Line ranges in string. An example of this is the following. Given a oneof like this:
 
-```proto3
+```proto
 oneof Test {
   int32 id = 1;
 }
@@ -17,12 +17,12 @@ we should come up with the following ranges:
 
 ```
 [
-	// line,column
-	{0, 0, 2, 1} // oneof - from 0,0 to 2, 1
-	{1, 2, 15}   // oneof field - from 1,2 to 1,15 (same lines get ommited)
-	{1, 2, 7}    // oneof field type - from 1,2 to 1,7
-	{1, 8, 10}   // oneof field name - from 1,8 to 1,10
-	{1, 13, 14}  // oneof field tage - from 1,13 to 1,14
+  // line,column
+  {0, 0, 2, 1} // oneof - from 0,0 to 2, 1
+  {1, 2, 15}   // oneof field - from 1,2 to 1,15 (same lines get ommited)
+  {1, 2, 7}    // oneof field type - from 1,2 to 1,7
+  {1, 8, 10}   // oneof field name - from 1,8 to 1,10
+  {1, 13, 14}  // oneof field tage - from 1,13 to 1,14
 ]
 ```
 
@@ -40,46 +40,46 @@ Now that we know what are `SourceCodeInfo` we can start with the testing. A naiv
 
 ```go
 func runSourceCodeInfoCheck(
-	t *testing.T,
-	info []*descriptorpb.SourceCodeInfo_Location,
-	expectedSpans [][]int32,
+  t *testing.T,
+  info []*descriptorpb.SourceCodeInfo_Location,
+  expectedSpans [][]int32,
 ) {
-	if len(info) == 0 {
-		t.Fatal("expected info")
-	}
+  if len(info) == 0 {
+    t.Fatal("expected info")
+  }
 
-	if len(info) != len(expectedSpans) {
-		t.Fatalf("expected %v, got: %v", expectedSpans, info)
-	}
+  if len(info) != len(expectedSpans) {
+    t.Fatalf("expected %v, got: %v", expectedSpans, info)
+  }
 
-	for i, expectedSpan := range expectedSpans {
-		if slices.Compare(info[i].Span, expectedSpan) != 0 {
-			t.Fatalf("path %d wrong. expected %v, got: %v", i, expectedSpan, info[i].Span)
-		}
-	}
+  for i, expectedSpan := range expectedSpans {
+    if slices.Compare(info[i].Span, expectedSpan) != 0 {
+      t.Fatalf("path %d wrong. expected %v, got: %v", i, expectedSpan, info[i].Span)
+    }
+  }
 }
 
 func TestOneofSourceCodeInfo(t *testing.T) {
-	// Arrange
-	l := lexer.New("oneof Test { int32 id = 1; string uuid = 2; }")
-	p := New(l, "")
+  // Arrange
+  l := lexer.New("oneof Test { int32 id = 1; string uuid = 2; }")
+  p := New(l, "")
 
-	// Act
-	_, info := augmentParse(p.(*Impl).parseSyntax, p.(*Impl), nil)
+  // Act
+  _, info := augmentParse(p.(*Impl).parseSyntax, p.(*Impl), nil)
 
-	// Assert
-	runSourceCodeInfoCheck(
-		t,
-		info,
-		[][]int32{
-			{0, 0, 45},  // oneof - from 0,0 to 0, 45
-			{0, 13, 26}, // oneof field - from 0,13 to 0,26
-			{0, 13, 18}, // oneof field type - from 0,13 to 0,18
-			{0, 19, 21}, // oneof field name - from 0,19 to 0,21
-			{0, 24, 25}, // oneof field tage - from 0,24 to 0,25
-			// etc...
-		},
-	)
+  // Assert
+  runSourceCodeInfoCheck(
+    t,
+    info,
+    [][]int32{
+      {0, 0, 45},  // oneof - from 0,0 to 0, 45
+      {0, 13, 26}, // oneof field - from 0,13 to 0,26
+      {0, 13, 18}, // oneof field type - from 0,13 to 0,18
+      {0, 19, 21}, // oneof field name - from 0,19 to 0,21
+      {0, 24, 25}, // oneof field tage - from 0,24 to 0,25
+      // etc...
+    },
+  )
 }
 ```
 
@@ -115,7 +115,7 @@ a------------b----cd-e--fghi-----jk---l--mno-p
 
 that would match a oneof like this one:
 
-```proto3
+```proto
 oneof Test { int32 id = 1; string uuid = 2; }
 ```
 
@@ -123,8 +123,8 @@ To better see it we will have a function that takes both the original Protobuf c
 
 ```go
 referenceString(
-	"oneof Test { int32 id = 1; string uuid = 2; }",
-	"a------------b----cd-e--fghi-----jk---l--mno-p",
+  "oneof Test { int32 id = 1; string uuid = 2; }",
+  "a------------b----cd-e--fghi-----jk---l--mno-p",
 )
 ```
 
@@ -154,7 +154,7 @@ It turns out that we can do it pretty easily. Think about a `struct` like the fo
 
 ```go
 type Ref struct {
-	A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int32
+  A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int32
 }
 ```
 
@@ -166,30 +166,30 @@ With that `Ref`, we will now use reflection to set `A` (uppercase because reflec
 // referenceString returns the original string and the newly created Ref
 // the sep argument is the separator we skip (e.g `-`)
 func referenceString(src string, indices string, sep rune) (string, Ref) {
-	// indices should always be longer than src by 1 rune
-	if len(indices) != len(src)+1 {
-		panic("wrong indices")
-	}
+  // indices should always be longer than src by 1 rune
+  if len(indices) != len(src)+1 {
+    panic("wrong indices")
+  }
 
-	ref := Ref{}
+  ref := Ref{}
 
-	for i, index := range indices {
-		if index != sep {
-			// checks valid characters (lowercase letter)
-			if !unicode.IsLetter(index) && !unicode.IsLower(index) {
-				panic(fmt.Sprintf("%v is not a lowercase letter", index))
-			}
+  for i, index := range indices {
+    if index != sep {
+      // checks valid characters (lowercase letter)
+      if !unicode.IsLetter(index) && !unicode.IsLower(index) {
+        panic(fmt.Sprintf("%v is not a lowercase letter", index))
+      }
 
-			// this is the index of the letter in our Ref struct!
-			// e.g A is at index 0 and Z is at index 25
-			idx := int(byte(index) - 'a') // ASCII trick to get index of letter in alphabet
+      // this is the index of the letter in our Ref struct!
+      // e.g A is at index 0 and Z is at index 25
+      idx := int(byte(index) - 'a') // ASCII trick to get index of letter in alphabet
 
-			// set the value of i to the field at index idx
-			reflect.ValueOf(&ref).Elem().Field(idx).SetInt(int64(i))
-		}
-	}
+      // set the value of i to the field at index idx
+      reflect.ValueOf(&ref).Elem().Field(idx).SetInt(int64(i))
+    }
+  }
 
-	return src, ref
+  return src, ref
 }
 ```
 
@@ -197,8 +197,8 @@ with that we can simply write the following:
 
 ```go
 _, ref := referenceString(
-	"oneof Test { int32 id = 1; string uuid = 2; }",
-	"a------------b----cd-e--fghi-----jk---l--mno-p",
+  "oneof Test { int32 id = 1; string uuid = 2; }",
+  "a------------b----cd-e--fghi-----jk---l--mno-p",
 )
 ```
 
@@ -212,32 +212,32 @@ If we check at the span [b, h), we can see that we have [13, 26). This is quite 
 
 ```go
 func TestOneofSourceCodeInfo(t *testing.T) {
-	// Arrange
-	pb, ref := referenceString(
-		"oneof Test { int32 id = 1; string uuid = 2; }",
-		"a------------b----cd-e--fghi-----jk---l--mno-p",
-		'-',
-	)
+  // Arrange
+  pb, ref := referenceString(
+    "oneof Test { int32 id = 1; string uuid = 2; }",
+    "a------------b----cd-e--fghi-----jk---l--mno-p",
+    '-',
+  )
 
-	l := lexer.New(pb)
-	p := New(l, "")
+  l := lexer.New(pb)
+  p := New(l, "")
 
-	// Act
-	_, info := augmentParse(p.(*Impl).parseSyntax, p.(*Impl), nil)
+  // Act
+  _, info := augmentParse(p.(*Impl).parseSyntax, p.(*Impl), nil)
 
-	// Assert
-	runSourceCodeInfoCheck(
-		t,
-		info,
-		[][]int32{
-			{0, ref.A, ref.P},  // oneof - from 0,0 to 0, 45
-			{0, ref.B, ref.H}, // oneof field - from 0,13 to 0,26
-			{0, ref.B, ref.C}, // oneof field type - from 0,13 to 0,18
-			{0, ref.D, ref.E}, // oneof field name - from 0,19 to 0,21
-			{0, ref.F, ref.G}, // oneof field tage - from 0,24 to 0,25
-			// etc...
-		},
-	)
+  // Assert
+  runSourceCodeInfoCheck(
+    t,
+    info,
+    [][]int32{
+      {0, ref.A, ref.P},  // oneof - from 0,0 to 0, 45
+      {0, ref.B, ref.H}, // oneof field - from 0,13 to 0,26
+      {0, ref.B, ref.C}, // oneof field type - from 0,13 to 0,18
+      {0, ref.D, ref.E}, // oneof field name - from 0,19 to 0,21
+      {0, ref.F, ref.G}, // oneof field tage - from 0,24 to 0,25
+      // etc...
+    },
+  )
 }
 ```
 
@@ -249,15 +249,15 @@ As you can see, we still have these 0s for each line. They actually represent li
 
 ```go
 pb, ref := referenceString(
-	`oneof Test {
+  `oneof Test {
 int32 id = 1;
 string uuid = 2;
 }`,
-	`a------------
+  `a------------
 b----cd-e--fgh
 i-----jk---l--mno
 -p`,
-	'-',
+  '-',
 )
 ```
 
@@ -267,8 +267,8 @@ The first thing that we are going to do is adding fields in `Ref` for lines. Thi
 
 ```go
 type Ref struct {
-	//...
-	LA, LB, LC, LD, LE, LF, LG, LH, LI, LJ, LK, LL, LM, LN, LO, LP, LQ, LR, LS, LT, LU, LV, LW, LX, LY, LZ int32
+  //...
+  LA, LB, LC, LD, LE, LF, LG, LH, LI, LJ, LK, LL, LM, LN, LO, LP, LQ, LR, LS, LT, LU, LV, LW, LX, LY, LZ int32
 }
 ```
 
@@ -278,39 +278,39 @@ Now, in referenceString we will keep track of columns and lines and, for `a`, we
 
 ```go
 func referenceString(src string, indices string, sep rune) (string, Ref) {
-	if len(strings.ReplaceAll(indices, "\n", "")) != len(src)+1 {
-		panic("wrong indices")
-	}
+  if len(strings.ReplaceAll(indices, "\n", "")) != len(src)+1 {
+    panic("wrong indices")
+  }
 
-	ref := Ref{}
-	line := int32(0) // the line
-	column := int32(0) // the column - do not use i anymore
+  ref := Ref{}
+  line := int32(0) // the line
+  column := int32(0) // the column - do not use i anymore
 
-	for _, index := range indices {
-		if index != sep && index != '\n' { // also check '\n'
-			if !unicode.IsLetter(index) && !unicode.IsLower(index) {
-				panic(fmt.Sprintf("%v is not a lowercase letter", index))
-			}
+  for _, index := range indices {
+    if index != sep && index != '\n' { // also check '\n'
+      if !unicode.IsLetter(index) && !unicode.IsLower(index) {
+        panic(fmt.Sprintf("%v is not a lowercase letter", index))
+      }
 
-			idx := int(byte(index) - 'a')
+      idx := int(byte(index) - 'a')
 
-			// set the column
-			reflect.ValueOf(&ref).Elem().Field(idx).SetInt(int64(column))
+      // set the column
+      reflect.ValueOf(&ref).Elem().Field(idx).SetInt(int64(column))
 
-			// set the line
-			reflect.ValueOf(&ref).Elem().Field(idx + 26).SetInt(int64(line))
-		}
+      // set the line
+      reflect.ValueOf(&ref).Elem().Field(idx + 26).SetInt(int64(line))
+    }
 
-		column += 1
+    column += 1
 
-		// on newline reset column and increase line
-		if index == '\n' {
-			line++
-			column = 0
-		}
-	}
+    // on newline reset column and increase line
+    if index == '\n' {
+      line++
+      column = 0
+    }
+  }
 
-	return src, ref
+  return src, ref
 }
 ```
 
@@ -318,35 +318,35 @@ With that we can now write a test for multiline like this:
 
 ```go
 func TestOneofMultilineSourceCodeInfo(t *testing.T) {
-	pb, ref := referenceString(
-		`oneof Test {
+  pb, ref := referenceString(
+    `oneof Test {
 int32 id = 1;
 string uuid = 2;
 }`,
-		`a------------
+    `a------------
 b----cd-e--fgh
 i-----jk---l--mno
 -p`,
-		'-',
-	)
+    '-',
+  )
 
-	l := lexer.New(pb)
-	p := New(l, "")
-	ctx := &oneofContext{}
+  l := lexer.New(pb)
+  p := New(l, "")
+  ctx := &oneofContext{}
 
-	// Act
-	_, info := augmentParse(p.(*Impl).parseOneof, p.(*Impl), ctx)
+  // Act
+  _, info := augmentParse(p.(*Impl).parseOneof, p.(*Impl), ctx)
 
-	// Assert
-	runSourceCodeInfoCheck(
-		t,
-		info,
-		[][]int32{
-			{ref.LA, ref.A, ref.LP, ref.P},
-			{ref.LB, ref.B, ref.H}, {ref.LB, ref.B, ref.C}, {ref.LD, ref.D, ref.E}, {ref.LF, ref.F, ref.G},
-			{ref.LI, ref.I, ref.O}, {ref.LI, ref.I, ref.J}, {ref.LK, ref.K, ref.L}, {ref.LM, ref.M, ref.N},
-		},
-	)
+  // Assert
+  runSourceCodeInfoCheck(
+    t,
+    info,
+    [][]int32{
+      {ref.LA, ref.A, ref.LP, ref.P},
+      {ref.LB, ref.B, ref.H}, {ref.LB, ref.B, ref.C}, {ref.LD, ref.D, ref.E}, {ref.LF, ref.F, ref.G},
+      {ref.LI, ref.I, ref.O}, {ref.LI, ref.I, ref.J}, {ref.LK, ref.K, ref.L}, {ref.LM, ref.M, ref.N},
+    },
+  )
 }
 ```
 
