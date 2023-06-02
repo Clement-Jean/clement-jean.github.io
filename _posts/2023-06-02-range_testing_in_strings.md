@@ -15,7 +15,7 @@ oneof Test {
 
 we should come up with the following ranges:
 
-```
+```shell
 [
   // line,column
   {0, 0, 2, 1} // oneof - from 0,0 to 2, 1
@@ -109,7 +109,7 @@ Now, even I didn't get the original idea, I believe that implementing it in Go (
 
 The idea is that we are going to have function calculating indices from a string full of separator characters and letters. For example, if we say that the separator is '-', we could have a string like this:
 
-```
+```shell
 a------------b----cd-e--fghi-----jk---l--mno-p
 ```
 
