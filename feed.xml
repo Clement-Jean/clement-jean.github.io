@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-06-07T14:51:52+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Authorization with gRPC and Envoy</title><link href="https://clement-jean.github.io/grpc_authz_envoy/" rel="alternate" type="text/html" title="Authorization with gRPC and Envoy" /><published>2023-06-07T00:00:00+08:00</published><updated>2023-06-07T00:00:00+08:00</updated><id>https://clement-jean.github.io/grpc_authz_envoy</id><content type="html" xml:base="https://clement-jean.github.io/grpc_authz_envoy/"><![CDATA[<p>Recently, I've been looking for a good alternative to <a href="https://traefik.io/traefik/">Traefik</a> as Reverse Proxy for gRPC services. Traefik has great support for gRPC and other common features, but Envoy comes with Protobuf-backed configuration and even greater support for gRPC services. In the article, I want to show how you can make Envoy use your custom authorization logic before redirecting (or not) the request to other services.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-06-07T15:03:01+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Authorization with gRPC and Envoy</title><link href="https://clement-jean.github.io/grpc_authz_envoy/" rel="alternate" type="text/html" title="Authorization with gRPC and Envoy" /><published>2023-06-07T00:00:00+08:00</published><updated>2023-06-07T00:00:00+08:00</updated><id>https://clement-jean.github.io/grpc_authz_envoy</id><content type="html" xml:base="https://clement-jean.github.io/grpc_authz_envoy/"><![CDATA[<p>Recently, I've been looking for a good alternative to <a href="https://traefik.io/traefik/">Traefik</a> as Reverse Proxy for gRPC services. Traefik has great support for gRPC and other common features, but Envoy comes with Protobuf-backed configuration and even greater support for gRPC services. In the article, I want to show how you can make Envoy use your custom authorization logic before redirecting (or not) the request to other services.</p>
 <h2 id="the-code">The code</h2>
-<p>The code is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-06-06-grpc_envoy_auth">here</a>.</p>
+<p>The code is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-06-07-grpc_authz_envoy">here</a>.</p>
 <h2 id="disclaimer">Disclaimer</h2>
 <p>This post has been inspired from this <a href="https://ekhabarov.com/post/envoy-as-an-api-gateway-authentication-and-authorization/">article</a>. I thought it would be nice to have a little bit more details and explain how to run the whole thing.</p>
 <h2 id="envoy">Envoy</h2>
@@ -13,7 +13,7 @@
 <p>One of the interesting features coming out of this support is the fact that Envoy can use custom gRPC services you develop. An example of this is the authorization service that I want to show you here.</p>
 <h2 id="protobuf">Protobuf</h2>
 <p>Before everything else, let us start by defining the service that we want to protect. Nothing fancy, we are going to use a simple GreetService:</p>
-<div class="code_switcher_container_parent 139a1e78-5af6-4088-9250-55377850c2ff"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 38248324-58d0-4c7c-9d57-01d815ec62c2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="kn">package</span> <span class="nn">greet</span><span class="p">;</span>
@@ -29,7 +29,7 @@
 </code></pre></div></div>
 </div>
 <p>After that, Envoy provides us with its own protobuf definition for authorization. We can take a look at <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/external_auth.proto">external_auth.proto</a> which contains the following:</p>
-<div class="code_switcher_container_parent d8ebff71-c86f-4563-af28-75ff09f6db83"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 813fb738-d349-4531-8452-0e312c3a03cb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// A generic interface for performing authorization check on incoming</span>
 <span class="c1">// requests to a networked service.</span>
 <span class="kd">service</span> <span class="n">Authorization</span> <span class="p">{</span>
@@ -44,7 +44,7 @@
 <h2 id="go-control-plane">go-control-plane</h2>
 <p>Envoy provides us with a project called go-control-plane. This contains a collection of services such as Authorization that we can implement in our project.</p>
 <p>To get it, we simply execute:</p>
-<div class="code_switcher_container_parent a45e62e0-6ddf-4429-949e-28ab3f363667"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent cbd01ea4-e56a-415e-9a9b-135a2d8a7a74"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go get github.com/envoyproxy/go-control-plane
 </code></pre></div></div>
 </div>
@@ -55,7 +55,7 @@
 <li>AutorizationServer (which is an interface containing <code>Check</code>)</li>
 </ul>
 <p>In our code we can now implement the <code>Check</code> function for our server type. This looks like this:</p>
-<div class="code_switcher_container_parent e3162ae2-54c2-4e81-811d-ac6661a448d7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 46d33f6c-d07e-40a1-b679-e7631f2ca61a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="n">auth</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"</span>
 
 <span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Check</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
@@ -64,7 +64,7 @@
 </div>
 <p>If you are familiar with gRPC, this should look familiar.</p>
 <p>And to register the Authorization service we can simply register like we normally would:</p>
-<div class="code_switcher_container_parent 91ba6377-c057-4f66-95e1-cc6731cf598a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent df22cc7a-165a-4b2d-a2e9-677702791433"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
   <span class="n">auth</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"</span>
   <span class="n">pb</span> <span class="s">"github.com/Clement-Jean/clement-jean.github.io/proto"</span>
@@ -88,7 +88,7 @@
 <p>Now, in order to make Envoy do what we want, we need to create some YAML configuration. This configuration generally contains the ports on which Envoy listens, filters for filtering requests based on some properties, and clusters which are a collection of one or more endpoints.</p>
 <p>In our case we are going to create two clusters. One for the authorization service and the other service. This is in fact not necessary since we registered both services on the same server, but I wanted to show you that you can split clusters for different microservices.</p>
 <p>The clusters definition looks like the following:</p>
-<div class="code_switcher_container_parent b71ead9e-379d-4e03-b4b4-b78d5581b58e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 07c1cd22-a455-4e09-8577-f7c10113c92e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">clusters</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc_auth</span>
     <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span>
@@ -122,7 +122,7 @@
 <p>Then we have <code>lb_policy: round_robin</code>. This is not required for us since we will have only one instance of each service but in the case you scale things up, you will have to balance the load across the multiple services.</p>
 <p>And finally, all the rest is basically defining a cluster with the name <code>grpc_auth</code> which can be reached at the address <code>0.0.0.0:50051</code>.</p>
 <p>Now that we have that, we can take a look at the listener. Let's see the first part of the listener which is simply defining on which address and port Envoy will listen.</p>
-<div class="code_switcher_container_parent 31f84ce2-397c-4d49-8962-eb41dece3c2e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 31396677-2f66-4373-b690-9dd05fc02651"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
 <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
   <span class="na">address</span><span class="pi">:</span>
@@ -133,7 +133,7 @@
 </div>
 <p>Once again Envoy will listen on <code>0.0.0.0:50050</code>. Now, note that even if you had <code>0.0.0.0:50051</code> there will be no conflict with the <code>0.0.0.0:50051</code> address set in the cluster. This is because generally the gRPC server will be containerized separately from Envoy and thus will listen on its own 50051 port.</p>
 <p>Finally, things get a little bit more interesting when we talk about the filters. We need to start with a <code>http_connection_manager</code> that defines the route that we want to protect with authorization.</p>
-<div class="code_switcher_container_parent c59ff094-d81e-4b97-a936-78ac4d612197"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 9ad95b18-c419-4757-ab96-33e8b098c9a5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
     <span class="c1"># address</span>
@@ -156,7 +156,7 @@
 </div>
 <p>The most important part is the virtual_hosts one. We say that we will accept requests from any domain (not recommended in prod), and then we basically that every request made on route matching <code>/greet.GreetService/</code> will be redirected to the <code>grpc_greet</code> cluster</p>
 <p>After that, we will configure the external authorization.</p>
-<div class="code_switcher_container_parent e3b230a9-46c0-4622-8e16-5010e808fefa"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 8f1895d8-ec10-46bf-87e8-abeca8b14665"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
     <span class="c1"># address</span>
@@ -190,7 +190,7 @@
 <li><code>with_request_body</code> forwards HTTP body to the Authorization service.</li>
 </ul>
 <p>Finally, we need to tell Envoy to actually route the requests. We simply do that by adding a <code>envoy.filters.http.router</code> at the end of the <code>http_filters</code>.</p>
-<div class="code_switcher_container_parent 99ce4405-ed47-4188-a391-53f781f59a8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent f39a0af4-380e-4acb-9cf6-ff56defa01c2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
     <span class="c1"># address</span>
@@ -214,7 +214,7 @@
 <li>Otherwise -&gt; Allow</li>
 </ul>
 <p>Token checks would normally involve a database of some sort but here, as this is a small demo, let's create a simple function.</p>
-<div class="code_switcher_container_parent 3c9a310f-bee8-4d8e-be16-b1f1d4d2a416"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 980533f4-1473-4b38-8ea4-2a9aae495854"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">containsToken</span><span class="p">(</span><span class="n">key</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
     <span class="k">return</span> <span class="no">false</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"empty key"</span><span class="p">)</span>
@@ -227,7 +227,7 @@
 <p>Nothing fancy.</p>
 <p>Now, in <code>Check</code> we will be receiving headers, not as metadata, but as part of the request. I will let you check <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/external_auth.proto">external_auth.proto</a> and <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/attribute_context.proto">attribute_context.proto</a> to understand a little bit more about the data that we will receive as part of <code>CheckRequest</code>.</p>
 <p>So we now get the token from the headers and pass it through <code>containsToken</code>.</p>
-<div class="code_switcher_container_parent 7e8500ee-7a2e-4f6a-a3f5-4f6d8e1190ef"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 1c2fceaf-6ba1-404f-a325-e3dec2b50fbd"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Check</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">headers</span> <span class="o">:=</span> <span class="n">req</span><span class="o">.</span><span class="n">Attributes</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Http</span><span class="o">.</span><span class="n">Headers</span>
   <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">containsToken</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s">"token"</span><span class="p">])</span>
@@ -237,7 +237,7 @@
 </div>
 <p>Finally, we still have to do error handling. <code>ok</code> will tell us whether the key is in the 'database' and the <code>err</code> will be errors like <code>empty key</code>. Now, returning an error with <code>go-control-plane</code> and Envoy is a little bit different that what you might expect. This is because instead of returning the error as status like we normally do in gRPC is not compatible with Envoy. Instead, we need to return the status as part of the <code>CheckResponse</code>.</p>
 <p>Two helpers functions aiming at creating a <code>Allow</code> and <code>Deny</code> response, that I found <a href="https://ekhabarov.com/post/envoy-as-an-api-gateway-authentication-and-authorization/">here</a>, are pretty self describing:</p>
-<div class="code_switcher_container_parent 1ba8b501-3f5d-478f-9c6b-9b9f77166ae4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent df5c252c-8884-423b-a611-f7d9ad59c638"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
   <span class="c">//...</span>
   <span class="s">"google.golang.org/genproto/googleapis/rpc/status"</span>
@@ -274,7 +274,7 @@
 </div>
 <p>Notice that we are not using the traditional <code>google.golang.org/grpc/status</code> here. We are using <code>google.golang.org/genproto/googleapis/rpc/status</code>. <strong>As of the time of writing this, I'm not aware of why this is the case. I might come back and update that when I learned why.</strong></p>
 <p>Finally, we can finish the implementation of both <code>Check</code> and <code>Greet</code>. We will make <code>Greet</code> return an empty response. And we will make <code>Check</code> return the result of <code>denied</code> in case of error and wrong token, or return the result of <code>allowed</code> if everything goes well.</p>
-<div class="code_switcher_container_parent d9f84c30-e260-46fc-be63-bb5a0fbb5c56"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 365e6af0-49f4-4a7a-b716-23acdf17b540"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
   <span class="s">"net/http"</span>
   <span class="c">//...</span>
@@ -306,18 +306,18 @@
 <h2 id="demo-time">Demo Time!</h2>
 <p>Here we are! It's demo time baby!</p>
 <p>To test all of this, we will run our server:</p>
-<div class="code_switcher_container_parent 42ae5fda-8911-439c-8e0c-77063db325b0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 40170aec-a2a7-41b4-be08-a28576260a17"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run server/<span class="k">*</span>.go
 listening at 0.0.0.0:50051
 </code></pre></div></div>
 </div>
 <p>After that, let's use <a href="https://func-e.io/">func-e</a> to run our Envoy instance:</p>
-<div class="code_switcher_container_parent f0f6235f-848b-4732-a0c8-14a7b9099a07"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 6a700b48-bb42-423f-a079-671856da5583"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>func-e run <span class="nt">-c</span> envoy/config.yaml
 </code></pre></div></div>
 </div>
 <p>And finally, I will use <a href="https://github.com/fullstorydev/grpcurl">grpcurl</a> to query the Greet endpoint on <code>0.0.0.0:50050</code> (Envoy listener). Let's start with the happy path scenario:</p>
-<div class="code_switcher_container_parent 92c3555b-f678-4257-8b16-c74a95b9ce8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent e6376f28-7427-440b-afd6-e7d861620cf8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
           <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
           <span class="nt">-rpc-header</span><span class="o">=</span><span class="s2">"token: authz"</span> <span class="se">\</span>
@@ -329,7 +329,7 @@ listening at 0.0.0.0:50051
 </div>
 <p>We get an empty <code>GreetResponse</code>, as expected.</p>
 <p>Now, we can try without token:</p>
-<div class="code_switcher_container_parent ffb46970-f4e8-4ce9-8f75-6c41d62ff2d5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 371129e9-e56d-4c2d-b06a-62b087a35477"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
           <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
           0.0.0.0:50050 greet.GreetService/Greet
@@ -340,7 +340,7 @@ ERROR:
 </div>
 <p>We get an Internal error with the message &quot;empty key&quot;.</p>
 <p>And finally, we test with a wrong token:</p>
-<div class="code_switcher_container_parent a8deb149-9822-437f-9678-79abe654f062"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 7c54b441-a23e-43a1-b5bd-b2dbd8a5dd92"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
           <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
           <span class="nt">-rpc-header</span><span class="o">=</span><span class="s2">"token: authd"</span> <span class="se">\</span>
