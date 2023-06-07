@@ -9,7 +9,7 @@ Recently, I've been looking for a good alternative to [Traefik](https://traefik.
 
 ## The code
 
-The code is available [here](https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-06-06-grpc_envoy_auth).
+The code is available [here](https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-06-07-grpc_authz_envoy).
 
 ## Disclaimer
 
