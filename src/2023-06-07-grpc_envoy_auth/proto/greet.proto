@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package greet;
+
+option go_package = "github.com/Clement-Jean/clement-jean.github.io/proto";
+
+message GreetRequest {}
+message GreetResponse {}
+
+service GreetService {
+	rpc Greet (GreetRequest) returns (GreetResponse);
+}
