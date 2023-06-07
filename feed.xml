@@ -1,4 +1,359 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-06-02T14:58:58+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Range Testing in Strings</title><link href="https://clement-jean.github.io/range_testing_in_strings/" rel="alternate" type="text/html" title="Range Testing in Strings" /><published>2023-06-02T00:00:00+08:00</published><updated>2023-06-02T00:00:00+08:00</updated><id>https://clement-jean.github.io/range_testing_in_strings</id><content type="html" xml:base="https://clement-jean.github.io/range_testing_in_strings/"><![CDATA[<p>Recently, I've been working on adding support for <code>SourceCodeInfo</code> into <a href="https://github.com/Clement-Jean/protein">Protein</a>. This required checking a lot of Column/Line ranges in string. An example of this is the following. Given a oneof like this:</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2023-06-07T14:51:52+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Authorization with gRPC and Envoy</title><link href="https://clement-jean.github.io/grpc_authz_envoy/" rel="alternate" type="text/html" title="Authorization with gRPC and Envoy" /><published>2023-06-07T00:00:00+08:00</published><updated>2023-06-07T00:00:00+08:00</updated><id>https://clement-jean.github.io/grpc_authz_envoy</id><content type="html" xml:base="https://clement-jean.github.io/grpc_authz_envoy/"><![CDATA[<p>Recently, I've been looking for a good alternative to <a href="https://traefik.io/traefik/">Traefik</a> as Reverse Proxy for gRPC services. Traefik has great support for gRPC and other common features, but Envoy comes with Protobuf-backed configuration and even greater support for gRPC services. In the article, I want to show how you can make Envoy use your custom authorization logic before redirecting (or not) the request to other services.</p>
+<h2 id="the-code">The code</h2>
+<p>The code is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-06-06-grpc_envoy_auth">here</a>.</p>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>This post has been inspired from this <a href="https://ekhabarov.com/post/envoy-as-an-api-gateway-authentication-and-authorization/">article</a>. I thought it would be nice to have a little bit more details and explain how to run the whole thing.</p>
+<h2 id="envoy">Envoy</h2>
+<p>If you don't know Envoy, it is a <a href="https://en.wikipedia.org/wiki/Reverse_proxy">Reverse Proxy</a>. This is basically a server relaying client requests to other servers (your services). It is generally used to protect the services from direct access and potential abuse. As such, Reverse Proxies can load balance, rate limit, and much more.</p>
+<p>Envoy is a project originally designed by Lyft and it is described as &quot;a high performance C++ distributed proxy designed for single services and applications, as well as a communication bus and “universal data plane” designed for large microservice “service mesh” architectures&quot;. That's a lot of buzz words! But for us, the most important is this feature:</p>
+<blockquote>
+<p>HTTP/2 AND GRPC SUPPORT</p>
+<p>Envoy has first class support for HTTP/2 and gRPC for both incoming and outgoing connections. It is a transparent HTTP/1.1 to HTTP/2 proxy.</p>
+</blockquote>
+<p>One of the interesting features coming out of this support is the fact that Envoy can use custom gRPC services you develop. An example of this is the authorization service that I want to show you here.</p>
+<h2 id="protobuf">Protobuf</h2>
+<p>Before everything else, let us start by defining the service that we want to protect. Nothing fancy, we are going to use a simple GreetService:</p>
+<div class="code_switcher_container_parent 139a1e78-5af6-4088-9250-55377850c2ff"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
+
+<span class="kn">package</span> <span class="nn">greet</span><span class="p">;</span>
+
+<span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"github.com/Clement-Jean/clement-jean.github.io/proto"</span><span class="p">;</span>
+
+<span class="kd">message</span> <span class="nc">GreetRequest</span> <span class="p">{}</span>
+<span class="kd">message</span> <span class="nc">GreetResponse</span> <span class="p">{}</span>
+
+<span class="kd">service</span> <span class="n">GreetService</span> <span class="p">{</span>
+  <span class="k">rpc</span> <span class="n">Greet</span> <span class="p">(</span><span class="n">GreetRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">GreetResponse</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>After that, Envoy provides us with its own protobuf definition for authorization. We can take a look at <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/external_auth.proto">external_auth.proto</a> which contains the following:</p>
+<div class="code_switcher_container_parent d8ebff71-c86f-4563-af28-75ff09f6db83"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// A generic interface for performing authorization check on incoming</span>
+<span class="c1">// requests to a networked service.</span>
+<span class="kd">service</span> <span class="n">Authorization</span> <span class="p">{</span>
+  <span class="c1">// Performs authorization check based on the attributes associated with the</span>
+  <span class="c1">// incoming request, and returns status `OK` or not `OK`.</span>
+  <span class="k">rpc</span> <span class="n">Check</span><span class="p">(</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">CheckResponse</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>This means that we need to implement the Check unary endpoint and register the Authorization service.</p>
+<h2 id="go-control-plane">go-control-plane</h2>
+<p>Envoy provides us with a project called go-control-plane. This contains a collection of services such as Authorization that we can implement in our project.</p>
+<p>To get it, we simply execute:</p>
+<div class="code_switcher_container_parent a45e62e0-6ddf-4429-949e-28ab3f363667"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go get github.com/envoyproxy/go-control-plane
+</code></pre></div></div>
+</div>
+<p>This gives us access to <code>github.com/envoyproxy/go-control-plane/envoy/service/auth/v3</code> which contains the following structs:</p>
+<ul>
+<li>CheckRequest</li>
+<li>CheckResponse</li>
+<li>AutorizationServer (which is an interface containing <code>Check</code>)</li>
+</ul>
+<p>In our code we can now implement the <code>Check</code> function for our server type. This looks like this:</p>
+<div class="code_switcher_container_parent e3162ae2-54c2-4e81-811d-ac6661a448d7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="n">auth</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Check</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>If you are familiar with gRPC, this should look familiar.</p>
+<p>And to register the Authorization service we can simply register like we normally would:</p>
+<div class="code_switcher_container_parent 91ba6377-c057-4f66-95e1-cc6731cf598a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
+  <span class="n">auth</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"</span>
+  <span class="n">pb</span> <span class="s">"github.com/Clement-Jean/clement-jean.github.io/proto"</span>
+<span class="p">)</span>
+
+<span class="k">type</span> <span class="n">Server</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">pb</span><span class="o">.</span><span class="n">UnimplementedGreetServiceServer</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c">//...</span>
+  <span class="n">srv</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Server</span><span class="p">{}</span>
+  <span class="n">auth</span><span class="o">.</span><span class="n">RegisterAuthorizationServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">srv</span><span class="p">)</span>
+  <span class="n">pb</span><span class="o">.</span><span class="n">RegisterGreetServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">srv</span><span class="p">)</span>
+  <span class="c">//...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>Notice that we are registering both services on the server here. This is not necessary. You could have a microservice specifically dedicated to authorization and the other one to greeting people.</p>
+<h2 id="envoy-configuration">Envoy Configuration</h2>
+<p>Now, in order to make Envoy do what we want, we need to create some YAML configuration. This configuration generally contains the ports on which Envoy listens, filters for filtering requests based on some properties, and clusters which are a collection of one or more endpoints.</p>
+<p>In our case we are going to create two clusters. One for the authorization service and the other service. This is in fact not necessary since we registered both services on the same server, but I wanted to show you that you can split clusters for different microservices.</p>
+<p>The clusters definition looks like the following:</p>
+<div class="code_switcher_container_parent b71ead9e-379d-4e03-b4b4-b78d5581b58e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">clusters</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc_auth</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="na">load_assignment</span><span class="pi">:</span>
+      <span class="na">cluster_name</span><span class="pi">:</span> <span class="s">grpc_auth</span>
+      <span class="na">endpoints</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">lb_endpoints</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">endpoint</span><span class="pi">:</span>
+            <span class="na">address</span><span class="pi">:</span>
+              <span class="na">socket_address</span><span class="pi">:</span>
+                <span class="na">address</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
+                <span class="na">port_value</span><span class="pi">:</span> <span class="m">50051</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc_greet</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="na">load_assignment</span><span class="pi">:</span>
+      <span class="na">cluster_name</span><span class="pi">:</span> <span class="s">grpc_greet</span>
+      <span class="na">endpoints</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">lb_endpoints</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">endpoint</span><span class="pi">:</span>
+            <span class="na">address</span><span class="pi">:</span>
+              <span class="na">socket_address</span><span class="pi">:</span>
+                <span class="na">address</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
+                <span class="na">port_value</span><span class="pi">:</span> <span class="m">50051</span>
+</code></pre></div></div>
+</div>
+<p>I hope we can agree on the fact that they are very similar so let's only dissect the authorization one.</p>
+<p><code>http2_protocol_options: {}</code> simply means that we are enabling HTTP/2 for this cluster. This is required for gRPC services since gRPC is basically Protobuf over HTTP/2.</p>
+<p>Then we have <code>lb_policy: round_robin</code>. This is not required for us since we will have only one instance of each service but in the case you scale things up, you will have to balance the load across the multiple services.</p>
+<p>And finally, all the rest is basically defining a cluster with the name <code>grpc_auth</code> which can be reached at the address <code>0.0.0.0:50051</code>.</p>
+<p>Now that we have that, we can take a look at the listener. Let's see the first part of the listener which is simply defining on which address and port Envoy will listen.</p>
+<div class="code_switcher_container_parent 31f84ce2-397c-4d49-8962-eb41dece3c2e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
+  <span class="na">address</span><span class="pi">:</span>
+    <span class="na">socket_address</span><span class="pi">:</span>
+      <span class="na">address</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
+      <span class="na">port_value</span><span class="pi">:</span> <span class="m">50050</span>
+</code></pre></div></div>
+</div>
+<p>Once again Envoy will listen on <code>0.0.0.0:50050</code>. Now, note that even if you had <code>0.0.0.0:50051</code> there will be no conflict with the <code>0.0.0.0:50051</code> address set in the cluster. This is because generally the gRPC server will be containerized separately from Envoy and thus will listen on its own 50051 port.</p>
+<p>Finally, things get a little bit more interesting when we talk about the filters. We need to start with a <code>http_connection_manager</code> that defines the route that we want to protect with authorization.</p>
+<div class="code_switcher_container_parent c59ff094-d81e-4b97-a936-78ac4d612197"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
+    <span class="c1"># address</span>
+    <span class="na">filter_chains</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.filters.network.http_connection_manager</span>
+        <span class="na">typed_config</span><span class="pi">:</span>
+          <span class="s2">"</span><span class="s">@type"</span><span class="err">:</span> <span class="s">type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager</span>
+          <span class="s">stat_prefix</span><span class="err">:</span> <span class="s">grpc_json</span>
+          <span class="s">codec_type</span><span class="err">:</span> <span class="s">AUTO</span>
+          <span class="s">route_config</span><span class="err">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">route</span>
+            <span class="na">virtual_hosts</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">vh</span>
+              <span class="na">domains</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">*"</span><span class="pi">]</span>
+              <span class="na">routes</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">prefix</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/greet.GreetService/"</span><span class="pi">,</span> <span class="nv">grpc</span><span class="pi">:</span> <span class="pi">{}</span> <span class="pi">}</span>
+                <span class="na">route</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">cluster</span><span class="pi">:</span> <span class="nv">grpc_greet</span><span class="pi">,</span> <span class="nv">timeout</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">seconds</span><span class="pi">:</span> <span class="nv">60</span> <span class="pi">}</span> <span class="pi">}</span>
+</code></pre></div></div>
+</div>
+<p>The most important part is the virtual_hosts one. We say that we will accept requests from any domain (not recommended in prod), and then we basically that every request made on route matching <code>/greet.GreetService/</code> will be redirected to the <code>grpc_greet</code> cluster</p>
+<p>After that, we will configure the external authorization.</p>
+<div class="code_switcher_container_parent e3b230a9-46c0-4622-8e16-5010e808fefa"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
+    <span class="c1"># address</span>
+    <span class="na">filter_chains</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.filters.network.http_connection_manager</span>
+        <span class="na">typed_config</span><span class="pi">:</span>
+          <span class="c1"># route matching</span>
+          <span class="na">http_filters</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.filters.http.ext_authz</span>
+            <span class="na">typed_config</span><span class="pi">:</span>
+              <span class="s2">"</span><span class="s">@type"</span><span class="err">:</span> <span class="s">type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz</span>
+              <span class="s">grpc_service</span><span class="err">:</span>
+                <span class="na">envoy_grpc</span><span class="pi">:</span>
+                  <span class="na">cluster_name</span><span class="pi">:</span> <span class="s">grpc_auth</span>
+                <span class="na">timeout</span><span class="pi">:</span> <span class="s">0.5s</span>
+              <span class="na">transport_api_version</span><span class="pi">:</span> <span class="s">V3</span>
+              <span class="na">failure_mode_allow</span><span class="pi">:</span> <span class="no">false</span>
+              <span class="na">with_request_body</span><span class="pi">:</span>
+                <span class="na">max_request_bytes</span><span class="pi">:</span> <span class="m">8192</span>
+                <span class="na">allow_partial_message</span><span class="pi">:</span> <span class="no">true</span>
+                <span class="na">pack_as_bytes</span><span class="pi">:</span> <span class="no">true</span>
+              <span class="na">status_on_error</span><span class="pi">:</span>
+                <span class="na">code</span><span class="pi">:</span> <span class="m">503</span>
+</code></pre></div></div>
+</div>
+<p>The most important things in this part of the config are:</p>
+<ul>
+<li><code>cluster_name: grpc_auth</code>. We are specifying that the Authorization service can be found in the <code>grpc_auth</code> cluster.</li>
+<li><code>code: 503</code>. If any error happens such as not finding the <code>Check</code> endpoint, Envoy will return a 503 error code.</li>
+<li><code>with_request_body</code> forwards HTTP body to the Authorization service.</li>
+</ul>
+<p>Finally, we need to tell Envoy to actually route the requests. We simply do that by adding a <code>envoy.filters.http.router</code> at the end of the <code>http_filters</code>.</p>
+<div class="code_switcher_container_parent 99ce4405-ed47-4188-a391-53f781f59a8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">listeners</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_grpc</span>
+    <span class="c1"># address</span>
+    <span class="na">filter_chains</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.filters.network.http_connection_manager</span>
+        <span class="na">typed_config</span><span class="pi">:</span>
+          <span class="c1"># route matching</span>
+          <span class="na">http_filters</span><span class="pi">:</span>
+          <span class="c1"># ext_authz</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.filters.http.router</span>
+            <span class="na">typed_config</span><span class="pi">:</span>
+              <span class="s1">'</span><span class="s">@type'</span><span class="err">:</span> <span class="s">type.googleapis.com/envoy.extensions.filters.http.router.v3.Router</span>
+</code></pre></div></div>
+</div>
+<h2 id="lets-codecheckcode">Let's <code>Check</code></h2>
+<p>Now that we have our Envoy config ready, it is time to implement the <code>Check</code> endpoint. We will first create a small demo environment where we will receive a token as header. We will check:</p>
+<ul>
+<li>If the token is empty/doesn't exist -&gt; Deny</li>
+<li>If the token value is different from 'authz' -&gt; Deny</li>
+<li>Otherwise -&gt; Allow</li>
+</ul>
+<p>Token checks would normally involve a database of some sort but here, as this is a small demo, let's create a simple function.</p>
+<div class="code_switcher_container_parent 3c9a310f-bee8-4d8e-be16-b1f1d4d2a416"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">containsToken</span><span class="p">(</span><span class="n">key</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="no">false</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"empty key"</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s">"authz"</span><span class="p">),</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>Nothing fancy.</p>
+<p>Now, in <code>Check</code> we will be receiving headers, not as metadata, but as part of the request. I will let you check <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/external_auth.proto">external_auth.proto</a> and <a href="https://github.com/envoyproxy/envoy/blob/main/api/envoy/service/auth/v3/attribute_context.proto">attribute_context.proto</a> to understand a little bit more about the data that we will receive as part of <code>CheckRequest</code>.</p>
+<p>So we now get the token from the headers and pass it through <code>containsToken</code>.</p>
+<div class="code_switcher_container_parent 7e8500ee-7a2e-4f6a-a3f5-4f6d8e1190ef"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Check</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">headers</span> <span class="o">:=</span> <span class="n">req</span><span class="o">.</span><span class="n">Attributes</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Http</span><span class="o">.</span><span class="n">Headers</span>
+  <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">containsToken</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s">"token"</span><span class="p">])</span>
+  <span class="c">//...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>Finally, we still have to do error handling. <code>ok</code> will tell us whether the key is in the 'database' and the <code>err</code> will be errors like <code>empty key</code>. Now, returning an error with <code>go-control-plane</code> and Envoy is a little bit different that what you might expect. This is because instead of returning the error as status like we normally do in gRPC is not compatible with Envoy. Instead, we need to return the status as part of the <code>CheckResponse</code>.</p>
+<p>Two helpers functions aiming at creating a <code>Allow</code> and <code>Deny</code> response, that I found <a href="https://ekhabarov.com/post/envoy-as-an-api-gateway-authentication-and-authorization/">here</a>, are pretty self describing:</p>
+<div class="code_switcher_container_parent 1ba8b501-3f5d-478f-9c6b-9b9f77166ae4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
+  <span class="c">//...</span>
+  <span class="s">"google.golang.org/genproto/googleapis/rpc/status"</span>
+  <span class="s">"google.golang.org/grpc/codes"</span>
+
+  <span class="n">envoy_type</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/type/v3"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">denied</span><span class="p">(</span><span class="n">code</span> <span class="kt">int32</span><span class="p">,</span> <span class="n">body</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">{</span>
+    <span class="n">Status</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">status</span><span class="o">.</span><span class="n">Status</span><span class="p">{</span><span class="n">Code</span><span class="o">:</span> <span class="n">code</span><span class="p">},</span>
+    <span class="n">HttpResponse</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse_DeniedResponse</span><span class="p">{</span>
+      <span class="n">DeniedResponse</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">DeniedHttpResponse</span><span class="p">{</span>
+        <span class="n">Status</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">envoy_type</span><span class="o">.</span><span class="n">HttpStatus</span><span class="p">{</span>
+          <span class="n">Code</span><span class="o">:</span> <span class="n">envoy_type</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">(</span><span class="n">code</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">Body</span><span class="o">:</span> <span class="n">body</span><span class="p">,</span>
+      <span class="p">},</span>
+    <span class="p">},</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">allowed</span><span class="p">()</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">{</span>
+    <span class="n">Status</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">status</span><span class="o">.</span><span class="n">Status</span><span class="p">{</span><span class="n">Code</span><span class="o">:</span> <span class="kt">int32</span><span class="p">(</span><span class="n">codes</span><span class="o">.</span><span class="n">OK</span><span class="p">)},</span>
+    <span class="n">HttpResponse</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse_OkResponse</span><span class="p">{</span>
+      <span class="n">OkResponse</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">auth</span><span class="o">.</span><span class="n">OkHttpResponse</span><span class="p">{</span>
+        <span class="n">HeadersToRemove</span><span class="o">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">"token"</span><span class="p">},</span>
+      <span class="p">},</span>
+    <span class="p">},</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<p>Notice that we are not using the traditional <code>google.golang.org/grpc/status</code> here. We are using <code>google.golang.org/genproto/googleapis/rpc/status</code>. <strong>As of the time of writing this, I'm not aware of why this is the case. I might come back and update that when I learned why.</strong></p>
+<p>Finally, we can finish the implementation of both <code>Check</code> and <code>Greet</code>. We will make <code>Greet</code> return an empty response. And we will make <code>Check</code> return the result of <code>denied</code> in case of error and wrong token, or return the result of <code>allowed</code> if everything goes well.</p>
+<div class="code_switcher_container_parent d9f84c30-e260-46fc-be63-bb5a0fbb5c56"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
+  <span class="s">"net/http"</span>
+  <span class="c">//...</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Check</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">auth</span><span class="o">.</span><span class="n">CheckResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">headers</span> <span class="o">:=</span> <span class="n">req</span><span class="o">.</span><span class="n">Attributes</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Http</span><span class="o">.</span><span class="n">Headers</span>
+  <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">containsToken</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s">"token"</span><span class="p">])</span>
+
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">denied</span><span class="p">(</span>
+      <span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span>
+      <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"failed retrieving the api key: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">),</span>
+    <span class="p">),</span> <span class="no">nil</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">denied</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusUnauthorized</span><span class="p">,</span> <span class="s">"unauthorized"</span><span class="p">),</span> <span class="no">nil</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">allowed</span><span class="p">(),</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">Greet</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">GreetRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">GreetResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">GreetResponse</span><span class="p">{},</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<h2 id="demo-time">Demo Time!</h2>
+<p>Here we are! It's demo time baby!</p>
+<p>To test all of this, we will run our server:</p>
+<div class="code_switcher_container_parent 42ae5fda-8911-439c-8e0c-77063db325b0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run server/<span class="k">*</span>.go
+listening at 0.0.0.0:50051
+</code></pre></div></div>
+</div>
+<p>After that, let's use <a href="https://func-e.io/">func-e</a> to run our Envoy instance:</p>
+<div class="code_switcher_container_parent f0f6235f-848b-4732-a0c8-14a7b9099a07"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>func-e run <span class="nt">-c</span> envoy/config.yaml
+</code></pre></div></div>
+</div>
+<p>And finally, I will use <a href="https://github.com/fullstorydev/grpcurl">grpcurl</a> to query the Greet endpoint on <code>0.0.0.0:50050</code> (Envoy listener). Let's start with the happy path scenario:</p>
+<div class="code_switcher_container_parent 92c3555b-f678-4257-8b16-c74a95b9ce8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
+          <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
+          <span class="nt">-rpc-header</span><span class="o">=</span><span class="s2">"token: authz"</span> <span class="se">\</span>
+          0.0.0.0:50050 greet.GreetService/Greet
+<span class="o">{</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+</div>
+<p>We get an empty <code>GreetResponse</code>, as expected.</p>
+<p>Now, we can try without token:</p>
+<div class="code_switcher_container_parent ffb46970-f4e8-4ce9-8f75-6c41d62ff2d5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
+          <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
+          0.0.0.0:50050 greet.GreetService/Greet
+ERROR:
+  Code: Internal
+  Message: failed retrieving the api key: empty key
+</code></pre></div></div>
+</div>
+<p>We get an Internal error with the message &quot;empty key&quot;.</p>
+<p>And finally, we test with a wrong token:</p>
+<div class="code_switcher_container_parent a8deb149-9822-437f-9678-79abe654f062"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>grpcurl <span class="nt">-plaintext</span> <span class="se">\</span>
+          <span class="nt">-proto</span> proto/greet.proto <span class="se">\</span>
+          <span class="nt">-rpc-header</span><span class="o">=</span><span class="s2">"token: authd"</span> <span class="se">\</span>
+          0.0.0.0:50050 greet.GreetService/Greet
+ERROR:
+  Code: Unauthenticated
+  Message: unauthorized
+</code></pre></div></div>
+</div>
+<p>Unauthorized! Great everything is working as expected.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this post we saw that we can use Envoy to sit between our services and call an Authorization service to decide whether or not to forward the request to a given route. In our case, we worked on a simple token checking logic but this should look similar for your real-life scenario. I hope this was interesting, thank you for reading!</p>
+<p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Go" /><category term="gRPC" /><category term="Envoy" /><summary type="html"><![CDATA[Recently, I've been looking for a good alternative to Traefik as Reverse Proxy for gRPC services. Traefik has great support for gRPC and other common features, but Envoy comes with Protobuf-backed configuration and even greater support for gRPC services. In the article, I want to show how you can make Envoy use your custom authorization logic before redirecting (or not) the request to other services.]]></summary></entry><entry><title type="html">Range Testing in Strings</title><link href="https://clement-jean.github.io/range_testing_in_strings/" rel="alternate" type="text/html" title="Range Testing in Strings" /><published>2023-06-02T00:00:00+08:00</published><updated>2023-06-02T00:00:00+08:00</updated><id>https://clement-jean.github.io/range_testing_in_strings</id><content type="html" xml:base="https://clement-jean.github.io/range_testing_in_strings/"><![CDATA[<p>Recently, I've been working on adding support for <code>SourceCodeInfo</code> into <a href="https://github.com/Clement-Jean/protein">Protein</a>. This required checking a lot of Column/Line ranges in string. An example of this is the following. Given a oneof like this:</p>
 <div class="code_switcher_container_parent 3656b1f1-d756-4086-9ef1-d80c2e9ed1b8"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">oneof</span> <span class="n">Test</span> <span class="p">{</span>
   <span class="kt">int32</span> <span class="na">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -323,17 +678,17 @@ i-----jk---l--mno
 <p>I hope this makes you as interested as I am on how to improve testing code. I already loved creating readable and deterministic tests but now with this other tool in my tool belt, I'm interested in thinking more about readability and developer onboarding.</p>
 <p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Go" /><category term="Protobuf" /><summary type="html"><![CDATA[Recently, I've been working on adding support for SourceCodeInfo into Protein. This required checking a lot of Column/Line ranges in string. An example of this is the following. Given a oneof like this:]]></summary></entry><entry><title type="html">Custom RPC Options in Protobuf</title><link href="https://clement-jean.github.io/custom_rpc_options/" rel="alternate" type="text/html" title="Custom RPC Options in Protobuf" /><published>2023-04-17T00:00:00+08:00</published><updated>2023-04-17T00:00:00+08:00</updated><id>https://clement-jean.github.io/custom_rpc_options</id><content type="html" xml:base="https://clement-jean.github.io/custom_rpc_options/"><![CDATA[<p>Recently I had to design authentication for a Blazor Application. After finishing implementing, I soon faced the need to know which RPC endpoint needs authentication and which doesn't. And while part of the problem is a solved one, I still needed a mechanism to let me define this. Let's see how.</p>
 <blockquote>
-<p>All the code (<strong>only running through Bazel right now</strong>) is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-04-13-custom_rpc_options">here</a></p>
+<p>All the code (<strong>only running through Bazel right now</strong>) is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-04-17-custom_rpc_options">here</a></p>
 </blockquote>
 <h2 id="custom-options">Custom Options</h2>
 <p>Before explaining what my solution to the problem is, I'd like to make sure you understand what are custom options in Protobuf and how to define one. If you are confident about this skill, feel free to skip to the next section.</p>
 <p><strong>A custom option is a way to define metadata for a proto file, message, enum, fields, service and rpc</strong>. Generally, we are used to these:</p>
-<div class="code_switcher_container_parent d74402bf-904a-4f51-a25f-ed9209754cbb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 03a55a9f-0f7f-4357-b9b3-151466615c38"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"github.com/Clement-Jean/test"</span><span class="p">;</span>
 </code></pre></div></div>
 </div>
 <p>being placed at the top of the proto file. But it is important to know that you can make a field or message deprecated like so:</p>
-<div class="code_switcher_container_parent 23e47230-73c9-48fc-b3a1-22e5507578cf"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent 00064f9a-f494-482b-bb6d-14a09b942a80"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Test</span> <span class="p">{</span>
   <span class="k">option</span> <span class="na">deprecated</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
@@ -343,7 +698,7 @@ i-----jk---l--mno
 </div>
 <p>Now, I agree that, in most of the cases, these option are more informational than anything else. They do not necessarily impact the code generation but they are here to document the code. Also, knowing that Protobuf has reflection, we can use them in our code. This means that we could have a tool checking for deprecated messages, fields, ... and give us warnings when we use them in our code base.</p>
 <p>How do we define one, though? Well, it turns out that this is pretty simple. We need to use the <code>extend</code> concept and define which kind of option we want to extend. Let's first take a look at what kind of options we have:</p>
-<ul class="code-tab-container a69a288a-4b16-4379-bd19-441b0ff97a4f"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'a69a288a-4b16-4379-bd19-441b0ff97a4f', 0)">descriptor.proto</a></li></ul><ul class="code-tab-switcher a69a288a-4b16-4379-bd19-441b0ff97a4f"><li class="code_switcher_container_parent active-tab code_switcher_proto b0258e83-2249-49f0-a298-e94a40282743"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container df0e1ae6-e47f-4b17-bc5d-8c149869e1e6"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'df0e1ae6-e47f-4b17-bc5d-8c149869e1e6', 0)">descriptor.proto</a></li></ul><ul class="code-tab-switcher df0e1ae6-e47f-4b17-bc5d-8c149869e1e6"><li class="code_switcher_container_parent active-tab code_switcher_proto fd24a43e-57c0-4185-bae1-fad633129484"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">FileOptions</span> <span class="p">{</span>
   <span class="c1">//...</span>
 
@@ -389,7 +744,7 @@ i-----jk---l--mno
 </li></ul>
 <p>That's actually every concept that we have in Protobuf! So let's define a simple option now. We will define an option called <code>hello</code> of type string. And for making this related to the problem that I'm trying to solve, let's define that option in <code>MethodOptions</code> which represents the options for RPC endpoints.</p>
 <p>So we will extend <code>MethodOptions</code>:</p>
-<ul class="code-tab-container 1e2b15ec-20f4-4d00-91dd-a01b76440277"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '1e2b15ec-20f4-4d00-91dd-a01b76440277', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 1e2b15ec-20f4-4d00-91dd-a01b76440277"><li class="code_switcher_container_parent active-tab code_switcher_proto 8a0eb00a-e193-4c35-998c-93009a2f15df"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 7e89f998-2864-4540-ab2a-dea2b7d1a122"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '7e89f998-2864-4540-ab2a-dea2b7d1a122', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 7e89f998-2864-4540-ab2a-dea2b7d1a122"><li class="code_switcher_container_parent active-tab code_switcher_proto 5ac3d8bd-6167-4d05-95dc-abca87d6d2bb"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">import</span> <span class="s">"google/protobuf/descriptor.proto"</span><span class="p">;</span>
@@ -398,7 +753,7 @@ i-----jk---l--mno
 </code></pre></div></div>
 </li></ul>
 <p>And then inside this <code>extend</code> we can just write the hello field:</p>
-<ul class="code-tab-container 5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 5b7e04dd-f3d3-4c6d-a2e3-96a46e26582e"><li class="code_switcher_container_parent active-tab code_switcher_proto ee8d3116-2b6e-4064-8c4b-7d60db650df7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container f8809d34-a8e2-4cd7-9ccf-305131e0a1ee"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'f8809d34-a8e2-4cd7-9ccf-305131e0a1ee', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher f8809d34-a8e2-4cd7-9ccf-305131e0a1ee"><li class="code_switcher_container_parent active-tab code_switcher_proto 192da9fa-0dc9-4e60-8c88-8c464db6c06b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">hello</span> <span class="o">=</span> <span class="err">??</span><span class="p">;</span>
 <span class="p">}</span>
@@ -406,7 +761,7 @@ i-----jk---l--mno
 </li></ul>
 <p>But what is the tag that we need to use? Well, if you noticed in the <code>descriptor.proto</code> we have an extension range. These are the numbers we can use for tag. For now, we will use 1000, however, be aware that some of these tags are reserved by some already defined options. <strong>So if you were to use a tool that defines options that have the same tag number, there would be conflicts</strong>.</p>
 <p>We now have:</p>
-<ul class="code-tab-container 53c8cb35-3e3e-40ef-bbec-3df99fca4fbb"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '53c8cb35-3e3e-40ef-bbec-3df99fca4fbb', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 53c8cb35-3e3e-40ef-bbec-3df99fca4fbb"><li class="code_switcher_container_parent active-tab code_switcher_proto e8fe5665-95e0-4633-a59b-f59246a6dc3e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 752ce167-6f4d-424f-8c0d-ac842fc88a53"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '752ce167-6f4d-424f-8c0d-ac842fc88a53', 0)">hello.proto</a></li></ul><ul class="code-tab-switcher 752ce167-6f4d-424f-8c0d-ac842fc88a53"><li class="code_switcher_container_parent active-tab code_switcher_proto f09063b1-2280-4d1d-bd3b-951965aefa22"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">hello</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
 <span class="p">}</span>
@@ -415,7 +770,7 @@ i-----jk---l--mno
 <h2 id="reflection">Reflection</h2>
 <p>Let us now use that option and read the value in code.</p>
 <p>To use it, this is pretty simple, we just need to import the file in which we wrote the <code>extend</code> and make sure we use the option on an RPC endpoint.</p>
-<ul class="code-tab-container f9225a84-799e-4324-95ee-528637aa7d2c"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', 'f9225a84-799e-4324-95ee-528637aa7d2c', 0)">world.proto</a></li></ul><ul class="code-tab-switcher f9225a84-799e-4324-95ee-528637aa7d2c"><li class="code_switcher_container_parent active-tab code_switcher_proto 72d412d5-43d2-4726-9683-fef9d8d1bf55"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 8ffdb2db-a783-4a08-a7e5-bc2540770539"><li class="active-tab code_switcher_proto"><a onclick="selectTab('code_switcher_proto', '8ffdb2db-a783-4a08-a7e5-bc2540770539', 0)">world.proto</a></li></ul><ul class="code-tab-switcher 8ffdb2db-a783-4a08-a7e5-bc2540770539"><li class="code_switcher_container_parent active-tab code_switcher_proto 866f3b3d-02fb-41a3-ab2f-88ef02e7289e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
 
 <span class="k">import</span> <span class="s">"hello.proto"</span><span class="p">;</span>
@@ -432,7 +787,7 @@ i-----jk---l--mno
 <p>We can generate the proto files out of world.proto and hello.proto. And after that we can take a bottom-up approach to read this value through reflection. By bottom up, I mean that we are going to first see how to read the value of a <code>MethodOptions</code>, then we will go to getting a <code>MethodDescriptor</code> out of a <code>ServiceDescriptor</code>, and finally getting a <code>ServiceDescriptor</code> out a <code>FileDescriptor</code>.</p>
 <h3 id="getting-an-option-value">Getting an Option Value</h3>
 <p>The first thing we are going to deal with is <code>MethodOptions</code>. These represent the options set on an RPC endpoint. In most of the implementations, we can check the existence of an option so this is as simple as &quot;check if there is the option with a given id on this method, if yes return the value, otherwise return null&quot;.</p>
-<ul class="code-tab-container fcd577bd-3550-49b5-b4d2-38c88a913bd4"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'fcd577bd-3550-49b5-b4d2-38c88a913bd4', 4)">main.cs</a></li></ul><ul class="code-tab-switcher fcd577bd-3550-49b5-b4d2-38c88a913bd4"><li class="code_switcher_container_parent active-tab code_switcher_go 289556d4-cef4-484c-bcff-c5ebff7de340"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 5d362a85-c00f-452f-8d03-153b9d25f35a"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '5d362a85-c00f-452f-8d03-153b9d25f35a', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '5d362a85-c00f-452f-8d03-153b9d25f35a', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '5d362a85-c00f-452f-8d03-153b9d25f35a', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '5d362a85-c00f-452f-8d03-153b9d25f35a', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '5d362a85-c00f-452f-8d03-153b9d25f35a', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 5d362a85-c00f-452f-8d03-153b9d25f35a"><li class="code_switcher_container_parent active-tab code_switcher_go 3561294e-8464-40c2-ba95-137e29499b45"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
   <span class="s">"google.golang.org/protobuf/proto"</span>
   <span class="s">"google.golang.org/protobuf/reflect/protoreflect"</span>
@@ -452,7 +807,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 378461b7-ed26-49a2-8d57-562a9e3e1415"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 1a898c2b-a461-4b58-896b-e9bb9084e3f7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;optional&gt;</span><span class="cp">
 </span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="p">;</span>
@@ -467,7 +822,7 @@ i-----jk---l--mno
     <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java aa643bc5-7e76-4d26-afb0-10a2251988f2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 075132db-3039-4b5f-835c-894428fb827b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.DescriptorProtos</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.google.protobuf.GeneratedMessage</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.Optional</span><span class="o">;</span>
@@ -481,7 +836,7 @@ i-----jk---l--mno
     <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python 3c348e8e-c6bb-4d74-970e-87ea9ee7ef2b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python fa9842a2-97e9-4c63-b738-f4ab6d85f114"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_option_value</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">.</span><span class="n">ListFields</span><span class="p">():</span>
     <span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">=</span> <span class="n">field</span>
@@ -489,7 +844,7 @@ i-----jk---l--mno
     <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s">""</span> <span class="ow">and</span> <span class="n">desc</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">value</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 80aa4465-73fc-4929-99f8-a0f98ecc415e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 0b41aa83-7555-4486-a843-a11f1c6938aa"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">pb</span> <span class="p">=</span> <span class="k">global</span><span class="p">::</span><span class="n">Google</span><span class="p">.</span><span class="n">Protobuf</span><span class="p">;</span>
 
 <span class="k">static</span> <span class="k">private</span> <span class="n">T</span> <span class="n">GetOptionValue</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span>
@@ -500,7 +855,7 @@ i-----jk---l--mno
 </li></ul>
 <h3 id="getting-a-method">Getting a Method</h3>
 <p>The next step is to get a <code>MethodDescriptor</code> out of a <code>ServiceDescriptor</code>. This is done so that we can later call the GetOptionValue function on the options of that method (if any). We will basically loop over all the methods of a service and check for a predicate on each. If the predicate returns true, we &quot;select&quot; that method.</p>
-<ul class="code-tab-container 2702dc2a-8694-47bf-a3cc-151a70bac359"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '2702dc2a-8694-47bf-a3cc-151a70bac359', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '2702dc2a-8694-47bf-a3cc-151a70bac359', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '2702dc2a-8694-47bf-a3cc-151a70bac359', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '2702dc2a-8694-47bf-a3cc-151a70bac359', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '2702dc2a-8694-47bf-a3cc-151a70bac359', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 2702dc2a-8694-47bf-a3cc-151a70bac359"><li class="code_switcher_container_parent active-tab code_switcher_go fa9a47a5-d5ea-47c3-9d3b-080e0642e67f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 31a0dae4-89d3-4bf0-a22b-ad39db049896"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '31a0dae4-89d3-4bf0-a22b-ad39db049896', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '31a0dae4-89d3-4bf0-a22b-ad39db049896', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '31a0dae4-89d3-4bf0-a22b-ad39db049896', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '31a0dae4-89d3-4bf0-a22b-ad39db049896', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '31a0dae4-89d3-4bf0-a22b-ad39db049896', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 31a0dae4-89d3-4bf0-a22b-ad39db049896"><li class="code_switcher_container_parent active-tab code_switcher_go 35053479-a535-4256-9229-4493e12696a4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">getServiceMethod</span><span class="p">(</span>
   <span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
   <span class="n">fn</span> <span class="k">func</span><span class="p">(</span><span class="n">md</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MethodDescriptor</span><span class="p">)</span> <span class="kt">bool</span><span class="p">,</span>
@@ -516,7 +871,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp d80b6486-f705-4f4b-aaf5-220a9cf34a8b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp 945c7f1e-fd2f-4e99-b55b-36d8442636a9"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp">
 </span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MethodDescriptor</span> <span class="o">*&gt;</span> <span class="n">get_service_method</span><span class="p">(</span>
@@ -536,7 +891,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 5ac93b1b-b564-4bda-873b-ccb9d51921e0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java bdef86c6-4c50-4c44-9659-5c254615983d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.google.protobuf.Descriptors</span><span class="o">;</span>
 
 <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Descriptors</span><span class="o">.</span><span class="na">MethodDescriptor</span><span class="o">&gt;</span> <span class="nf">getServiceMethod</span><span class="o">(</span>
@@ -553,7 +908,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python ccdd5efd-ef12-4822-afb9-b915ffc21e2c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python 06339e19-d360-40cf-b950-e6a32cba699f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">predicate</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">sd</span><span class="p">.</span><span class="n">methods_by_name</span><span class="p">:</span>
     <span class="n">md</span> <span class="o">=</span> <span class="n">sd</span><span class="p">.</span><span class="n">methods_by_name</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span>
@@ -561,7 +916,7 @@ i-----jk---l--mno
     <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">md</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">md</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 9dc70dea-2203-44b4-aa7e-a7dccc100770"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp aa43a0cc-f928-4597-b157-bbc46a9bf90d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">private</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span><span class="p">&gt;</span> <span class="nf">GetServiceMethod</span><span class="p">(</span>
   <span class="k">this</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">ServiceDescriptor</span><span class="p">&gt;</span> <span class="n">services</span><span class="p">,</span>
   <span class="n">Func</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodDescriptor</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="n">predicate</span>
@@ -573,7 +928,7 @@ i-----jk---l--mno
 </li></ul>
 <h3 id="putting-everything-together">Putting Everything Together</h3>
 <p>And finally the idea is to call <code>GetServiceMethod</code> on all the <code>ServiceDescriptor</code>s and with the predicate is true we can call <code>GetOptionValue</code> on the method selected.</p>
-<ul class="code-tab-container fb8a519e-7034-470c-85df-3cbef5239867"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'fb8a519e-7034-470c-85df-3cbef5239867', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', 'fb8a519e-7034-470c-85df-3cbef5239867', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', 'fb8a519e-7034-470c-85df-3cbef5239867', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', 'fb8a519e-7034-470c-85df-3cbef5239867', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', 'fb8a519e-7034-470c-85df-3cbef5239867', 4)">main.cs</a></li></ul><ul class="code-tab-switcher fb8a519e-7034-470c-85df-3cbef5239867"><li class="code_switcher_container_parent active-tab code_switcher_go 3329cd12-0d6d-44d7-af64-ef8927764c73"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 86c1b67d-19ee-47c3-9997-09a5c65f9d2e"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '86c1b67d-19ee-47c3-9997-09a5c65f9d2e', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '86c1b67d-19ee-47c3-9997-09a5c65f9d2e', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '86c1b67d-19ee-47c3-9997-09a5c65f9d2e', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '86c1b67d-19ee-47c3-9997-09a5c65f9d2e', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '86c1b67d-19ee-47c3-9997-09a5c65f9d2e', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 86c1b67d-19ee-47c3-9997-09a5c65f9d2e"><li class="code_switcher_container_parent active-tab code_switcher_go d86a9cd1-da44-45ad-9ed2-781974cd72d3"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">getMethodOptionValue</span><span class="p">[</span><span class="n">T</span> <span class="kt">string</span> <span class="o">|</span> <span class="kt">int</span> <span class="o">|</span> <span class="kt">bool</span><span class="p">](</span>
   <span class="n">sd</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ServiceDescriptor</span><span class="p">,</span>
   <span class="n">id</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">ExtensionType</span><span class="p">,</span>
@@ -613,7 +968,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="no">nil</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 5a8c1a3f-80cb-4605-b9f9-61c11c4974c3"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp c34ea4e5-c5a2-455d-9000-d22f8a6701c2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="n">get_method_option_value</span><span class="p">(</span>
   <span class="k">const</span> <span class="n">ServiceDescriptor</span> <span class="o">*</span><span class="n">sd</span><span class="p">,</span> <span class="c1">// in C++ we can access the ServiceDescriptor directly</span>
@@ -636,7 +991,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java 68bd03da-9397-43e5-b189-a198ca28a8cd"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java b3cfa5bd-3e53-49cb-b06e-582314a4da1e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">getMethodExtension</span><span class="o">(</span>
   <span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span><span class="o">,</span>
   <span class="nc">GeneratedMessage</span><span class="o">.</span><span class="na">GeneratedExtension</span><span class="o">&lt;</span><span class="nc">DescriptorProtos</span><span class="o">.</span><span class="na">MethodOptions</span><span class="o">,</span> <span class="o">?&gt;</span> <span class="n">id</span>
@@ -652,7 +1007,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python 4fe72a2a-43ff-477b-9057-00279a8bbc35"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python 873f984c-e306-471d-8637-a81b06090286"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_method_option_value</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
   <span class="n">md</span> <span class="o">=</span> <span class="n">get_service_method</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">md</span><span class="p">:</span> <span class="n">get_option_value</span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="n">GetOptions</span><span class="p">(),</span> <span class="nb">id</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">)</span>
 
@@ -666,7 +1021,7 @@ i-----jk---l--mno
     <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">value</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp ef2911bd-53a1-43bb-be4b-6fd54ac06f8f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp f53e9a74-e6b3-4a24-a273-3da663449932"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">private</span> <span class="n">T</span> <span class="n">GetMethodOptionValue</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span>
   <span class="k">this</span> <span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">FileDescriptor</span> <span class="n">fd</span><span class="p">,</span>
   <span class="n">pb</span><span class="p">::</span><span class="n">Extension</span><span class="p">&lt;</span><span class="n">pb</span><span class="p">.</span><span class="n">Reflection</span><span class="p">.</span><span class="n">MethodOptions</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">id</span>
@@ -678,7 +1033,7 @@ i-----jk---l--mno
 </li></ul>
 <h3 id="usage">Usage</h3>
 <p>Let's see how to use that in our main function.</p>
-<ul class="code-tab-container 8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 8b2e7d54-83a2-41dc-be8d-e6ed9b6e9c38"><li class="code_switcher_container_parent active-tab code_switcher_go 27ee38fd-c473-493d-aaaa-70e5170124de"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<ul class="code-tab-container 418f8265-0bef-415a-bbaa-b5481c29c5da"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '418f8265-0bef-415a-bbaa-b5481c29c5da', 0)">main.go</a></li><li class=" code_switcher_cpp"><a onclick="selectTab('code_switcher_cpp', '418f8265-0bef-415a-bbaa-b5481c29c5da', 1)">main.cc</a></li><li class=" code_switcher_java"><a onclick="selectTab('code_switcher_java', '418f8265-0bef-415a-bbaa-b5481c29c5da', 2)">main.java</a></li><li class=" code_switcher_python"><a onclick="selectTab('code_switcher_python', '418f8265-0bef-415a-bbaa-b5481c29c5da', 3)">main.py</a></li><li class=" code_switcher_csharp"><a onclick="selectTab('code_switcher_csharp', '418f8265-0bef-415a-bbaa-b5481c29c5da', 4)">main.cs</a></li></ul><ul class="code-tab-switcher 418f8265-0bef-415a-bbaa-b5481c29c5da"><li class="code_switcher_container_parent active-tab code_switcher_go b73777cc-2618-4529-b770-7266192af9b4"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="s">"fmt"</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
@@ -691,7 +1046,7 @@ i-----jk---l--mno
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_cpp 0bad56a8-da07-45b1-a2dc-0dd43d832a64"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_cpp d3c085a3-b868-4691-bc97-411213a28502"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -705,7 +1060,7 @@ i-----jk---l--mno
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_java cd773d3c-c9a2-4fbf-bf90-0fed7584f4a7"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_java 5614194e-b913-4111-acd6-f2b6faf83d39"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// World is the FileDescriptor for the file world.proto</span>
   <span class="nc">Descriptors</span><span class="o">.</span><span class="na">FileDescriptor</span> <span class="n">fd</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">getDescriptor</span><span class="o">();</span>
@@ -715,12 +1070,12 @@ i-----jk---l--mno
   <span class="n">world</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">w</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">w</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_python c9511230-4363-4e90-a7d9-725598a56df1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_python 6190e4e1-9582-4b82-9970-0c7ae904c18a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">proto.world_pb2</span> <span class="kn">import</span> <span class="n">DESCRIPTOR</span> <span class="c1"># FileDescriptor for world.proto
 </span>
 <span class="k">print</span><span class="p">(</span><span class="n">get_method_extension</span><span class="p">(</span><span class="n">DESCRIPTOR</span><span class="p">,</span> <span class="s">"hello"</span><span class="p">))</span>
 </code></pre></div></div>
-</li><li class="code_switcher_container_parent code_switcher_csharp 51054cea-75ae-427f-b17d-28f0018b2728"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+</li><li class="code_switcher_container_parent code_switcher_csharp 0af59b11-9fb7-40da-964d-bcda355678ec"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">public</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="c1">// HelloExtensions.Hello is the generated custom option</span>
@@ -735,14 +1090,14 @@ i-----jk---l--mno
 </li></ul>
 <h2 id="back-to-the-problem">Back to the Problem</h2>
 <p>Now, as I mentioned I was trying to detect which routes need authentication with the help of such a custom option. It is not that hard to imagine the code we saw in the previous section work for an extension like the following:</p>
-<div class="code_switcher_container_parent e19890b9-d5cb-44b0-b408-b9b023085d1a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent a374fc79-9745-4abe-baeb-260cc732c816"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MethodOptions</span> <span class="p">{</span>
   <span class="kt">bool</span> <span class="na">is_authenticated</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 </div>
 <p>Then, we can use it like so:</p>
-<div class="code_switcher_container_parent 6c5795b1-f03d-42f8-a8db-31539a2d721e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
+<div class="code_switcher_container_parent b43ec3f2-51d1-410a-b34b-8f444e1fd1b2"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
 <div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">service</span> <span class="n">CheckoutService</span> <span class="p">{</span>
   <span class="k">rpc</span> <span class="n">Checkout</span> <span class="p">(</span><span class="n">CheckoutRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">CheckoutResponse</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">option</span> <span class="p">(</span><span class="n">is_authenticated</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -3145,90 +3500,4 @@ ok      github.com/Clement-Jean/protein/lexer  0.809s
 <p>You can now play with your plugin and test with other team names.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>Obviously, we can improve the solution in this post but the most important is that we saw that we can create custom options and protoc plugins. This can be interesting for compile time analysis or generating code. Finally, we saw that in this auditing use case, but we could use this in more advanced use cases (e.g.: <a href="https://github.com/grpc-ecosystem/grpc-gateway">grpc-gateway</a>).</p>
-<p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><category term="C++" /><category term="Go" /><summary type="html"><![CDATA[Recently, I answered a StackOverflow question related to writing protoc plugins and Protobuf custom options. I thought this would be interesting to share how to write one because I believe this is quite an involved process and it fits the context of an article.]]></summary></entry><entry><title type="html">One Character to Save 200 Bytes</title><link href="https://clement-jean.github.io/one_character_to_save_200_bytes/" rel="alternate" type="text/html" title="One Character to Save 200 Bytes" /><published>2023-01-14T00:00:00+08:00</published><updated>2023-01-14T00:00:00+08:00</updated><id>https://clement-jean.github.io/one_character_to_save_200_bytes</id><content type="html" xml:base="https://clement-jean.github.io/one_character_to_save_200_bytes/"><![CDATA[<p>Recently, I've been working with <a href="https://techhub.social/@coderbyheart@chaos.social">Markus Tacker</a> on improving his <a href="https://github.com/coderbyheart/json-protobuf-comparison-wifi-site-survey">comparison of JSON vs. Protobuf for a Wifi Site Survey</a>. This has been a lot of fun and I thought I could do a simple post about what went well and what my mistakes were.</p>
-<h2 id="looking-at-the-proto-file">Looking at the proto file</h2>
-<p>Here is the proto file at the moment I was looking at it:</p>
-<div class="code_switcher_container_parent 7b5f2ced-33f7-4aba-91ab-e7bf5ffe86cc"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
-
-<span class="kd">message</span> <span class="nc">WiFiSiteSurvey</span> <span class="p">{</span>
-  <span class="kt">uint32</span> <span class="na">timestamp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="n">AP</span> <span class="na">accesspoints</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kd">message</span> <span class="nc">AP</span> <span class="p">{</span>
-  <span class="kt">int64</span> <span class="na">mac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="kt">string</span> <span class="na">ssid</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-  <span class="kt">int32</span> <span class="na">rssi</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-  <span class="kt">int32</span> <span class="na">channel</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</div>
-<p>The first thing that made me think about improving this schema is the use of repeated on a complex object. If you don't know why, I go into more details about why it is less efficient to use complex objects in a repeated field, in the article called <a href="https://clement-jean.github.io/packed_vs_unpacked_repeated_fields/">Packed vs. Unpacked Repeated Fields</a>.</p>
-<p>Other than that, I didn't have any other idea at that point. I needed to analyze the data.</p>
-<h2 id="analyzing-the-data">Analyzing the Data</h2>
-<p>The first thing to do when you are dealing with data is to understand it and get a sense of the possible values you can have. One thing that came out directly after running the comparison script and analyzing the <a href="https://github.com/coderbyheart/json-protobuf-comparison-wifi-site-survey/blob/saga/sitesurvey.json">sitesurvey.json</a> is that all <code>rssi</code> properties are negative.</p>
-<p>Now, I'm not an expert in wifi protocol but after searching online what <code>rssi</code> meant, I found that it's an acronym for Received Signal Strength Indicator and that it will always be a negative value ranging from -30 to -90 (see <a href="https://corecabling.com/understanding-received-signal-strength-rssi-in-your-wifi-network/">here</a>).</p>
-<p>This is interesting because by knowing this range we know that we are dealing with a range that fits in the 32 bytes integers and we know that the numbers are all negative so we will prefer to use a sint instead of an int (TODO: article about sint vs int). And, if you look at the proto file shown above the <code>rssi</code> field has the type <code>int32</code>, which means that we are encoding all the values into 10 bytes (because negative values are encoded as big positive numbers).</p>
-<p>OK, so, before applying the change, Markus got the following result:</p>
-<div class="code_switcher_container_parent 23cac668-db16-4713-a8d3-0a4c14915bc1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node compare.js
-Found APs 30
-JSON payload length: 1949 bytes
-Protobuf payload length: 966 bytes
-</code></pre></div></div>
-</div>
-<p>This is already very nice because we save 50% of bytes in our payload. But, after changing <code>int32 rssi = 3;</code> to <code>sint32 rssi = 3;</code>, we got the following result:</p>
-<div class="code_switcher_container_parent 4a0cbe59-6b6c-4dd6-b93e-8793180bb1b1"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node compare.js
-Found APs 30
-JSON payload length: 1949 bytes
-Protobuf payload length: 713 bytes
-</code></pre></div></div>
-</div>
-<p>Two hundred+ bytes gone, with one character added. Pretty cool!</p>
-<h2 id="back-to-the-original-idea">Back to the Original Idea</h2>
-<p>Even though we saved 200 bytes, that wasn't my original idea on how to improve this proto file. As I mentioned I wanted to see if making the repeated field act on simple data could help.</p>
-<p>Now, this is important to note that everything that comes after this wasn't added to the repository since we didn't entirely understand the requirements for the data. So I will show the assumption that we were making at that time and we will see how it was dismissed later. Here are the assumption:</p>
-<ul>
-<li>None of the fields are optional if an info is missing treat the data as erroneous.</li>
-</ul>
-<p>This is important because with that assumption we could make multiple repeated fields instead of having the <code>AP</code> message and we would save encoding a complex object. This would be lowering the payload size and then later on because all the lists have the same length we could do a zip between these lists to get the objects back (first object get first element of all the lists). So the proto file changed like so:</p>
-<div class="code_switcher_container_parent d21e32fb-4e47-486c-8fcd-14623132e1a6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
-
-<span class="kd">message</span> <span class="nc">WiFiSiteSurvey</span> <span class="p">{</span>
-  <span class="kt">uint32</span> <span class="na">timestamp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="kt">int64</span> <span class="na">macs</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="kt">string</span> <span class="na">ssids</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">rssis</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">channels</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-</div>
-<blockquote>
-<p>Note: <code>string</code> is a complex object so we are still using unpacked repeated field on <code>ssids</code>.</p>
-</blockquote>
-<p>We first filtered all the erroneous data in the dataset and rerun the comparison. Here is the result:</p>
-<div class="code_switcher_container_parent 24440ede-f7f8-46f8-8d19-34803961a938"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node compare.js
-Found APs 24
-JSON payload length: 1949 bytes
-Protobuf payload length: 510 bytes
-</code></pre></div></div>
-</div>
-<p>Another 200 bytes gone.</p>
-<h2 id="why-the-repeated-trick-didnt-work">Why the repeated 'trick' didn't work</h2>
-<p>This mostly didn't work because some of the fields in <code>AP</code> are actually optional. This means that either we would have to add empty wrappers into the lists to get the lists have the same length (not worth, the payload size would be bigger than 713 bytes) or we go back to our <code>AP</code> message after the <code>sint32</code> improvement.</p>
-<p>The second thing that is not making this approach work is that, if you noticed, we are lowering the payload but we are doing more computation in our code. We need to do a zip afterwards. This might be fine if this is internal to your company and well documented. However, if this is a client facing proto file, this might just make their life harder.</p>
-<p><strong>Lesson: Know your data requirements!</strong></p>
-<h2 id="other-improvements">Other Improvements</h2>
-<p>Here is a list of further improvements, added or not yet added, that are not impacting payload size:</p>
-<ul>
-<li>Change <code>uint32 timestamp = 1;</code> to <code>uint64 timestamp = 1;</code> for accepting a bigger range of numbers.</li>
-<li>Change <code>int32 channel = 4;</code> to <code>uint32 channel = 4;</code> for invalidating negative numbers on the client side.</li>
-<li>Change <code>int64 mac = 1;</code> to <code>uint64 mac = 1;</code> for invalidating negative numbers on the client side (I'm not sure yet, but this seems possible).</li>
-</ul>
-<h2 id="conclusion">Conclusion</h2>
-<p>We saw that by knowing your data and knowing the encoding algorithm behind Protobuf, we can get really big payload size improvements. However, we still need to care about the usage of our proto files and be more accurate on the different data requirements; otherwise we will implement obscure 'fixes' and in the end they will not be needed.</p>
-<p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><summary type="html"><![CDATA[Recently, I've been working with Markus Tacker on improving his comparison of JSON vs. Protobuf for a Wifi Site Survey. This has been a lot of fun and I thought I could do a simple post about what went well and what my mistakes were.]]></summary></entry></feed>
+<p><strong>If you like this kind of content let me know in the comment section and feel free to ask for help on similar projects, recommend the next post subject or simply send me your feedback.</strong></p>]]></content><author><name>Clement</name></author><category term="Protocol Buffers" /><category term="C++" /><category term="Go" /><summary type="html"><![CDATA[Recently, I answered a StackOverflow question related to writing protoc plugins and Protobuf custom options. I thought this would be interesting to share how to write one because I believe this is quite an involved process and it fits the context of an article.]]></summary></entry></feed>
