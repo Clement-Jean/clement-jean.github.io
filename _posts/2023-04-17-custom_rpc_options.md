@@ -7,7 +7,7 @@ categories: [Protobuf]
 
 Recently I had to design authentication for a Blazor Application. After finishing implementing, I soon faced the need to know which RPC endpoint needs authentication and which doesn't. And while part of the problem is a solved one, I still needed a mechanism to let me define this. Let's see how.
 
-> All the code (**only running through Bazel right now**) is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-04-13-custom_rpc_options">here</a>
+> All the code (**only running through Bazel right now**) is available <a href="https://github.com/Clement-Jean/clement-jean.github.io/tree/working/src/2023-04-17-custom_rpc_options">here</a>
 
 ## Custom Options
 
