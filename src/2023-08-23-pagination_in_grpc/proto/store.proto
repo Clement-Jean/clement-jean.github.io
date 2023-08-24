@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Clement-Jean/clement-jean.github.io/proto";
+
+message Book {
+  string name = 1;
+  string description = 2;
+  repeated string authors = 3;
+  google.protobuf.Timestamp published = 4;
+  uint32 pages = 5;
+  string isbn = 6;
+}
+
+message ListBooksRequest {
+  // string parent = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  //string sorted_by = 4;
+  //string etag = 5;
+}
+
+message ListBooksResponse {
+  repeated Book books = 1;
+  string next_page_token = 2;
+  //string etag = 3;
+}
+
+service BookStoreService {
+  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse);
+}

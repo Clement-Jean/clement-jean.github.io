@@ -1,0 +1,32 @@
+services:
+  server:
+    image: golang:1.20.6-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: &user postgres
+      POSTGRES_PASSWORD: &pass postgres
+      POSTGRES_DB: &dbname postgres
+    ports:
+      - 50051:50051
+    volumes:
+      - .:/app:cached
+    working_dir: /app
+    command: 'go run .'
+    depends_on:
+      - db
+  db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_USER: *user
+      POSTGRES_PASSWORD: *pass
+      POSTGRES_DB: *dbname
+    ports:
+      - 5432
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./db/init-db.sql:/docker-entrypoint-initdb.d/create_tables.sql
+volumes:
+  db:
+    driver: local
