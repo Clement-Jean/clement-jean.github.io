@@ -311,10 +311,10 @@ import "fmt"
 func binarySearch(arr []uint32, n uint32) bool
 
 func main() {
-	arr := []uint32{41, 23, 61, 11, 2, 19, 31, 29, 37, 47, 43, 53, 73, 67, 79}
+  arr := []uint32{41, 23, 61, 11, 2, 19, 31, 29, 37, 47, 43, 53, 73, 67, 79}
 
-	fmt.Printf("%v\n", binarySearch(arr, 19))
-	fmt.Printf("%v\n", binarySearch(arr, 100))
+  fmt.Printf("%v\n", binarySearch(arr, 19))
+  fmt.Printf("%v\n", binarySearch(arr, 100))
 }
 ```
 
