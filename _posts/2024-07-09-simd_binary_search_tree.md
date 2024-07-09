@@ -132,7 +132,7 @@ You can see that we are working with uint32s. This is because on ARM64 Neon, we 
 
 Next, we will jump to our `main.s` file and start defining our function:
 
-```assembly
+```asm
 #include "textflag.h"
 
 //func binarySearch(arr []int, n int) bool
@@ -144,7 +144,7 @@ The most important thing here is the `$0-33` part. We are saying that we do not 
 
 Next, as part of my function, I generally like to define some names for the register. It helps me remember what each register is supposed to contain. This looks like this:
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 #define data R0
 #define dataLen R1
@@ -163,7 +163,7 @@ TEXT ·binarySearch(SB),NOSPLIT,$0-33
 
 With that, we can initialize the registers and check the base cases:
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
@@ -205,7 +205,7 @@ found:
 
 Now, we can start the real work. We will have a simple loop which we load 4 elements at the `curr` position in `data`:
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
@@ -231,7 +231,7 @@ Notice that we are multiplying `curr` by 4. This is because we are working with 
 
 Then, inside the loop, we will check for equality between the four loaded elements and the search vector:
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
@@ -251,7 +251,7 @@ You can notice that if the maximum value inside `equalMask` is `math.MaxUint32` 
 
 After that, we fall into the binary search algorithm. We will first start by looking for the index:
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
@@ -272,7 +272,7 @@ The `cmhi` checks whether the data we are looking for is bigger that the data we
 
 Finally, we need to update the `curr`, `level`, and the `nb_subtree`. As mentionned, the former is telling us from where to read the data in the array. The two last ones actually help us calculate the `curr` by running the following formula: `curr = nb_subtree * 3 + (3 * (child_idx + 1))`.
 
-```assembly
+```asm
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
