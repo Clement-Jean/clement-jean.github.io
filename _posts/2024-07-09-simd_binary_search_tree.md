@@ -326,6 +326,71 @@ true
 false
 ```
 
+## Benchmark
+
+```go
+package main
+
+import (
+  "testing"
+  "slices"
+)
+
+var ok bool
+
+func BenchmarkBinarySearchSIMD(b *testing.B) {
+  nbs := []uint32{41, 23, 61, 11, 2, 19, 31, 29, 37, 47, 43, 53, 73, 67, 79}
+
+  for i := 0; i < b.N; i++ {
+    for _, item := range nbs {
+      if ok = binarySearch(nbs, item); !ok {
+        b.Fail()
+      }
+    }
+  }
+}
+
+func BenchmarkBinarySearch(b *testing.B) {
+  arr := []uint32{41, 23, 11, 2, 19, 31, 29, 37, 61, 47, 43, 53, 73, 67, 79}
+  slices.Sort(arr)
+
+  for i := 0; i < b.N; i++ {
+    for _, item := range arr {
+      if _, ok = slices.BinarySearch(arr, item); !ok {
+        b.Fail()
+      }
+    }
+  }
+}
+```
+
+```sh
+$ go test -run=Benchmark -bench=. -count=10 .
+goos: darwin
+goarch: arm64
+BenchmarkBinarySearchSIMD-10            29052963                40.82 ns/op
+BenchmarkBinarySearchSIMD-10            29059149                40.80 ns/op
+BenchmarkBinarySearchSIMD-10            29166654                40.83 ns/op
+BenchmarkBinarySearchSIMD-10            29083417                40.83 ns/op
+BenchmarkBinarySearchSIMD-10            29022134                40.84 ns/op
+BenchmarkBinarySearchSIMD-10            29075196                40.83 ns/op
+BenchmarkBinarySearchSIMD-10            28986556                40.81 ns/op
+BenchmarkBinarySearchSIMD-10            29005532                40.81 ns/op
+BenchmarkBinarySearchSIMD-10            29118674                40.79 ns/op
+BenchmarkBinarySearchSIMD-10            28919640                40.79 ns/op
+BenchmarkBinarySearch-10                12682536                94.19 ns/op
+BenchmarkBinarySearch-10                12656307                94.20 ns/op
+BenchmarkBinarySearch-10                12666488                94.19 ns/op
+BenchmarkBinarySearch-10                12660024                94.68 ns/op
+BenchmarkBinarySearch-10                12671432                94.22 ns/op
+BenchmarkBinarySearch-10                12671989                94.25 ns/op
+BenchmarkBinarySearch-10                12659746                94.19 ns/op
+BenchmarkBinarySearch-10                12688084                94.23 ns/op
+BenchmarkBinarySearch-10                12639111                94.21 ns/op
+BenchmarkBinarySearch-10                12664016                94.24 ns/op
+PASS
+```
+
 ## Conclusion
 
 In this article we saw a cache friendly version of the binary search using SIMD. While, we focused on the algorithm itself, I worked on this as part of a data structure. It is an AVL Tree that can be frozen at any point, and once frozen, it will let you do the binary search described in this article.
