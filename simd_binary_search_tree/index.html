@@ -1,20 +1,20 @@
-<!DOCTYPE html> <html> <head> <title>Binary Search Tree with SIMD – Clément Jean – Eternal learner and challenges lover</title> <meta charset="utf-8" /> <meta content='text/html; charset=utf-8' http-equiv='Content-Type'> <meta http-equiv='X-UA-Compatible' content='IE=edge'> <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'> <meta name="description" content="Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm here. " /> <meta property="og:description" content="Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm here. " /> <meta name="author" content="Clément Jean" /> <meta property="og:title" content="Binary Search Tree with SIMD" /> <meta property="twitter:title" content="Binary Search Tree with SIMD" /> <link href="https://techhub.social/@clementjean" rel="me"> <link rel="stylesheet" type="text/css" href="/style.css" /> <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" /> <link rel="icon" type="image/png" href="/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png"> <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script></head> <body> <div class="wrapper-masthead"> <div class="container"> <header class="masthead clearfix"> <a href="/" aria-label="Home" class="site-avatar"><img src="/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png" alt="Clement Jean" width="80" height="70"/></a> <div class="site-info"> <h1 class="site-name"><a class="black-red-link" href="/">Clément Jean</a></h1> <p class="site-description">Eternal learner and challenges lover</p> </div> <nav> <a class="black-red-link" href="/">Home</a> <a class="black-red-link" href="/categories">Categories</a> <a class="black-red-link" href="/hire_me">Hire Me</a> <a class="black-red-link" href="/about">About</a> </nav> </header> </div> </div> <div id="main" role="main" class="container"> <article class="post"> <h1>Binary Search Tree with SIMD</h1> <div class="entry"> <p>Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm <a href="https://dl.acm.org/doi/10.1145/1807167.1807206">here</a>.</p> <h2 id="the-intuition">The Intuition</h2> <p>Let's assume that we have a binary tree:</p> <div class="code_switcher_container_parent 9ca9acb2-cee6-4540-accc-0d60069b1f6c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>      ┌────── 41 ──────┐
+<!DOCTYPE html> <html> <head> <title>Binary Search Tree with SIMD – Clément Jean – Eternal learner and challenges lover</title> <meta charset="utf-8" /> <meta content='text/html; charset=utf-8' http-equiv='Content-Type'> <meta http-equiv='X-UA-Compatible' content='IE=edge'> <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'> <meta name="description" content="Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm here. " /> <meta property="og:description" content="Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm here. " /> <meta name="author" content="Clément Jean" /> <meta property="og:title" content="Binary Search Tree with SIMD" /> <meta property="twitter:title" content="Binary Search Tree with SIMD" /> <link href="https://techhub.social/@clementjean" rel="me"> <link rel="stylesheet" type="text/css" href="/style.css" /> <link rel="alternate" type="application/rss+xml" title="Clément Jean - Eternal learner and challenges lover" href="/feed.xml" /> <link rel="icon" type="image/png" href="/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png"> <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/><link rel="stylesheet" href="/assets/codeblock.css"/><script src="/assets/codeblock.js"></script></head> <body> <div class="wrapper-masthead"> <div class="container"> <header class="masthead clearfix"> <a href="/" aria-label="Home" class="site-avatar"><img src="/images/%E4%B8%80%E4%BB%8B%E5%A5%BD%E5%AD%A6.png" alt="Clement Jean" width="80" height="70"/></a> <div class="site-info"> <h1 class="site-name"><a class="black-red-link" href="/">Clément Jean</a></h1> <p class="site-description">Eternal learner and challenges lover</p> </div> <nav> <a class="black-red-link" href="/">Home</a> <a class="black-red-link" href="/categories">Categories</a> <a class="black-red-link" href="/hire_me">Hire Me</a> <a class="black-red-link" href="/about">About</a> </nav> </header> </div> </div> <div id="main" role="main" class="container"> <article class="post"> <h1>Binary Search Tree with SIMD</h1> <div class="entry"> <p>Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm <a href="https://dl.acm.org/doi/10.1145/1807167.1807206">here</a>.</p> <h2 id="the-intuition">The Intuition</h2> <p>Let's assume that we have a binary tree:</p> <div class="code_switcher_container_parent e749b52e-8559-4ace-bebc-7ab935085e48"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>      ┌────── 41 ──────┐
       │                │
    ┌──23──┐       ┌───61───┐
    │      │       │        │
 ┌─11─┐  ┌─31─┐  ┌─47─┐  ┌─73─┐
 │    │  │    │  │    │  │    │
 2   19  29  37  43  53  67  79
-</code></pre></div> <p>A normal way of representing a binary tree into an array is by representing it like so:</p> <div class="code_switcher_container_parent e9c3d088-c362-4fe8-856a-11f6b9dd9258"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┬────┬────┬────┬────┬───┬────┬────┬────┬────┬────┬────┬────┐
+</code></pre></div> <p>A normal way of representing a binary tree into an array is by representing it like so:</p> <div class="code_switcher_container_parent dfdda9fe-3c3f-4412-81f9-9e8769def9b5"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┬────┬────┬────┬────┬───┬────┬────┬────┬────┬────┬────┬────┐
 │ 41 │ 23 │ 61 │ 11 │ 31 │ 47 │ 73 │ 2 │ 19 │ 29 │ 37 │ 47 │ 53 │ 67 │ 79 │
 └────┴────┴────┴────┴────┴────┴────┴───┴────┴────┴────┴────┴────┴────┴────┘
-</code></pre></div> <p>or, in other words, we have the level nodes layed out consecutively.</p> <p>This approach however, is not that cache friendly. While the locality of the data for a level is good, in a binary search, we actually care more about the parent-children locality. This is because, by keeping the children next to the parent, we wouldn't need to jump far ahead in the array.</p> <p>The paper mentionned at the beginning, propose to have a binary tree layed out like the following:</p> <div class="code_switcher_container_parent 070659ab-0cbd-4e5b-957e-48c15071b9ef"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┬────┬───┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐
+</code></pre></div> <p>or, in other words, we have the level nodes layed out consecutively.</p> <p>This approach however, is not that cache friendly. While the locality of the data for a level is good, in a binary search, we actually care more about the parent-children locality. This is because, by keeping the children next to the parent, we wouldn't need to jump far ahead in the array.</p> <p>The paper mentionned at the beginning, propose to have a binary tree layed out like the following:</p> <div class="code_switcher_container_parent 842f71f6-c924-4487-9965-cdbe0bdb23ac"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┬────┬───┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐
 │ 41 │ 23 │ 61 │ 11 │ 2 │ 19 │ 31 │ 29 │ 37 │ 47 │ 43 │ 53 │ 73 │ 67 │ 79 │
 └────┴────┴────┴────┴───┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘
-</code></pre></div> <p>And if you take time to understand how this maps back to the binary tree, you will notice that we are storing parent-children triangles. With this, we can now apply SIMD operations on both the parent and the children in order to either dtermine if the data we are looking for is in the triangle, or if we should continue our search.</p> <p>The next important thing to understand is how we do the search of elements.</p> <p>Let's take an example to make things clearer. Let's say that we are looking for the number 62. We will start by loading 41, 23, 61 into a vector.</p> <div class="code_switcher_container_parent c5c20003-81ef-4fa0-aa33-c297972f091b"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
+</code></pre></div> <p>And if you take time to understand how this maps back to the binary tree, you will notice that we are storing parent-children triangles. With this, we can now apply SIMD operations on both the parent and the children in order to either dtermine if the data we are looking for is in the triangle, or if we should continue our search.</p> <p>The next important thing to understand is how we do the search of elements.</p> <p>Let's take an example to make things clearer. Let's say that we are looking for the number 62. We will start by loading 41, 23, 61 into a vector.</p> <div class="code_switcher_container_parent daa1043f-aafb-4041-9ba4-689173ea0703"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
 │ 41 │ 23 │ 61 │
 └────┴────┴────┘
-</code></pre></div> <p>Then, we will compare (smaller than) each number with the element we are looking for:</p> <div class="code_switcher_container_parent 2ff27cf0-d8d4-4252-a06d-d0ba631b2d70"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
+</code></pre></div> <p>Then, we will compare (smaller than) each number with the element we are looking for:</p> <div class="code_switcher_container_parent 7228c197-b71d-4ffc-a57a-ec063194bb41"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
 │ 41 │ 23 │ 61 │
 └────┴────┴────┘
         &lt;
@@ -25,14 +25,14 @@
 ┌────┬────┬────┐
 │  1 │  1 │  1 │
 └────┴────┴────┘
-</code></pre></div> <p>and with the mask we get, we can map to an index in the following subtrees. Here is the full mapping:</p> <div class="code_switcher_container_parent d46edfbf-b787-4518-bd50-e970aed29a81"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code> 0 0 0 -&gt; 0
+</code></pre></div> <p>and with the mask we get, we can map to an index in the following subtrees. Here is the full mapping:</p> <div class="code_switcher_container_parent 2908c2c8-43ae-4669-887c-840f07261a5f"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code> 0 0 0 -&gt; 0
  0 1 0 -&gt; 1
  1 1 0 -&gt; 2
  1 1 1 -&gt; 3
-</code></pre></div> <p>It's actually a popcount.</p> <p>So, with our <code>[1, 1, 1]</code>, we should access the 4th child (mapping is 0 indexed).</p> <p>If you look at the binary tree, this means that we need to go to the number 73 and we now have the vector:</p> <div class="code_switcher_container_parent 832cafa3-9910-45ee-b7cb-362b172923da"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
+</code></pre></div> <p>It's actually a popcount.</p> <p>So, with our <code>[1, 1, 1]</code>, we should access the 4th child (mapping is 0 indexed).</p> <p>If you look at the binary tree, this means that we need to go to the number 73 and we now have the vector:</p> <div class="code_switcher_container_parent 1e48da51-eac5-4fe0-ad10-d6b902ea7788"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
 │ 73 │ 67 │ 79 │
 └────┴────┴────┘
-</code></pre></div> <p>Now, we can obviously repeat the process.</p> <p>On top of the lookup for index, we also need to be able to check the equality of the search vector and the curr loaded vector. This is as simple as:</p> <div class="code_switcher_container_parent ec5539bc-0909-4105-bbd8-e01c41b23c1e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
+</code></pre></div> <p>Now, we can obviously repeat the process.</p> <p>On top of the lookup for index, we also need to be able to check the equality of the search vector and the curr loaded vector. This is as simple as:</p> <div class="code_switcher_container_parent df0fc990-2fdf-4cd1-85f5-d612b5f69178"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code>┌────┬────┬────┐
 │ 41 │ 23 │ 61 │
 └────┴────┴────┘
        ==
@@ -43,20 +43,20 @@
 ┌────┬────┬────┐
 │  0 │  0 │  0 │
 └────┴────┴────┘
-</code></pre></div> <p>If we found a 1, it would mean that the element is in the tree. Otherwise, we keep running as long as we are within the boundaries of the array.</p> <p>Hopefully, this all makes sense. Let us move to the code.</p> <h2 id="the-code">The Code</h2> <p>As <a href="https://github.com/golang/go/issues/67520">my proposal for adding SIMD intrinsics</a> is still not evaluated/accepted, we will need to write Go assembly (ARM64) to make use of SIMD instructions. I'll try to be as clear as possible on what each instruction is doing but you should know at least basics of assembly.</p> <p>Let's start by defining the function definition in our <code>main.go</code>:</p> <div class="code_switcher_container_parent 4010a3e8-63f8-40d7-91a4-9cf401faddcc"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+</code></pre></div> <p>If we found a 1, it would mean that the element is in the tree. Otherwise, we keep running as long as we are within the boundaries of the array.</p> <p>Hopefully, this all makes sense. Let us move to the code.</p> <h2 id="the-code">The Code</h2> <p>As <a href="https://github.com/golang/go/issues/67520">my proposal for adding SIMD intrinsics</a> is still not evaluated/accepted, we will need to write Go assembly (ARM64) to make use of SIMD instructions. I'll try to be as clear as possible on what each instruction is doing but you should know at least basics of assembly.</p> <p>Let's start by defining the function definition in our <code>main.go</code>:</p> <ul class="code-tab-container 7337fd1a-2cc4-4ea9-acdd-bc2c2225df62"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '7337fd1a-2cc4-4ea9-acdd-bc2c2225df62', 0)">main.go</a></li></ul><ul class="code-tab-switcher 7337fd1a-2cc4-4ea9-acdd-bc2c2225df62"><li class="code_switcher_container_parent active-tab code_switcher_go 8a1cfe66-19e2-4fa0-9a50-3590e070293d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
 <span class="k">func</span> <span class="n">binarySearch</span><span class="p">(</span><span class="n">arr</span> <span class="p">[]</span><span class="kt">uint32</span><span class="p">,</span> <span class="n">n</span> <span class="kt">uint32</span><span class="p">)</span> <span class="kt">bool</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="c">//...</span>
 <span class="p">}</span>
-</code></pre></div></div> </div> <p>You can see that we are working with uint32s. This is because on ARM64 Neon, we only have 128 bits, and as we need to load at least 3 elements per triangle, uint32 is our best choice.</p> <p>Next, we will jump to our <code>main.s</code> file and start defining our function:</p> <div class="code_switcher_container_parent 4be6ba29-05ba-42e4-88d7-d48f39f2e5c0"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>#include &quot;textflag.h&quot;
-
-//func binarySearch(arr []int, n int) bool
-TEXT ·binarySearch(SB),NOSPLIT,$0-33
-	//...
-</code></pre></div> <p>The most important thing here is the <code>$0-33</code> part. We are saying that we do not have local variables (0) and that our arguments/return value take 33 bytes (24 for the slice, 8 for the int, and 1 for the bool).</p> <p>Next, as part of my function, I generally like to define some names for the register. It helps me remember what each register is supposed to contain. This looks like this:</p> <div class="code_switcher_container_parent 5c3f93e8-da2f-44ab-9bef-bc3665b84e92"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-#define data R0
+</code></pre></div></div> </li></ul> <p>You can see that we are working with uint32s. This is because on ARM64 Neon, we only have 128 bits, and as we need to load at least 3 elements per triangle, uint32 is our best choice.</p> <p>Next, we will jump to our <code>main.s</code> file and start defining our function:</p> <ul class="code-tab-container 4c9552e6-9b4c-4b15-a87b-2e8836eb1710"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', '4c9552e6-9b4c-4b15-a87b-2e8836eb1710', 0)">main.s</a></li></ul><ul class="code-tab-switcher 4c9552e6-9b4c-4b15-a87b-2e8836eb1710"><li class="code_switcher_container_parent active-tab code_switcher_c 5daf384f-b36b-42c8-a487-795579100ffe"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"textflag.h"</span><span class="cp">
+</span>
+<span class="c1">//func binarySearch(arr []int, n int) bool</span>
+<span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+  <span class="c1">//...</span>
+</code></pre></div></div> </li></ul> <p>The most important thing here is the <code>$0-33</code> part. We are saying that we do not have local variables (0) and that our arguments/return value take 33 bytes (24 for the slice, 8 for the int, and 1 for the bool).</p> <p>Next, as part of my function, I generally like to define some names for the register. It helps me remember what each register is supposed to contain. This looks like this:</p> <ul class="code-tab-container 48c6defe-91a1-4e4f-a300-7364c6b8f2de"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', '48c6defe-91a1-4e4f-a300-7364c6b8f2de', 0)">main.s</a></li></ul><ul class="code-tab-switcher 48c6defe-91a1-4e4f-a300-7364c6b8f2de"><li class="code_switcher_container_parent active-tab code_switcher_c aba22528-6a53-4249-8d93-55a33ef60b47"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="cp">#define data R0
 #define dataLen R1
 #define toFind R2
 #define curr R3
@@ -69,112 +69,112 @@ TEXT ·binarySearch(SB),NOSPLIT,$0-33
 #define idx V2
 #define one V3
 #define equalMask V4
-</code></pre></div> <p>With that, we can initialize the registers and check the base cases:</p> <div class="code_switcher_container_parent 8fede085-30d7-43cb-8dd0-82b66e53d87d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-//...
+</span></code></pre></div></div> </li></ul> <p>With that, we can initialize the registers and check the base cases:</p> <ul class="code-tab-container ca2de619-80de-4d66-9c42-417488e8a634"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', 'ca2de619-80de-4d66-9c42-417488e8a634', 0)">main.s</a></li></ul><ul class="code-tab-switcher ca2de619-80de-4d66-9c42-417488e8a634"><li class="code_switcher_container_parent active-tab code_switcher_c 2ae6a9d2-c699-4c94-a870-61f46e1158f9"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="c1">//...</span>
 
-    // initialize registers
-	MOVD arr+0(FP), data
-	MOVD arr_len+8(FP), dataLen
-	MOVD n+24(FP), toFind
-	MOVD $0, curr
-	MOVD $1, level
-	MOVD $0, nb_subtree
-	VDUP level, one.S4
+  <span class="c1">// initialize registers</span>
+  <span class="n">MOVD</span> <span class="n">arr</span><span class="o">+</span><span class="mi">0</span><span class="p">(</span><span class="n">FP</span><span class="p">),</span> <span class="n">data</span>
+  <span class="n">MOVD</span> <span class="n">arr_len</span><span class="o">+</span><span class="mi">8</span><span class="p">(</span><span class="n">FP</span><span class="p">),</span> <span class="n">dataLen</span>
+  <span class="n">MOVD</span> <span class="n">n</span><span class="o">+</span><span class="mi">24</span><span class="p">(</span><span class="n">FP</span><span class="p">),</span> <span class="n">toFind</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="n">curr</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="n">level</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_subtree</span>
+  <span class="n">VDUP</span> <span class="n">level</span><span class="p">,</span> <span class="n">one</span><span class="p">.</span><span class="n">S4</span>
 
-    // if array len is 0 return false
-	CMP $0, dataLen
-	BEQ not_found
+  <span class="c1">// if array len is 0 return false</span>
+  <span class="n">CMP</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataLen</span>
+  <span class="n">BEQ</span> <span class="n">not_found</span>
 
-    // if array len &gt; 1 start the work
-	// otherwise check if the first element is equal
-	//  to the one we are looking for
-	CMP $1, dataLen
-	BGT load
-	MOVD (data), tmp
-	CMP tmp, toFind
-	BEQ found
-	B not_found
+  <span class="c1">// if array len &gt; 1 start the work</span>
+  <span class="c1">// otherwise check if the first element is equal</span>
+  <span class="c1">//  to the one we are looking for</span>
+  <span class="n">CMP</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="n">dataLen</span>
+  <span class="n">BGT</span> <span class="n">load</span>
+  <span class="n">MOVD</span> <span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">tmp</span>
+  <span class="n">CMP</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">toFind</span>
+  <span class="n">BEQ</span> <span class="n">found</span>
+  <span class="n">B</span> <span class="n">not_found</span>
 
-	//...
+  <span class="c1">//...</span>
 
-not_found:
-	MOVD $0, R19 // false
-	MOVD R19, ret+32(FP)
-	RET
+<span class="n">not_found</span><span class="o">:</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="n">R19</span> <span class="c1">// false</span>
+  <span class="n">MOVD</span> <span class="n">R19</span><span class="p">,</span> <span class="n">ret</span><span class="o">+</span><span class="mi">32</span><span class="p">(</span><span class="n">FP</span><span class="p">)</span>
+  <span class="n">RET</span>
 
-found:
-	MOVD $1, R19 // true
-	MOVD R19, ret+32(FP)
-	RET
-</code></pre></div> <p>Now, we can start the real work. We will have a simple loop which we load 4 elements at the <code>curr</code> position in <code>data</code>:</p> <div class="code_switcher_container_parent e6d72d4e-a11b-4555-8315-348e71152259"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-//...
+<span class="n">found</span><span class="o">:</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="n">R19</span> <span class="c1">// true</span>
+  <span class="n">MOVD</span> <span class="n">R19</span><span class="p">,</span> <span class="n">ret</span><span class="o">+</span><span class="mi">32</span><span class="p">(</span><span class="n">FP</span><span class="p">)</span>
+  <span class="n">RET</span>
+</code></pre></div></div> </li></ul> <p>Now, we can start the real work. We will have a simple loop which we load 4 elements at the <code>curr</code> position in <code>data</code>:</p> <ul class="code-tab-container ebda8f5d-640a-4417-be00-7cd80d51d0bb"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', 'ebda8f5d-640a-4417-be00-7cd80d51d0bb', 0)">main.s</a></li></ul><ul class="code-tab-switcher ebda8f5d-640a-4417-be00-7cd80d51d0bb"><li class="code_switcher_container_parent active-tab code_switcher_c d4966fa6-5971-4442-88c2-120e16e9ab59"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="c1">//...</span>
 
-load:
-	VDUP toFind, searchKey.S4
+<span class="n">load</span><span class="o">:</span>
+  <span class="n">VDUP</span> <span class="n">toFind</span><span class="p">,</span> <span class="n">searchKey</span><span class="p">.</span><span class="n">S4</span>
 
-check:
-	CMP dataLen, curr
-	BGE not_found
+<span class="n">check</span><span class="o">:</span>
+  <span class="n">CMP</span> <span class="n">dataLen</span><span class="p">,</span> <span class="n">curr</span>
+  <span class="n">BGE</span> <span class="n">not_found</span>
 
-loop:
-	MOVD $4, R19
-	MUL R19, curr
-	ADD curr, data, R19
-	VLD1 (R19), [mask.S4]
+<span class="n">loop</span><span class="o">:</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">4</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">MUL</span> <span class="n">R19</span><span class="p">,</span> <span class="n">curr</span>
+  <span class="n">ADD</span> <span class="n">curr</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">VLD1</span> <span class="p">(</span><span class="n">R19</span><span class="p">),</span> <span class="p">[</span><span class="n">mask</span><span class="p">.</span><span class="n">S4</span><span class="p">]</span>
 
-	//TODO update curr
+  <span class="c1">//TODO update curr</span>
 
-	B check
-</code></pre></div> <p>Notice that we are multiplying <code>curr</code> by 4. This is because we are working with uint32s (4 bytes) so our index (<code>curr</code>) need to be moved by <code>curr * 4</code> bytes.</p> <p>Then, inside the loop, we will check for equality between the four loaded elements and the search vector:</p> <div class="code_switcher_container_parent e01e0e51-b043-417a-ac20-93002985e6af"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-//...
+  <span class="n">B</span> <span class="n">check</span>
+</code></pre></div></div> </li></ul> <p>Notice that we are multiplying <code>curr</code> by 4. This is because we are working with uint32s (4 bytes) so our index (<code>curr</code>) need to be moved by <code>curr * 4</code> bytes.</p> <p>Then, inside the loop, we will check for equality between the four loaded elements and the search vector:</p> <ul class="code-tab-container 12b9f5b9-e27a-4f94-8687-a1d3a9350472"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', '12b9f5b9-e27a-4f94-8687-a1d3a9350472', 0)">main.s</a></li></ul><ul class="code-tab-switcher 12b9f5b9-e27a-4f94-8687-a1d3a9350472"><li class="code_switcher_container_parent active-tab code_switcher_c 9c9aafe2-0b1c-453f-becd-0332e20a6db6"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="c1">//...</span>
 
-loop:
-	//...
+<span class="n">loop</span><span class="o">:</span>
+  <span class="c1">//...</span>
 
-	VCMEQ mask.S4, searchKey.S4, equalMask.S4
-	WORD $0x6eb0a893 //umaxv.4s s19, v4
-	FMOVS F19, R19
-	CMP $4294967295, R19
-	BEQ found
+  <span class="n">VCMEQ</span> <span class="n">mask</span><span class="p">.</span><span class="n">S4</span><span class="p">,</span> <span class="n">searchKey</span><span class="p">.</span><span class="n">S4</span><span class="p">,</span> <span class="n">equalMask</span><span class="p">.</span><span class="n">S4</span>
+  <span class="n">WORD</span> <span class="err">$</span><span class="mh">0x6eb0a893</span> <span class="c1">//umaxv.4s s19, v4</span>
+  <span class="n">FMOVS</span> <span class="n">F19</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">CMP</span> <span class="err">$</span><span class="mi">4294967295</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">BEQ</span> <span class="n">found</span>
 
-	//...
-</code></pre></div> <p>You can notice that if the maximum value inside <code>equalMask</code> is <code>math.MaxUint32</code> (4294967295), it means that we found the element and thus we can return.</p> <p>After that, we fall into the binary search algorithm. We will first start by looking for the index:</p> <div class="code_switcher_container_parent 7e87cca5-a081-424d-a45c-dead760ffefa"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-//...
+  <span class="c1">//...</span>
+</code></pre></div></div> </li></ul> <p>You can notice that if the maximum value inside <code>equalMask</code> is <code>math.MaxUint32</code> (4294967295), it means that we found the element and thus we can return.</p> <p>After that, we fall into the binary search algorithm. We will first start by looking for the index:</p> <ul class="code-tab-container fa226ee5-06d3-4644-afdc-29b7feb10a94"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', 'fa226ee5-06d3-4644-afdc-29b7feb10a94', 0)">main.s</a></li></ul><ul class="code-tab-switcher fa226ee5-06d3-4644-afdc-29b7feb10a94"><li class="code_switcher_container_parent active-tab code_switcher_c 5a4b76b8-adaf-49ba-8cc7-a19bc7612872"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="c1">//...</span>
 
-loop:
-	//...
+<span class="n">loop</span><span class="o">:</span>
+  <span class="c1">//...</span>
 
-	WORD $0x6ea13401 //cmhi.4s v1, v0, v1
-	MOVD $0, R19
-	VMOV R19, mask.S[3]
-	VAND mask.B16, one.B16, idx.B16
-	WORD $0x6eb0384f //uaddlv.4s d15, v2
-	FMOVD F15, child_idx
+  <span class="n">WORD</span> <span class="err">$</span><span class="mh">0x6ea13401</span> <span class="c1">//cmhi.4s v1, v0, v1</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">VMOV</span> <span class="n">R19</span><span class="p">,</span> <span class="n">mask</span><span class="p">.</span><span class="n">S</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+  <span class="n">VAND</span> <span class="n">mask</span><span class="p">.</span><span class="n">B16</span><span class="p">,</span> <span class="n">one</span><span class="p">.</span><span class="n">B16</span><span class="p">,</span> <span class="n">idx</span><span class="p">.</span><span class="n">B16</span>
+  <span class="n">WORD</span> <span class="err">$</span><span class="mh">0x6eb0384f</span> <span class="c1">//uaddlv.4s d15, v2</span>
+  <span class="n">FMOVD</span> <span class="n">F15</span><span class="p">,</span> <span class="n">child_idx</span>
 
-	//...
-</code></pre></div> <p>The <code>cmhi</code> checks whether the data we are looking for is bigger that the data we loaded. Then, we bitwise AND the loaded vector with ones and finally, we do a basic popcount to determine the <code>child_idx</code>.</p> <p>Finally, we need to update the <code>curr</code>, <code>level</code>, and the <code>nb_subtree</code>. As mentionned, the former is telling us from where to read the data in the array. The two last ones actually help us calculate the <code>curr</code> by running the following formula: <code>curr = nb_subtree * 3 + (3 * (child_idx + 1))</code>.</p> <div class="code_switcher_container_parent 63824b24-25ad-40a2-84f6-779916ca5b41"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div><pre><code class="language-asm">>TEXT ·binarySearch(SB),NOSPLIT,$0-33
-//...
+  <span class="c1">//...</span>
+</code></pre></div></div> </li></ul> <p>The <code>cmhi</code> checks whether the data we are looking for is bigger that the data we loaded. Then, we bitwise AND the loaded vector with ones and finally, we do a basic popcount to determine the <code>child_idx</code>.</p> <p>Finally, we need to update the <code>curr</code>, <code>level</code>, and the <code>nb_subtree</code>. As mentionned, the former is telling us from where to read the data in the array. The two last ones actually help us calculate the <code>curr</code> by running the following formula: <code>curr = nb_subtree * 3 + (3 * (child_idx + 1))</code>.</p> <ul class="code-tab-container be3b140b-06f4-492f-8180-46e382695f88"><li class="active-tab code_switcher_c"><a onclick="selectTab('code_switcher_c', 'be3b140b-06f4-492f-8180-46e382695f88', 0)">main.s</a></li></ul><ul class="code-tab-switcher be3b140b-06f4-492f-8180-46e382695f88"><li class="code_switcher_container_parent active-tab code_switcher_c d3f1ded9-42ea-4985-b709-53b35c25a37d"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TEXT</span> <span class="err">·</span><span class="n">binarySearch</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span><span class="n">NOSPLIT</span><span class="p">,</span><span class="err">$</span><span class="mi">0</span><span class="o">-</span><span class="mi">33</span>
+<span class="c1">//...</span>
 
-loop:
-	//...
+<span class="n">loop</span><span class="o">:</span>
+  <span class="c1">//...</span>
 
-	//curr = nb_subtree * 3 + (3 * (child_idx + 1))
-	MOVD child_idx, tmp
-	ADD $1, tmp
-	MOVD $3, R19
-	MUL R19, tmp
-	MOVD tmp, curr
-	MUL R19, nb_subtree, R19
-	ADD R19, curr
+  <span class="c1">//curr = nb_subtree * 3 + (3 * (child_idx + 1))</span>
+  <span class="n">MOVD</span> <span class="n">child_idx</span><span class="p">,</span> <span class="n">tmp</span>
+  <span class="n">ADD</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="n">tmp</span>
+  <span class="n">MOVD</span> <span class="err">$</span><span class="mi">3</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">MUL</span> <span class="n">R19</span><span class="p">,</span> <span class="n">tmp</span>
+  <span class="n">MOVD</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">curr</span>
+  <span class="n">MUL</span> <span class="n">R19</span><span class="p">,</span> <span class="n">nb_subtree</span><span class="p">,</span> <span class="n">R19</span>
+  <span class="n">ADD</span> <span class="n">R19</span><span class="p">,</span> <span class="n">curr</span>
 
-	//nb_subtree = level &lt;&lt; 2
-	LSL $2, level, nb_subtree
+  <span class="c1">//nb_subtree = level &lt;&lt; 2</span>
+  <span class="n">LSL</span> <span class="err">$</span><span class="mi">2</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">nb_subtree</span>
 
-	//level++
-	ADD $1, level
+  <span class="c1">//level++</span>
+  <span class="n">ADD</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="n">level</span>
 
-	//...
-</code></pre></div> <p>And that actually is all for the binary search algorithm.</p> <h2 id="a-demo">A Demo</h2> <p>We can now go back to our <code>main.go</code> and try it.</p> <div class="code_switcher_container_parent 4eccaf81-5860-4838-a435-c344cc697864"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+  <span class="c1">//...</span>
+</code></pre></div></div> </li></ul> <p>And that actually is all for the binary search algorithm.</p> <h2 id="a-demo">A Demo</h2> <p>We can now go back to our <code>main.go</code> and try it.</p> <ul class="code-tab-container 1232afa9-018f-4a48-9793-1a646f6a96df"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '1232afa9-018f-4a48-9793-1a646f6a96df', 0)">main.go</a></li></ul><ul class="code-tab-switcher 1232afa9-018f-4a48-9793-1a646f6a96df"><li class="code_switcher_container_parent active-tab code_switcher_go d2c4122b-4d3b-4d7e-96c5-31433bec4817"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
 <span class="k">import</span> <span class="s">"fmt"</span>
 
@@ -186,10 +186,10 @@ loop:
   <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">binarySearch</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="m">19</span><span class="p">))</span>
   <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">binarySearch</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="m">100</span><span class="p">))</span>
 <span class="p">}</span>
-</code></pre></div></div> </div> <p>and if we run, we should have:</p> <div class="code_switcher_container_parent 1cc4bb8a-5e9a-4094-b52f-7f637a1f5f8c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run <span class="nb">.</span>
+</code></pre></div></div> </li></ul> <p>and if we run, we should have:</p> <div class="code_switcher_container_parent 635e3b40-14ba-4925-88db-2158a57e104e"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run <span class="nb">.</span>
 <span class="nb">true
 false</span>
-</code></pre></div></div> </div> <h2 id="benchmark">Benchmark</h2> <ul class="code-tab-container 3c272782-8d35-4ae9-84bc-4cd104cf904a"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', '3c272782-8d35-4ae9-84bc-4cd104cf904a', 0)">go</a></li><li class=" code_switcher_sh"><a onclick="selectTab('code_switcher_sh', '3c272782-8d35-4ae9-84bc-4cd104cf904a', 1)">sh</a></li></ul><ul class="code-tab-switcher 3c272782-8d35-4ae9-84bc-4cd104cf904a"><li class="code_switcher_container_parent active-tab code_switcher_go 3dd7a157-40d9-4448-9e39-73f2f354b83c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+</code></pre></div></div> </div> <h2 id="benchmark">Benchmark</h2> <ul class="code-tab-container e631a3e0-caab-434d-aa88-00fc413c854d"><li class="active-tab code_switcher_go"><a onclick="selectTab('code_switcher_go', 'e631a3e0-caab-434d-aa88-00fc413c854d', 0)">main_test.go</a></li><li class=" code_switcher_sh"><a onclick="selectTab('code_switcher_sh', 'e631a3e0-caab-434d-aa88-00fc413c854d', 1)">result</a></li></ul><ul class="code-tab-switcher e631a3e0-caab-434d-aa88-00fc413c854d"><li class="code_switcher_container_parent active-tab code_switcher_go c31dfc63-5993-45ac-b352-206e5403da86"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
 <span class="k">import</span> <span class="p">(</span>
   <span class="s">"testing"</span>
@@ -222,7 +222,7 @@ false</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div></div> </li><li class="code_switcher_container_parent code_switcher_sh 2bfff6d3-8f9f-4775-b9fe-abf421e9772a"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> <span class="nt">-run</span><span class="o">=</span>Benchmark <span class="nt">-bench</span><span class="o">=</span><span class="nb">.</span> <span class="nt">-count</span><span class="o">=</span>10 <span class="nb">.</span>
+</code></pre></div></div> </li><li class="code_switcher_container_parent code_switcher_sh 89db7549-5c99-4440-841e-5de1d774967c"><div class="code_switcher_code_action_container"><button class="code_switcher_theme_button" onclick="updateTheme(true)"></button></div> <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go <span class="nb">test</span> <span class="nt">-run</span><span class="o">=</span>Benchmark <span class="nt">-bench</span><span class="o">=</span><span class="nb">.</span> <span class="nt">-count</span><span class="o">=</span>10 <span class="nb">.</span>
 goos: darwin
 goarch: arm64
 BenchmarkBinarySearchSIMD-10            29052963                40.82 ns/op
