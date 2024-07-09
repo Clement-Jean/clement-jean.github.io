@@ -12,7 +12,7 @@ Recently, I've been looking at cache friendly algorithm for common data structur
 Let's assume that we have a binary tree:
 
 ```
-	  ┌────── 41 ──────┐
+      ┌────── 41 ──────┐
       │                │
    ┌──23──┐       ┌───61───┐
    │      │       │        │
@@ -118,7 +118,7 @@ As [my proposal for adding SIMD intrinsics](https://github.com/golang/go/issues/
 
 Let's start by defining the function definition in our `main.go`:
 
-```go
+```go main.go
 package main
 
 func binarySearch(arr []uint32, n uint32) bool
@@ -132,19 +132,19 @@ You can see that we are working with uint32s. This is because on ARM64 Neon, we 
 
 Next, we will jump to our `main.s` file and start defining our function:
 
-```asm
+```c main.s
 #include "textflag.h"
 
 //func binarySearch(arr []int, n int) bool
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
-	//...
+  //...
 ```
 
 The most important thing here is the `$0-33` part. We are saying that we do not have local variables (0) and that our arguments/return value take 33 bytes (24 for the slice, 8 for the int, and 1 for the bool).
 
 Next, as part of my function, I generally like to define some names for the register. It helps me remember what each register is supposed to contain. This looks like this:
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 #define data R0
 #define dataLen R1
@@ -163,138 +163,138 @@ TEXT ·binarySearch(SB),NOSPLIT,$0-33
 
 With that, we can initialize the registers and check the base cases:
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
-    // initialize registers
-	MOVD arr+0(FP), data
-	MOVD arr_len+8(FP), dataLen
-	MOVD n+24(FP), toFind
-	MOVD $0, curr
-	MOVD $1, level
-	MOVD $0, nb_subtree
-	VDUP level, one.S4
+  // initialize registers
+  MOVD arr+0(FP), data
+  MOVD arr_len+8(FP), dataLen
+  MOVD n+24(FP), toFind
+  MOVD $0, curr
+  MOVD $1, level
+  MOVD $0, nb_subtree
+  VDUP level, one.S4
 
-    // if array len is 0 return false
-	CMP $0, dataLen
-	BEQ not_found
+  // if array len is 0 return false
+  CMP $0, dataLen
+  BEQ not_found
 
-    // if array len > 1 start the work
-	// otherwise check if the first element is equal
-	//  to the one we are looking for
-	CMP $1, dataLen
-	BGT load
-	MOVD (data), tmp
-	CMP tmp, toFind
-	BEQ found
-	B not_found
+  // if array len > 1 start the work
+  // otherwise check if the first element is equal
+  //  to the one we are looking for
+  CMP $1, dataLen
+  BGT load
+  MOVD (data), tmp
+  CMP tmp, toFind
+  BEQ found
+  B not_found
 
-	//...
+  //...
 
 not_found:
-	MOVD $0, R19 // false
-	MOVD R19, ret+32(FP)
-	RET
+  MOVD $0, R19 // false
+  MOVD R19, ret+32(FP)
+  RET
 
 found:
-	MOVD $1, R19 // true
-	MOVD R19, ret+32(FP)
-	RET
+  MOVD $1, R19 // true
+  MOVD R19, ret+32(FP)
+  RET
 ```
 
 Now, we can start the real work. We will have a simple loop which we load 4 elements at the `curr` position in `data`:
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
 load:
-	VDUP toFind, searchKey.S4
+  VDUP toFind, searchKey.S4
 
 check:
-	CMP dataLen, curr
-	BGE not_found
+  CMP dataLen, curr
+  BGE not_found
 
 loop:
-	MOVD $4, R19
-	MUL R19, curr
-	ADD curr, data, R19
-	VLD1 (R19), [mask.S4]
+  MOVD $4, R19
+  MUL R19, curr
+  ADD curr, data, R19
+  VLD1 (R19), [mask.S4]
 
-	//TODO update curr
+  //TODO update curr
 
-	B check
+  B check
 ```
 
 Notice that we are multiplying `curr` by 4. This is because we are working with uint32s (4 bytes) so our index (`curr`) need to be moved by `curr * 4` bytes.
 
 Then, inside the loop, we will check for equality between the four loaded elements and the search vector:
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
 loop:
-	//...
+  //...
 
-	VCMEQ mask.S4, searchKey.S4, equalMask.S4
-	WORD $0x6eb0a893 //umaxv.4s s19, v4
-	FMOVS F19, R19
-	CMP $4294967295, R19
-	BEQ found
+  VCMEQ mask.S4, searchKey.S4, equalMask.S4
+  WORD $0x6eb0a893 //umaxv.4s s19, v4
+  FMOVS F19, R19
+  CMP $4294967295, R19
+  BEQ found
 
-	//...
+  //...
 ```
 
 You can notice that if the maximum value inside `equalMask` is `math.MaxUint32` (4294967295), it means that we found the element and thus we can return.
 
 After that, we fall into the binary search algorithm. We will first start by looking for the index:
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
 loop:
-	//...
+  //...
 
-	WORD $0x6ea13401 //cmhi.4s v1, v0, v1
-	MOVD $0, R19
-	VMOV R19, mask.S[3]
-	VAND mask.B16, one.B16, idx.B16
-	WORD $0x6eb0384f //uaddlv.4s d15, v2
-	FMOVD F15, child_idx
+  WORD $0x6ea13401 //cmhi.4s v1, v0, v1
+  MOVD $0, R19
+  VMOV R19, mask.S[3]
+  VAND mask.B16, one.B16, idx.B16
+  WORD $0x6eb0384f //uaddlv.4s d15, v2
+  FMOVD F15, child_idx
 
-	//...
+  //...
 ```
 
 The `cmhi` checks whether the data we are looking for is bigger that the data we loaded. Then, we bitwise AND the loaded vector with ones and finally, we do a basic popcount to determine the `child_idx`.
 
 Finally, we need to update the `curr`, `level`, and the `nb_subtree`. As mentionned, the former is telling us from where to read the data in the array. The two last ones actually help us calculate the `curr` by running the following formula: `curr = nb_subtree * 3 + (3 * (child_idx + 1))`.
 
-```asm
+```c main.s
 TEXT ·binarySearch(SB),NOSPLIT,$0-33
 //...
 
 loop:
-	//...
+  //...
 
-	//curr = nb_subtree * 3 + (3 * (child_idx + 1))
-	MOVD child_idx, tmp
-	ADD $1, tmp
-	MOVD $3, R19
-	MUL R19, tmp
-	MOVD tmp, curr
-	MUL R19, nb_subtree, R19
-	ADD R19, curr
+  //curr = nb_subtree * 3 + (3 * (child_idx + 1))
+  MOVD child_idx, tmp
+  ADD $1, tmp
+  MOVD $3, R19
+  MUL R19, tmp
+  MOVD tmp, curr
+  MUL R19, nb_subtree, R19
+  ADD R19, curr
 
-	//nb_subtree = level << 2
-	LSL $2, level, nb_subtree
+  //nb_subtree = level << 2
+  LSL $2, level, nb_subtree
 
-	//level++
-	ADD $1, level
+  //level++
+  ADD $1, level
 
-	//...
+  //...
 ```
 
 And that actually is all for the binary search algorithm.
@@ -303,7 +303,7 @@ And that actually is all for the binary search algorithm.
 
 We can now go back to our `main.go` and try it.
 
-```go
+```go main.go
 package main
 
 import "fmt"
@@ -320,7 +320,7 @@ func main() {
 
 and if we run, we should have:
 
-```shell
+```sh
 $ go run .
 true
 false
@@ -328,7 +328,7 @@ false
 
 ## Benchmark
 
-```go
+```go main_test.go
 package main
 
 import (
@@ -364,7 +364,7 @@ func BenchmarkBinarySearch(b *testing.B) {
 }
 ```
 
-```sh
+```sh result
 $ go test -run=Benchmark -bench=. -count=10 .
 goos: darwin
 goarch: arm64
