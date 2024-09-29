@@ -5,6 +5,11 @@ title: "Binary Search Tree with SIMD"
 categories: [Go, SIMD]
 ---
 
+<div class="alert alert-warning" role="alert">
+  <h4 class="alert-heading">Warning!</h4>
+  <p>The code (ASM) part of this article is not fully correct and doesn't scale to more layers of the tree. While I solved this problem offline, I did not update this article. Once I do, this warning will be off.</p>
+</div>
+
 Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go. You can find the paper describing the algorithm [here](https://dl.acm.org/doi/10.1145/1807167.1807206).
 
 ## The Intuition
