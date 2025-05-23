@@ -10,7 +10,7 @@ layout: default
       {% if post.image %}
         <img src="{{- post.image | relative_url -}}" alt="" class="featured-image-post" />
       {% endif %}
-      
+
       <div class="entry">
         {{ post.excerpt | strip_html }}
       </div>
