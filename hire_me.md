@@ -19,9 +19,3 @@ I will participate to your event and speak about Protocol Buffers and/or gRPC. T
 ## Freelance 👨🏻‍💻
 
 I will implement gRPC services, write proto files, and/or set up the build system for your project.
-
-<!-- Calendly badge widget begin -->
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-<script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/clementjean', text: 'Schedule time with me', color: '#ff0000', textColor: '#ffffff', branding: true }); }</script>
-<!-- Calendly badge widget end -->
