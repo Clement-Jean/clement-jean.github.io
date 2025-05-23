@@ -5,4 +5,3 @@ JEKYLL_ENV=production bundle exec jekyll build
 git checkout master
 purgecss --css _site/**/*.css --content _site/**/*.html --output _site/css
 rsync --exclude src -a -v _site/ ./
-git checkout working
