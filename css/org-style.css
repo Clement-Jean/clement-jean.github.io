@@ -107,6 +107,10 @@ body.dark-mode {
     outline: none;
 }
 
+.tab-controls button:focus {
+    outline: none;
+}
+
 .tab-content {
     position: relative;
     display: none;
