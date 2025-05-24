@@ -30,6 +30,26 @@ body.dark-mode {
     content: unset !important;
 }
 
+.tab-content pre.src::selection {
+    color: black;
+    background-color: darkgray;
+}
+
+.tab-content pre.src span::selection {
+    color: black;
+    background-color: darkgray;
+}
+
+.tab-content pre.src.dark-mode::selection {
+    color: white;
+    background-color: lightgray;
+}
+
+.tab-content pre.src.dark-mode span::selection {
+    color: white;
+    background-color: lightgray;
+}
+
 .tab-content pre {
     padding: 25px;
     border: none;
