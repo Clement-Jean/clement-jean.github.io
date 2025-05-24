@@ -84,6 +84,7 @@ body.dark-mode {
 .tab-controls button.active {
     color: #1769e0;
     border-bottom: 3px solid #1769e0;
+    outline: none;
 }
 
 .tab-content {
