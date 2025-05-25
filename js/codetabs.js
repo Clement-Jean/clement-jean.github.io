@@ -107,13 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		button.classList.add('active');
 		const targetTab = button.getAttribute('target-id');
-		const activeContent = tab.querySelector(`div[target-id|='${targetTab}']`);
+		const activeContent = tab.querySelector(`.tab-content[target-id|='${targetTab}']`);
 		if (activeContent) {
 		    activeContent.classList.add('active');
+
+		    // update lang preference across all codetabs
+		    document.querySelectorAll(`.tab-content`).forEach((content) => {
+			if (content.lang == activeContent.lang) {
+			    content.classList.add('active');
+			    const id = content.getAttribute('target-id');
+			    document.querySelector(`button[target-id|=${id}]`).click();
+			}
+		    });
 		}
 	    });
 	});
 
+	// init to fist code snippet in codetab
 	if (tabButtons.length > 0 && tabContents.length > 0) {
 	    tabButtons[0].classList.add('active');
 	    tabContents[0].classList.add('active');
