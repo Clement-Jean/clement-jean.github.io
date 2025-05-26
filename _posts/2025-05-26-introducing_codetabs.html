@@ -1,0 +1,245 @@
+---
+layout: post
+title: "Introducing codetabs.el"
+excerpt: "Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore..."
+categories: [Elisp, Emacs]
+---
+<style>
+    .org-src-container pre .custom-1 { color: white; background-color: #0000ff; }
+    .org-src-container pre .custom { color: black; background-color: #0ff; }
+</style>
+
+<div class="alert alert-warning" role="alert">
+  <h4 class="alert-heading">Warning!</h4>
+  <p>Some features might not yet be added to the codetabs.el repo! This blog is experimenting with what could be done. If you are interested in how it works check <a href="https://github.com/Clement-Jean/clement-jean.github.io/blob/working/_org/lisp/codetabs.el">_org/lisp/codetabs.el</a> and <a href="https://github.com/Clement-Jean/clement-jean.github.io/blob/working/js/codetabs.js">js/codetabs.js</a></p>
+</div>
+<div id="outline-container-org87b0a59" class="outline-2">
+<h2 id="org87b0a59">Description</h2>
+<div class="outline-text-2" id="text-org87b0a59">
+<p>
+Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: <b>CUSTOMIZATION</b>.
+</p>
+
+<p>
+If you read some of my previous blog post, I have code snippets that are grouped under tabs. This is because I often want to write multi-language code or simply have a beautiful code snippet and the name of a file as the tab name. Previous articles were relying on <a href="https://github.com/jdvp/jdvp-codetabs-commonmark">jdvp-codetabs-commonmark</a> but I was missing some features and I already bothered the maintainer enough that I didn't feel like asking anymore. These features were:
+</p>
+
+<ul class="org-ul">
+<li>Custom code highlighting (change color theme)</li>
+<li>Code emphasis (emphasize errors and warnings in code)</li>
+<li>Small animations (not important, but looks good)</li>
+</ul>
+
+<p>
+So, I decided to implement this my way. During this process, I came up with <a href="https://github.com/Clement-Jean/codetabs.el">codetabs.el</a> and this article will demonstrate its features.
+</p>
+</div>
+</div>
+<div id="outline-container-org80fde2f" class="outline-2">
+<h2 id="org80fde2f">Behavior</h2>
+<div class="outline-text-2" id="text-org80fde2f">
+</div>
+<div id="outline-container-orgf322bf9" class="outline-4">
+<h4 id="orgf322bf9">Naming</h4>
+<div class="outline-text-4" id="text-orgf322bf9">
+<p>
+With <code>codetabs</code> we can either get tabs named after the org babel language like so:
+</p>
+
+<div lang="go" class="org-src-container">
+ <pre class="src src-go"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+
+<div lang="cpp" class="org-src-container">
+ <pre class="src src-cpp"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+</pre>
+</div>
+
+<p>
+or we can rename them with a simple <code>#+name</code>:
+</p>
+
+<div name="main.go" lang="go" class="org-src-container">
+ <pre class="src src-go" id="org3432789"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+
+<div name="main.cc" lang="cpp" class="org-src-container">
+ <pre class="src src-cpp" id="org0a96ec4"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+</pre>
+</div>
+
+<p>
+For single <code>src-blocks</code>, it is similar:
+</p>
+
+<div name="Shell" lang="shell" class="org-src-container">
+ <pre class="src src-shell" id="orgfe9c3fd">ls
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8f4beb1" class="outline-4">
+<h4 id="org8f4beb1">Skipping</h4>
+<div class="outline-text-4" id="text-org8f4beb1">
+<p>
+We can skip some blocks. For example, the BQN block is consecutive but uses the attr <code>:skip</code>:
+</p>
+
+<div name="C++" lang="cpp" class="org-src-container">
+ <pre class="src src-cpp" id="org24de080"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"hello"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
+</pre>
+</div>
+
+<div name="Python" lang="python" class="org-src-container">
+ <pre class="src src-python" id="org4daeab4"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
+   <span class="org-builtin">print</span>(1)
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-bqn"><span class="org-bqn-primitive-function">&lt;</span><span class="org-bqn-primitive-two-modifier">&#10204;</span><span class="org-string">'a'</span><span class="org-bqn-primitive-two-modifier">&#8888;</span><span class="org-bqn-primitive-function">/</span> <span class="org-string">"Big Questions Notation"</span>
+</pre>
+</div>
+
+<div name="C++" lang="cpp" class="org-src-container">
+ <pre class="src src-cpp" id="org3e28b37"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"world"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
+</pre>
+</div>
+
+<div name="Python" lang="python" class="org-src-container">
+ <pre class="src src-python" id="orga1a5d12"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
+   <span class="org-builtin">print</span>(2)
+</pre>
+</div>
+
+<p>
+And it also works for single <code>src-blocks</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org2028d35">ls
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf4f579e" class="outline-4">
+<h4 id="orgf4f579e">Copying</h4>
+<div class="outline-text-4" id="text-orgf4f579e">
+<p>
+We can also enable copy of code with the <code>:copy</code> attribute (check the top right corner!):
+</p>
+
+<div name="Go" copy="nil" lang="go" class="org-src-container">
+ <pre class="src src-go" id="orgf2724bb"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3aaf8b5" class="outline-4">
+<h4 id="org3aaf8b5">State</h4>
+<div class="outline-text-4" id="text-org3aaf8b5">
+<p>
+The language preference is reflected across the whole article. For example, if you click on C++ because you prefer reading in this language, all the C++ codes will be selected. Try it:
+</p>
+
+<div name="Go" lang="go" class="org-src-container">
+ <pre class="src src-go" id="org6a3c842"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+
+<div name="C++" lang="cpp" class="org-src-container">
+ <pre class="src src-cpp" id="org1b2407e"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+</pre>
+</div>
+
+<p>
+SOME TEXT HERE&#x2026;.
+</p>
+
+<div name="Go" lang="go" class="org-src-container">
+ <pre class="src src-go" id="org7bbdc1d"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+
+<div name="C++" lang="cpp" class="org-src-container">
+ <pre class="src src-cpp" id="org30a9de4"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org8f68327" class="outline-2">
+<h2 id="org8f68327">Styling</h2>
+<div class="outline-text-2" id="text-org8f68327">
+</div>
+<div id="outline-container-orgacdfb0b" class="outline-4">
+<h4 id="orgacdfb0b">CSS</h4>
+<div class="outline-text-4" id="text-orgacdfb0b">
+<p>
+With <code>org-html-htmlize-output-type</code> set to <code>css</code> you can customize your CSS to make any token the color you want (see the function name difference in light and dark theme):
+</p>
+
+<div name="Go" lang="go" class="org-src-container">
+ <pre class="src src-go" id="orgecb5e78"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+}
+</pre>
+</div>
+
+<p>
+This is just done like so:
+</p>
+
+<div name="CSS" lang="css" class="org-src-container">
+ <pre class="src src-css" id="org376d6c3"><span class="org-css-selector">.org-src-container pre .org-function-name</span> {
+  <span class="org-comment-delimiter">/* </span><span class="org-comment">font-lock-function-name-face</span><span class="org-comment-delimiter"> */</span>
+  <span class="org-css-property">color</span>: <span class="custom-1">#0000ff</span>;
+}
+<span class="org-css-selector">.org-src-container pre.dark-mode .org-function-name</span> {
+  <span class="org-comment-delimiter">/* </span><span class="org-comment">font-lock-function-name-face</span><span class="org-comment-delimiter"> */</span>
+  <span class="org-css-property">color</span>: <span class="custom">#0ff</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf805a16" class="outline-4">
+<h4 id="orgf805a16">Emphasis</h4>
+<div class="outline-text-4" id="text-orgf805a16">
+<p>
+By using the <code>:emphasize</code> attr we can also define the styling for a given portion of code:
+</p>
+
+<div emphasize-class="squiggly-error,squiggly-warning" emphasize-end="⊸,⊣" emphasize-start="⟜,⊢" name="Go" lang="go" class="org-src-container">
+ <pre class="src src-go" id="org1e0d616"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+  fmt.<span class="org-function-name">Printf</span>(<span class="org-string">"%d\n"</span>, ⟜<span class="org-string">"I pass a string"</span>⊸)
+  fmt.<span class="org-function-name">Printf</span>(⊢<span class="org-string">"%d\n"</span>⊣)
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdd5f3f5" class="outline-2">
+<h2 id="orgdd5f3f5">Misc</h2>
+<div class="outline-text-2" id="text-orgdd5f3f5">
+<p>
+I customized the code snippets theme based on: <a href="https://github.com/tokyo-night/tokyo-night-vscode-theme">tokyo-night-vscode-theme</a>
+</p>
+
+<p>
+I added the following animations:
+</p>
+
+<ul class="org-ul">
+<li>Switching to/from dark mode</li>
+<li>Tab transitions</li>
+</ul>
+</div>
+</div>

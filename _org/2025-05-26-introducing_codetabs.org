@@ -1,0 +1,199 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
+#+OPTIONS: html-postamble:nil
+#+OPTIONS: src:t
+
+#+BEGIN_EXPORT html
+---
+layout: post
+title: "Introducing codetabs.el"
+excerpt: "Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore..."
+categories: [Elisp, Emacs]
+---
+<style>
+    .org-src-container pre .custom-1 { color: white; background-color: #0000ff; }
+    .org-src-container pre .custom { color: black; background-color: #0ff; }
+</style>
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+<div class="alert alert-warning" role="alert">
+  <h4 class="alert-heading">Warning!</h4>
+  <p>Some features might not yet be added to the codetabs.el repo! This blog is experimenting with what could be done. If you are interested in how it works check <a href="https://github.com/Clement-Jean/clement-jean.github.io/blob/working/_org/lisp/codetabs.el">_org/lisp/codetabs.el</a> and <a href="https://github.com/Clement-Jean/clement-jean.github.io/blob/working/js/codetabs.js">js/codetabs.js</a></p>
+</div>
+#+END_EXPORT
+
+* Description
+
+Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: *CUSTOMIZATION*.
+
+If you read some of my previous blog post, I have code snippets that are grouped under tabs. This is because I often want to write multi-language code or simply have a beautiful code snippet and the name of a file as the tab name. Previous articles were relying on [[https://github.com/jdvp/jdvp-codetabs-commonmark][jdvp-codetabs-commonmark]] but I was missing some features and I already bothered the maintainer enough that I didn't feel like asking anymore. These features were:
+
+- Custom code highlighting (change color theme)
+- Code emphasis (emphasize errors and warnings in code)
+- Small animations (not important, but looks good)
+
+So, I decided to implement this my way. During this process, I came up with [[https://github.com/Clement-Jean/codetabs.el][codetabs.el]] and this article will demonstrate its features.
+
+* Behavior
+
+*** Naming
+
+With ~codetabs~ we can either get tabs named after the org babel language like so:
+
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+#+begin_src cpp
+  int main() { return 0; }
+#+end_src
+
+or we can rename them with a simple ~#+name~:
+
+#+name: main.go
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+#+name: main.cc
+#+begin_src cpp
+  int main() { return 0; }
+#+end_src
+
+For single ~src-blocks~, it is similar:
+
+#+name: Shell
+#+begin_src shell
+  ls
+#+end_src
+
+*** Skipping
+
+We can skip some blocks. For example, the BQN block is consecutive but uses the attr ~:skip~:
+
+#+name: C++
+#+begin_src cpp
+  std::cout << "hello" << std::endl;
+#+end_src
+
+#+name: Python
+#+begin_src python
+  def test():
+     print(1)
+#+end_src
+
+#+attr_codetabs: :skip t
+#+begin_src bqn
+  <⟜'a'⊸/ "Big Questions Notation"
+#+end_src
+
+#+name: C++
+#+begin_src cpp
+  std::cout << "world" << std::endl;
+#+end_src
+
+#+name: Python
+#+begin_src python
+  def test():
+     print(2)
+#+end_src
+
+And it also works for single ~src-blocks~:
+
+#+name: Shell
+#+attr_codetabs: :skip t
+#+begin_src sh
+  ls
+#+end_src
+
+*** Copying
+
+We can also enable copy of code with the ~:copy~ attribute (check the top right corner!):
+
+#+name: Go
+#+attr_codetabs: :copy t
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+*** State
+
+The language preference is reflected across the whole article. For example, if you click on C++ because you prefer reading in this language, all the C++ codes will be selected. Try it:
+
+#+name: Go
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+#+name: C++
+#+begin_src cpp
+  int main() { return 0; }
+#+end_src
+
+SOME TEXT HERE....
+
+#+name: Go
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+#+name: C++
+#+begin_src cpp
+  int main() { return 0; }
+#+end_src
+
+* Styling
+
+*** CSS
+
+With ~org-html-htmlize-output-type~ set to ~css~ you can customize your CSS to make any token the color you want (see the function name difference in light and dark theme):
+
+#+name: Go
+#+begin_src go
+  func main() {
+  }
+#+end_src
+
+This is just done like so:
+
+#+name: CSS
+#+begin_src css
+  .org-src-container pre .org-function-name {
+    /* font-lock-function-name-face */
+    color: #0000ff;
+  }
+  .org-src-container pre.dark-mode .org-function-name {
+    /* font-lock-function-name-face */
+    color: #0ff;
+  }
+#+end_src
+
+*** Emphasis
+
+By using the ~:emphasize~ attr we can also define the styling for a given portion of code:
+
+#+name: Go
+#+attr_codetabs: :emphasize ((⟜ ⊸ squiggly-error)(⊢ ⊣ squiggly-warning))
+#+begin_src go
+  func main() {
+    fmt.Printf("%d\n", ⟜"I pass a string"⊸)
+    fmt.Printf(⊢"%d\n"⊣)
+  }
+#+end_src
+
+* Misc
+
+I customized the code snippets theme based on: [[https://github.com/tokyo-night/tokyo-night-vscode-theme][tokyo-night-vscode-theme]]
+
+I added the following animations:
+
+- Switching to/from dark mode
+- Tab transitions

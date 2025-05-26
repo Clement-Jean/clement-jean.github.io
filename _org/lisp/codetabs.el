@@ -30,6 +30,7 @@
 	(lang (org-element-property :language src-block))
 	(name (org-element-property :name src-block))
 	(skip (org-export-read-attribute :attr_codetabs src-block :skip))
+	(copy (org-export-read-attribute :attr_codetabs src-block :copy))
 	(emphasize (org-export-read-attribute :attr_codetabs src-block :emphasize)))
     (if (not skip)
 	(with-temp-buffer
@@ -37,6 +38,8 @@
 	  (let* ((html (libxml-parse-html-region (point-min) (point)))
 		 (div (elt (elt html 2) 2)))
 	    (push `(lang . ,lang) (elt div 1))
+	    (when copy
+	      (push '(copy) (elt div 1)))
 	    (when name
 	      (push `(name . ,name) (elt div 1)))
 	    (when emphasize
@@ -52,4 +55,24 @@
 	    (replace-regexp-in-string (rx (seq " " "<span")) "<span" (buffer-string))))
       old-ret)))
 
+(defun codetabs-htmlize-preprocess-fix ()
+  "replace < by &lt in codetabs; in order to avoid having htmlize thinking < is a beggining of tag"
+  (when (not (org-export-read-attribute :attr_codetabs src-block :skip))
+    (when (derived-mode-p 'prog-mode)
+      (goto-char (point-min))
+      (while (search-forward "<" nil t)
+	(replace-match "&lt;")))
+    (when (derived-mode-p 'c++-mode)
+      (goto-char (point-min))
+      ;; in C++ we need to handle includes differently so that the <
+      ;; has the same style (org-string) as the rest.
+      (while (re-search-forward "#include\\(\\s-*\\)\\(&lt;\\)" nil t)
+	(let* ((whitespace-between (match-string 1))
+	       (replacement-text
+		(concat
+		 whitespace-between
+		 "<span class=\"org-string\">&lt;</span>")))
+	  (replace-match replacement-text nil nil nil 2))))))
+
 (provide 'codetabs-src-block-advice)
+(provide 'codetabs-htmlize-preprocess-fix)

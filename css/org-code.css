@@ -1,10 +1,5 @@
-body {
-    color: #000000;
-    background-color: #ffffff;
-}
-
 /* ERRORS */
-.squiggly-error { 
+.squiggly-error {
   background-image:
     linear-gradient(45deg, transparent 65%, red 80%, transparent 90%),
     linear-gradient(135deg, transparent 5%, red 15%, transparent 25%),
@@ -14,7 +9,7 @@ body {
   background-size: 8px 2.5px;
   background-position:0 100%;
 }
-.squiggly-warning { 
+.squiggly-warning {
   background-image:
     linear-gradient(45deg, transparent 65%, darkorange 80%, transparent 90%),
     linear-gradient(135deg, transparent 5%, darkorange 15%, transparent 25%),
@@ -25,76 +20,130 @@ body {
   background-position:0 100%;
 }
 
+.org-src-container pre {
+    font-size: 14px;
+    color: black;
+}
+
+.org-src-container pre.dark-mode {
+    color: white;
+}
+
+/* WARNING */
+.org-src-container pre .org-warning {
+    /* font-lock-comment-face */
+    color: #008b8b;
+    font-weight: bold;
+}
+.org-src-container pre.dark-mode .org-warning {
+    /* font-lock-comment-face */
+    color: #ff9e64;
+}
+
 /* COMMENTS */
-.org-comment {
+.org-src-container pre .org-comment {
     /* font-lock-comment-face */
-    color: #b22222;
+    color: #888b94;
 }
-.org-src-container > pre.dark-mode .org-comment {
+.org-src-container pre.dark-mode .org-comment {
     /* font-lock-comment-face */
-    color: lightgreen;
+    color: #565f98;
 }
-.org-comment-delimiter {
+
+.org-src-container pre .org-comment-delimiter {
     /* font-lock-comment-delimiter-face */
-    color: #b22222;
+    color: #888b89;
 }
-.org-src-container > pre.dark-mode .org-comment-delimiter {
-    /* font-lock-comment-face */
-    color: lightgreen;
+.org-src-container pre.dark-mode .org-comment-delimiter {
+    /* font-lock-comment-delimiter-face */
+    color: #565f89;
 }
 
 /* STRINGS */
-.org-string {
+.org-src-container pre .org-string {
     /* font-lock-string-face */
-    color: #8b2252;
+    color: #385f0d;
 }
-.org-src-container > pre.dark-mode .org-string {
-    /* font-lock-comment-face */
-    color: green;
+.org-src-container pre.dark-mode .org-string {
+    /* font-lock-string-face */
+    color: #9ece6a;
 }
 
 /* CONSTANTS */
-.org-constant {
+.org-src-container pre .org-constant {
     /* font-lock-constant-face */
     color: #008b8b;
 }
+.org-src-container pre.dark-mode .org-constant {
+    /* font-lock-constant-face */
+    color: #ff9e64;
+}
 
 /* TYPES */
-.org-type {
+.org-src-container pre .org-type {
     /* font-lock-type-face */
-    color: #228b22;
+    color: #343b58;
+}
+.org-src-container pre.dark-mode .org-type {
+    /* font-lock-type-face */
+    color: #c0caf5;
 }
 
 /* FUNCTIONS */
-.org-function-name {
+.org-src-container pre .org-function-name {
     /* font-lock-function-name-face */
-    color: #0000ff;
+    color: #2959aa;
 }
-.org-src-container > pre.dark-mode .org-function-name {
+.org-src-container pre.dark-mode .org-function-name {
     /* font-lock-function-name-face */
-    color: #0ff;
+    color: #7aa2f7;
 }
 
 /* KEYWORDS */
-.org-keyword {
+.org-src-container pre .org-keyword {
     /* font-lock-keyword-face */
-    color: #a020f0;
+    color: #65359d;
+}
+.org-src-container pre.dark-mode .org-keyword {
+    /* font-lock-keyword-face */
+    color: #bb9af7;
+}
+
+/* VARIABLES */
+.org-src-container pre .org-variable-name {
+    /* font-lock-variable-name-face */
+    color: #343b58;
+}
+.org-src-container pre.dark-mode .org-variable-name {
+    /* font-lock-variable-name-face */
+    color: #c0caf5;
+}
+
+/* PREPROCESSOR */
+.org-src-container pre .org-preprocessor {
+    /* font-lock-preprocessor */
+    color: #33635c;
+}
+.org-src-container pre.dark-mode .org-preprocessor {
+    /* font-lock-preprocessor */
+    color: #73daca;
 }
 
 /* CSS */
-.org-css-selector {
-    color: #0000ff;
+.org-src-container pre .org-css-selector {
+    /* font-lock-css-selector */
+    color: #2959aa;
 }
-.org-src-container > pre.dark-mode .org-css-selector {
-    color: #0ff;
+.org-src-container pre.dark-mode .org-css-selector {
+    /* font-lock-css-selector */
+    color: #7aa2f7;
 }
 
-/* MISC */
-.custom-1 {
-    color: white;
-    background-color: #0000ff;
+.org-src-container pre .org-css-property {
+    /* font-lock-css-property */
+    color: #65359d;
 }
-.custom {
-    color: black;
-    background-color: #0ff;
+.org-src-container pre.dark-mode .org-css-property {
+    /* font-lock-css-property */
+    color: #bb9af7;
 }

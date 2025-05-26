@@ -2,6 +2,7 @@
 layout: post
 author: Clement
 title: "Binary Search Tree with SIMD"
+excerpt: "Recently, I've been looking at cache friendly algorithm for common data structures like trees, tries, ... One such algorithm kept coming up to mind and that's why I decided to implement it in Go."
 categories: [Go, SIMD]
 ---
 
