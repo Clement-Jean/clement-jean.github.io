@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2025-05-26T16:34:33+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Introducing codetabs.el</title><link href="https://clement-jean.github.io/introducing_codetabs/" rel="alternate" type="text/html" title="Introducing codetabs.el" /><published>2025-05-26T00:00:00+08:00</published><updated>2025-05-26T00:00:00+08:00</updated><id>https://clement-jean.github.io/introducing_codetabs</id><content type="html" xml:base="https://clement-jean.github.io/introducing_codetabs/"><![CDATA[<style>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://clement-jean.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://clement-jean.github.io/" rel="alternate" type="text/html" /><updated>2025-05-26T17:00:23+08:00</updated><id>https://clement-jean.github.io/feed.xml</id><title type="html">Clément Jean</title><subtitle>Eternal learner and challenges lover</subtitle><author><name>Clément Jean</name></author><entry><title type="html">Introducing codetabs.el</title><link href="https://clement-jean.github.io/introducing_codetabs/" rel="alternate" type="text/html" title="Introducing codetabs.el" /><published>2025-05-26T00:00:00+08:00</published><updated>2025-05-26T00:00:00+08:00</updated><id>https://clement-jean.github.io/introducing_codetabs</id><content type="html" xml:base="https://clement-jean.github.io/introducing_codetabs/"><![CDATA[<style>
     .org-src-container pre .custom-1 { color: white; background-color: #0000ff; }
     .org-src-container pre .custom { color: black; background-color: #0ff; }
 </style>
@@ -11,7 +11,7 @@
 <h2 id="org87b0a59">Description</h2>
 <div class="outline-text-2" id="text-org87b0a59">
 <p>
-Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: <b>CUSTOMIZATION</b>.
+Recently, I've been trying to change the way I write blog posts here. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: <b>CUSTOMIZATION</b>.
 </p>
 
 <p>
@@ -71,7 +71,7 @@ For single <code>src-blocks</code>, it is similar:
 </p>
 
 <div name="Shell" lang="shell" class="org-src-container">
- <pre class="src src-shell" id="orgfe9c3fd">ls
+ <pre class="src src-shell" id="org2028d35">ls
 </pre>
 </div>
 </div>
@@ -84,12 +84,12 @@ We can skip some blocks. For example, the BQN block is consecutive but uses the 
 </p>
 
 <div name="C++" lang="cpp" class="org-src-container">
- <pre class="src src-cpp" id="org24de080"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"hello"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
+ <pre class="src src-cpp" id="org30a9de4"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"hello"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
 </pre>
 </div>
 
 <div name="Python" lang="python" class="org-src-container">
- <pre class="src src-python" id="org4daeab4"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
+ <pre class="src src-python" id="orga1a5d12"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
    <span class="org-builtin">print</span>(1)
 </pre>
 </div>
@@ -100,12 +100,12 @@ We can skip some blocks. For example, the BQN block is consecutive but uses the 
 </div>
 
 <div name="C++" lang="cpp" class="org-src-container">
- <pre class="src src-cpp" id="org3e28b37"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"world"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
+ <pre class="src src-cpp" id="orgf3a5f14"><span class="org-constant">std</span>::cout &lt;&lt; <span class="org-string">"world"</span> &lt;&lt; <span class="org-constant">std</span>::endl;
 </pre>
 </div>
 
 <div name="Python" lang="python" class="org-src-container">
- <pre class="src src-python" id="orga1a5d12"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
+ <pre class="src src-python" id="orga9b5c7f"><span class="org-keyword">def</span> <span class="org-function-name">test</span>():
    <span class="org-builtin">print</span>(2)
 </pre>
 </div>
@@ -115,7 +115,7 @@ And it also works for single <code>src-blocks</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh" id="org2028d35">ls
+<pre class="src src-sh" id="org25c35ca">ls
 </pre>
 </div>
 </div>
@@ -128,7 +128,7 @@ We can also enable copy of code with the <code>:copy</code> attribute (check the
 </p>
 
 <div name="Go" copy="nil" lang="go" class="org-src-container">
- <pre class="src src-go" id="orgf2724bb"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+ <pre class="src src-go" id="org1e0d616"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
 }
 </pre>
 </div>
@@ -142,13 +142,13 @@ The language preference is reflected across the whole article. For example, if y
 </p>
 
 <div name="Go" lang="go" class="org-src-container">
- <pre class="src src-go" id="org6a3c842"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+ <pre class="src src-go" id="org73027d7"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
 }
 </pre>
 </div>
 
 <div name="C++" lang="cpp" class="org-src-container">
- <pre class="src src-cpp" id="org1b2407e"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+ <pre class="src src-cpp" id="orgd906eee"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
 </pre>
 </div>
 
@@ -157,13 +157,13 @@ SOME TEXT HERE&#x2026;.
 </p>
 
 <div name="Go" lang="go" class="org-src-container">
- <pre class="src src-go" id="org7bbdc1d"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+ <pre class="src src-go" id="org3be1da5"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
 }
 </pre>
 </div>
 
 <div name="C++" lang="cpp" class="org-src-container">
- <pre class="src src-cpp" id="org30a9de4"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
+ <pre class="src src-cpp" id="org5336d8f"><span class="org-type">int</span> <span class="org-function-name">main</span>() { <span class="org-keyword">return</span> 0; }
 </pre>
 </div>
 </div>
@@ -173,15 +173,15 @@ SOME TEXT HERE&#x2026;.
 <h2 id="org8f68327">Styling</h2>
 <div class="outline-text-2" id="text-org8f68327">
 </div>
-<div id="outline-container-orgacdfb0b" class="outline-4">
-<h4 id="orgacdfb0b">CSS</h4>
-<div class="outline-text-4" id="text-orgacdfb0b">
+<div id="outline-container-orgf18f871" class="outline-4">
+<h4 id="orgf18f871">CSS</h4>
+<div class="outline-text-4" id="text-orgf18f871">
 <p>
 With <code>org-html-htmlize-output-type</code> set to <code>css</code> you can customize your CSS to make any token the color you want (see the function name difference in light and dark theme):
 </p>
 
 <div name="Go" lang="go" class="org-src-container">
- <pre class="src src-go" id="orgecb5e78"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+ <pre class="src src-go" id="org5a18d93"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
 }
 </pre>
 </div>
@@ -191,7 +191,7 @@ This is just done like so:
 </p>
 
 <div name="CSS" lang="css" class="org-src-container">
- <pre class="src src-css" id="org376d6c3"><span class="org-css-selector">.org-src-container pre .org-function-name</span> {
+ <pre class="src src-css" id="orgacdfb0b"><span class="org-css-selector">.org-src-container pre .org-function-name</span> {
   <span class="org-comment-delimiter">/* </span><span class="org-comment">font-lock-function-name-face</span><span class="org-comment-delimiter"> */</span>
   <span class="org-css-property">color</span>: <span class="custom-1">#0000ff</span>;
 }
@@ -211,7 +211,7 @@ By using the <code>:emphasize</code> attr we can also define the styling for a g
 </p>
 
 <div emphasize-class="squiggly-error,squiggly-warning" emphasize-end="⊸,⊣" emphasize-start="⟜,⊢" name="Go" lang="go" class="org-src-container">
- <pre class="src src-go" id="org1e0d616"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
+ <pre class="src src-go" id="org2a0fe36"><span class="org-keyword">func</span> <span class="org-function-name">main</span>() {
   fmt.<span class="org-function-name">Printf</span>(<span class="org-string">"%d\n"</span>, ⟜<span class="org-string">"I pass a string"</span>⊸)
   fmt.<span class="org-function-name">Printf</span>(⊢<span class="org-string">"%d\n"</span>⊣)
 }
@@ -236,7 +236,7 @@ I added the following animations:
 <li>Tab transitions</li>
 </ul>
 </div>
-</div>]]></content><author><name>Clément Jean</name></author><category term="Elisp" /><category term="Emacs" /><summary type="html"><![CDATA[Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore...]]></summary></entry><entry><title type="html">Binary Search Tree with SIMD</title><link href="https://clement-jean.github.io/simd_binary_search_tree/" rel="alternate" type="text/html" title="Binary Search Tree with SIMD" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/simd_binary_search_tree</id><content type="html" xml:base="https://clement-jean.github.io/simd_binary_search_tree/"><![CDATA[<div class="alert alert-warning" role="alert">
+</div>]]></content><author><name>Clément Jean</name></author><category term="Elisp" /><category term="Emacs" /><summary type="html"><![CDATA[Recently, I've been trying to change the way I write blog posts here. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore...]]></summary></entry><entry><title type="html">Binary Search Tree with SIMD</title><link href="https://clement-jean.github.io/simd_binary_search_tree/" rel="alternate" type="text/html" title="Binary Search Tree with SIMD" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>https://clement-jean.github.io/simd_binary_search_tree</id><content type="html" xml:base="https://clement-jean.github.io/simd_binary_search_tree/"><![CDATA[<div class="alert alert-warning" role="alert">
   <h4 class="alert-heading">Warning!</h4>
   <p>The code (ASM) part of this article is not fully correct and doesn't scale to more layers of the tree. While I solved this problem offline, I did not update this article. Once I do, this warning will be off.</p>
 </div>
