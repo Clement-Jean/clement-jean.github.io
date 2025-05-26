@@ -9,7 +9,7 @@
 ---
 layout: post
 title: "Introducing codetabs.el"
-excerpt: "Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore..."
+excerpt: "Recently, I've been trying to change the way I write blog posts here. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore..."
 categories: [Elisp, Emacs]
 ---
 <style>
@@ -27,7 +27,7 @@ categories: [Elisp, Emacs]
 
 * Description
 
-Recently, I'm trying to change the way I write blog posts on this blog. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: *CUSTOMIZATION*.
+Recently, I've been trying to change the way I write blog posts here. Up until now I was using Jekyll+Markdown to write and publish. However, I decided I didn't want Markdown anymore and instead use Org Mode (I use Emacs BTW!). The reason is very simple: *CUSTOMIZATION*.
 
 If you read some of my previous blog post, I have code snippets that are grouped under tabs. This is because I often want to write multi-language code or simply have a beautiful code snippet and the name of a file as the tab name. Previous articles were relying on [[https://github.com/jdvp/jdvp-codetabs-commonmark][jdvp-codetabs-commonmark]] but I was missing some features and I already bothered the maintainer enough that I didn't feel like asking anymore. These features were:
 
