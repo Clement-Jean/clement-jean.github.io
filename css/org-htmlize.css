@@ -1,0 +1,75 @@
+/* Generated from (org-html-htmlize-generate-css) with minimum
+packages loaded and default light theme */
+
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+.org-builtin {
+    /* font-lock-builtin-face */
+    color: #483d8b;
+}
+.org-comment {
+    /* font-lock-comment-face */
+    color: #b22222;
+}
+.org-src-container > pre.dark-mode > .org-comment {
+    /* font-lock-comment-face */
+    color: lightgreen;
+}
+.org-comment-delimiter {
+    /* font-lock-comment-delimiter-face */
+    color: #b22222;
+}
+.org-src-container > pre.dark-mode > .org-comment-delimiter {
+    /* font-lock-comment-face */
+    color: lightgreen;
+}
+.org-constant {
+    /* font-lock-constant-face */
+    color: #008b8b;
+}
+.org-function-name {
+    /* font-lock-function-name-face */
+    color: #0000ff;
+}
+.org-src-container > pre.dark-mode > .org-function-name {
+    /* font-lock-function-name-face */
+    color: #0ff;
+}
+.org-css-selector {
+    color: #0000ff;
+}
+.org-src-container > pre.dark-mode > .org-css-selector {
+    color: #0ff;
+}
+.custom-1 {
+    color: white;
+    background-color: #0000ff;
+}
+.custom {
+    color: black;
+    background-color: #0ff;
+}
+.org-keyword {
+    /* font-lock-keyword-face */
+    color: #a020f0;
+}
+.org-string {
+    /* font-lock-string-face */
+    color: #8b2252;
+}
+.org-type {
+    /* font-lock-type-face */
+    color: #228b22;
+}
+
+a {
+    color: inherit;
+    background-color: inherit;
+    font: inherit;
+    text-decoration: inherit;
+}
+a:hover {
+    text-decoration: underline;
+}

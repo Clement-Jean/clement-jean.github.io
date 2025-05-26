@@ -1,0 +1,124 @@
+/* ERRORS */
+.squiggly-error {
+  background-image:
+    linear-gradient(45deg, transparent 65%, red 80%, transparent 90%),
+    linear-gradient(135deg, transparent 5%, red 15%, transparent 25%),
+    linear-gradient(135deg, transparent 45%, red 55%, transparent 65%),
+    linear-gradient(45deg, transparent 25%, red 35%, transparent 50%);
+  background-repeat:repeat-x;
+  background-size: 8px 2.5px;
+  background-position:0 100%;
+}
+.squiggly-warning {
+  background-image:
+    linear-gradient(45deg, transparent 65%, darkorange 80%, transparent 90%),
+    linear-gradient(135deg, transparent 5%, darkorange 15%, transparent 25%),
+    linear-gradient(135deg, transparent 45%, darkorange 55%, transparent 65%),
+    linear-gradient(45deg, transparent 25%, darkorange 35%, transparent 50%);
+  background-repeat:repeat-x;
+  background-size: 8px 2.5px;
+  background-position:0 100%;
+}
+
+.org-src-container pre {
+    font-size: 14px;
+    color: black;
+}
+
+.org-src-container pre.dark-mode {
+    color: white;
+}
+
+/* WARNING */
+
+/* COMMENTS */
+.org-src-container pre .org-comment {
+    /* font-lock-comment-face */
+    color: #888b94;
+}
+.org-src-container pre.dark-mode .org-comment {
+    /* font-lock-comment-face */
+    color: #565f98;
+}
+
+.org-src-container pre .org-comment-delimiter {
+    /* font-lock-comment-delimiter-face */
+    color: #888b89;
+}
+.org-src-container pre.dark-mode .org-comment-delimiter {
+    /* font-lock-comment-delimiter-face */
+    color: #565f89;
+}
+
+/* STRINGS */
+.org-src-container pre .org-string {
+    /* font-lock-string-face */
+    color: #385f0d;
+}
+.org-src-container pre.dark-mode .org-string {
+    /* font-lock-string-face */
+    color: #9ece6a;
+}
+
+/* CONSTANTS */
+.org-src-container pre .org-constant {
+    /* font-lock-constant-face */
+    color: #008b8b;
+}
+.org-src-container pre.dark-mode .org-constant {
+    /* font-lock-constant-face */
+    color: #ff9e64;
+}
+
+/* TYPES */
+.org-src-container pre .org-type {
+    /* font-lock-type-face */
+    color: #343b58;
+}
+.org-src-container pre.dark-mode .org-type {
+    /* font-lock-type-face */
+    color: #c0caf5;
+}
+
+/* FUNCTIONS */
+.org-src-container pre .org-function-name {
+    /* font-lock-function-name-face */
+    color: #2959aa;
+}
+.org-src-container pre.dark-mode .org-function-name {
+    /* font-lock-function-name-face */
+    color: #7aa2f7;
+}
+
+/* KEYWORDS */
+.org-src-container pre .org-keyword {
+    /* font-lock-keyword-face */
+    color: #65359d;
+}
+.org-src-container pre.dark-mode .org-keyword {
+    /* font-lock-keyword-face */
+    color: #bb9af7;
+}
+
+/* VARIABLES */
+
+/* PREPROCESSOR */
+
+/* CSS */
+.org-src-container pre .org-css-selector {
+    /* font-lock-css-selector */
+    color: #2959aa;
+}
+.org-src-container pre.dark-mode .org-css-selector {
+    /* font-lock-css-selector */
+    color: #7aa2f7;
+}
+
+.org-src-container pre .org-css-property {
+    /* font-lock-css-property */
+    color: #65359d;
+}
+.org-src-container pre.dark-mode .org-css-property {
+    /* font-lock-css-property */
+    color: #bb9af7;
+}
