@@ -30,6 +30,15 @@
 }
 
 /* WARNING */
+.org-src-container pre .org-warning {
+    /* font-lock-comment-face */
+    color: #008b8b;
+    font-weight: bold;
+}
+.org-src-container pre.dark-mode .org-warning {
+    /* font-lock-comment-face */
+    color: #ff9e64;
+}
 
 /* COMMENTS */
 .org-src-container pre .org-comment {
@@ -101,8 +110,24 @@
 }
 
 /* VARIABLES */
+.org-src-container pre .org-variable-name {
+    /* font-lock-variable-name-face */
+    color: #343b58;
+}
+.org-src-container pre.dark-mode .org-variable-name {
+    /* font-lock-variable-name-face */
+    color: #c0caf5;
+}
 
 /* PREPROCESSOR */
+.org-src-container pre .org-preprocessor {
+    /* font-lock-preprocessor */
+    color: #33635c;
+}
+.org-src-container pre.dark-mode .org-preprocessor {
+    /* font-lock-preprocessor */
+    color: #73daca;
+}
 
 /* CSS */
 .org-src-container pre .org-css-selector {

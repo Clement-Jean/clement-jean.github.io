@@ -20,8 +20,159 @@ body.dark-mode {
     --code-text-color: #f0f0f0;
 }
 
-.outline-2, .outline-4 {
+.outline-1 {
+    margin: 20px 0px;
+}
+
+.outline-2, .outline-3, .outline-4 {
     margin: 20px 10px;
+}
+
+.tab-content pre.src:before {
+    color: unset !important;
+    background-color: unset !important;
+    position: unset !important;
+    top: unset !important;
+    right: unset !important;
+    padding: unset !important;
+    content: unset !important;
+}
+
+.tab-content pre.src::selection {
+    color: black;
+    background-color: darkgray;
+}
+
+.tab-content pre.src span::selection {
+    color: black;
+    background-color: darkgray;
+}
+
+.tab-content pre.src.dark-mode::selection {
+    color: white;
+    background-color: lightgray;
+}
+
+.tab-content pre.src.dark-mode span::selection {
+    color: white;
+    background-color: lightgray;
+}
+
+.tab-content pre {
+    padding: 25px;
+    border: none;
+    border-radius: 0px 0px 8px 8px;
+    margin: 0px;
+    line-height: 2;
+    color: #343b59;
+    background-color: #e6e7ed;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-content pre.dark-mode {
+    background-color: #1a1b26;
+    color: #a9b1d6;
+    border-color: #444;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-content pre code {
+    font-size: 14px;
+}
+
+.code-tabs {
+    border: 1px solid #ccc;
+    border-radius: 8px 8px 8px 8px;
+    margin: 10px;
+}
+
+.tab-controls {
+    --active-indicator-offset: auto;
+    --active-indicator-width: 10px;
+
+    position: relative;
+    display: flex;
+    padding-left: 20px;
+}
+
+.tab-controls::after {
+    position: absolute;
+    content: "";
+    width: var(--active-indicator-width);
+    height: 3px;
+    background-color: #1769e0;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    left: var(--active-indicator-offset);
+    bottom: 0px;
+    transition: left 300ms, width 300ms;
+}
+
+.tab-controls button {
+    font-size: 15px;
+    margin-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.tab-controls button:last-child {
+    border-right: none;
+}
+
+.tab-controls button.active {
+    color: #1769e0;
+    outline: none;
+}
+
+.tab-controls button:focus {
+    outline: none;
+}
+
+.tab-content {
+    position: relative;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content pre .theme-toggle-icon {
+    line-height: 1;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: var(--tab-bg);
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.tab-content pre .theme-toggle-icon::before {
+    content: url('/images/icon_theme.svg');
+}
+
+.tab-content pre .copy-icon {
+    line-height: 1;
+    position: absolute;
+    top: 10px;
+    right: 35px;
+    color: var(--tab-bg);
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.tab-content pre .copy-icon::after {
+    content: url('/images/icon_copy.svg');
+}
+
+.tab-content pre.dark-mode .theme-toggle-icon::before {
 }
 
 /* .theme-toggle-icon:hover { */
